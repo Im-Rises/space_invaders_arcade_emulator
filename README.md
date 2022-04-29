@@ -1,4 +1,4 @@
-# SpaceInvadersArcadeEmulator
+# space_invaders_arcade_emulator
 
 Space Invaders arcade game emulator in development made in Rust.
 
