@@ -1,3 +1,7 @@
+// public import
+pub mod si_arcade;
+
 fn main() {
-    println!("Hello, world!");
+    // let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new();
+    // space_invaders_arcade:
 }
