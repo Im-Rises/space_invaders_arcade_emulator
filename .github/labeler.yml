@@ -1,0 +1,17 @@
+repo:
+- '*'
+
+source:
+- 'src'
+
+main:
+- 'src/**/main.*'
+
+video:
+- 'src/**/Ppu.*'
+
+audio:
+- 'src/**/Spu.*'
+
+controller:
+- 'src/**/Joypad.*'
