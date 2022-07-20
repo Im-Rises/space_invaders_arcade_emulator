@@ -1,4 +1,3 @@
-//private imports
 mod cpu;
 mod ppu;
 mod mmu;
@@ -12,12 +11,20 @@ pub struct SpaceInvadersArcade {
 }
 
 impl SpaceInvadersArcade {
-    // fn new() -> SpaceInvadersArcade {
-    // }
+    pub fn new(roms_path: &str) -> SpaceInvadersArcade {
+        SpaceInvadersArcade {
+            cpu: cpu::Cpu::new(),
+            mmu: mmu::Mmu::new(roms_path),
+            // ppu: mmu::new(),
+            // inputs: inputs::new()
+        }
+    }
     fn load_rom(&self) {
         // mmu.load_rom();
     }
-    fn start(&self) {}
+    fn start(&self) {
+
+    }
     fn pause_emulation(&self) {}
     fn restart_emulation(&self) {}
     fn save_state(&self) {}
