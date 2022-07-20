@@ -22,7 +22,7 @@ impl SpaceInvadersArcade {
     fn load_rom(&self) {
         // mmu.load_rom();
     }
-    fn start(&self) {
+    pub fn start(&self) {
 
     }
     fn pause_emulation(&self) {}
