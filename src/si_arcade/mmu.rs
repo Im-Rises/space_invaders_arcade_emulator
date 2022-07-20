@@ -6,15 +6,24 @@ pub struct Mmu {
 }
 
 impl Mmu {
+    pub fn new(roms_path: &str) -> Mmu {
+        Mmu{
+            romh: vec![],
+            romg: vec![],
+            romf: vec![],
+            rome: vec![]
+        }
+    }
+
     pub fn load_roms(&self) {}
 
     fn load_rom(&self, path: String) {}
 
-    pub fn read(){
+    pub fn read(&self){
 
     }
 
-    pub fn write(){
+    pub fn write(&self){
 
     }
 }
