@@ -1,3 +1,6 @@
+use std::rc::Rc;
+use crate::si_arcade::mmu::Mmu;
+
 pub struct Cpu {
     a: u8,
     f: u8,
@@ -12,10 +15,11 @@ pub struct Cpu {
     stat: u16,
     opcode: u8,
     cycles: u8,
+    mmu: Rc<Mmu>,
 }
 
 impl Cpu {
-    pub fn new() -> Cpu
+    pub fn new(mmu: &Rc<Mmu>) -> Cpu
     {
         Cpu {
             a: 0,
@@ -31,6 +35,7 @@ impl Cpu {
             stat: 0,
             opcode: 0,
             cycles: 0,
+            mmu: Rc::clone(&mmu),
         }
     }
 
