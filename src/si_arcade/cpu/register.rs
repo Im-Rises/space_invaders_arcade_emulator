@@ -1,12 +1,13 @@
+use crate::binary_lib;
+
 pub enum Flag {
     //Three bits are unused
     S = 7,
     Z = 6,
-    AC = 4,
+    A = 4,
     P = 2,
     C = 0,
 }
-
 
 pub struct Register {
     pub a: u8,

@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use super::mmu::Mmu;
 
-mod register;
 mod opcodes;
+mod register;
 
 const CLOCK_FREQUENCY: usize = 2_000_000;
 
@@ -31,7 +31,6 @@ impl Cpu {
             mmu: Rc::clone(&mmu),
         }
     }
-
 
     fn clock(&mut self) {
         if self.cycles == 0 {
@@ -307,5 +306,21 @@ impl Cpu {
             0xFF => (),
             _ => {}
         }
+    }
+}
+
+impl Cpu {
+    // List all the opcodes function here
+
+    fn mov_r1_r2(&self, r1: &mut u8, r2: u8) {
+        *r1 = r2;
+    }
+
+    fn mov_m_r(&mut self, r: u8) {
+        self.mmu.write(self.regs.get_hl(), r);
+    }
+
+    fn nop(&self) {
+        // Do nothing
     }
 }

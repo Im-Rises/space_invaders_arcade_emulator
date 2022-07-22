@@ -19,13 +19,15 @@ impl Mmu {
         }
     }
 
-    pub fn load_roms(&self) {}
+    // pub fn load_roms(&self) {}
 
-    fn load_rom(&self, path: String) {}
+    // fn load_rom(&self, path: String) {}
 
     pub fn read(&self, address: u16) -> u8 {
-        10
+        self.memory[address as usize]
     }
 
-    pub fn write(&self) {}
+    pub fn write(&mut self, address: u16, data: u8) {
+        self.memory[address as usize] = data;
+    }
 }

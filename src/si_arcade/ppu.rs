@@ -8,8 +8,6 @@ pub struct Ppu {
 
 impl Ppu {
     pub fn new(mmu: &Rc<Mmu>) -> Ppu {
-        Ppu {
-            mmu: Rc::clone(&mmu),
-        }
+        Ppu { mmu: Rc::clone(&mmu) }
     }
 }
