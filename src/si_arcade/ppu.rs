@@ -1,4 +1,5 @@
 use std::rc::Rc;
+
 use crate::si_arcade::mmu::Mmu;
 
 pub struct Ppu {
@@ -7,6 +8,8 @@ pub struct Ppu {
 
 impl Ppu {
     pub fn new(mmu: &Rc<Mmu>) -> Ppu {
-        Ppu { mmu: Rc::clone(&mmu) }
+        Ppu {
+            mmu: Rc::clone(&mmu),
+        }
     }
 }

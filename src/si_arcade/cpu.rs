@@ -1,15 +1,11 @@
 use std::rc::Rc;
-use crate::si_arcade::mmu::Mmu;
+
+use super::mmu::Mmu;
+
+mod register;
 
 pub struct Cpu {
-    a: u8,
-    f: u8,
-    b: u8,
-    c: u8,
-    d: u8,
-    e: u8,
-    h: u8,
-    l: u8,
+    regs: register::Register,
     sp: u16,
     pc: u16,
     stat: u16,
@@ -19,17 +15,9 @@ pub struct Cpu {
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<Mmu>) -> Cpu
-    {
+    pub fn new(mmu: &Rc<Mmu>) -> Cpu {
         Cpu {
-            a: 0,
-            f: 0,
-            b: 0,
-            c: 0,
-            d: 0,
-            e: 0,
-            h: 0,
-            l: 0,
+            regs: register::Register::new(),
             sp: 0,
             pc: 0,
             stat: 0,
@@ -44,25 +32,20 @@ impl Cpu {
     //
     // }
 
-    fn clock(&mut self)
-    {
-        if self.cycles == 0
-        {
+    fn clock(&mut self) {
+        if self.cycles == 0 {
             let opcode = self.fetch();
             self.compute_opcode(opcode);
         }
         self.cycles -= 1;
     }
 
-    fn fetch(&self) -> u8
-    {
+    fn fetch(&self) -> u8 {
         10
     }
 
-    fn compute_opcode(&self, opcode: u8)
-    {
-        match opcode
-        {
+    fn compute_opcode(&self, opcode: u8) {
+        match opcode {
             0x00 => self.nop(),
             0x01 => (),
             0x02 => (),
@@ -327,11 +310,9 @@ impl Cpu {
 impl Cpu {
     // Sub functions
 
-    fn pair_registers(&self)
-    {}
+    fn pair_registers(&self) {}
 
-    fn unpair_registers(&self)
-    {}
+    fn unpair_registers(&self) {}
 
     // List all the opcodes function here
 
@@ -340,11 +321,9 @@ impl Cpu {
     //     // r1 = r2;
     // }
 
-    fn mov_m_r(&self)
-    {}
+    fn mov_m_r(&self) {}
 
-    fn nop(&self)
-    {
+    fn nop(&self) {
         // Do nothing
     }
 

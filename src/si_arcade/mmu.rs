@@ -7,11 +7,11 @@ pub struct Mmu {
 
 impl Mmu {
     pub fn new(roms_path: &str) -> Mmu {
-        Mmu{
+        Mmu {
             romh: vec![],
             romg: vec![],
             romf: vec![],
-            rome: vec![]
+            rome: vec![],
         }
     }
 
@@ -19,11 +19,7 @@ impl Mmu {
 
     fn load_rom(&self, path: String) {}
 
-    pub fn read(&self){
+    pub fn read(&self) {}
 
-    }
-
-    pub fn write(&self){
-
-    }
+    pub fn write(&self) {}
 }

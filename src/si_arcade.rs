@@ -1,9 +1,9 @@
-mod cpu;
-mod ppu;
-mod mmu;
-mod inputs;
-
 use std::rc::Rc;
+
+mod cpu;
+mod inputs;
+mod mmu;
+mod ppu;
 
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
