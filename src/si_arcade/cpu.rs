@@ -3,12 +3,16 @@ use std::rc::Rc;
 use super::mmu::Mmu;
 
 mod register;
+mod opcodes;
+
+const CLOCK_FREQUENCY: usize = 2_000_000;
 
 pub struct Cpu {
     regs: register::Register,
     sp: u16,
     pc: u16,
     stat: u16,
+    halted: bool,
     opcode: u8,
     cycles: u8,
     mmu: Rc<Mmu>,
@@ -21,32 +25,31 @@ impl Cpu {
             sp: 0,
             pc: 0,
             stat: 0,
+            halted: false,
             opcode: 0,
             cycles: 0,
             mmu: Rc::clone(&mmu),
         }
     }
 
-    // enum Opcodes{
-    //     NOP(0x00),
-    //
-    // }
 
     fn clock(&mut self) {
         if self.cycles == 0 {
             let opcode = self.fetch();
+            self.pc += 1;
             self.compute_opcode(opcode);
+            // self.cycles+=ocpodeCyclesArray;
         }
         self.cycles -= 1;
     }
 
     fn fetch(&self) -> u8 {
-        10
+        self.mmu.read(self.pc)
     }
 
     fn compute_opcode(&self, opcode: u8) {
         match opcode {
-            0x00 => self.nop(),
+            0x00 => (),
             0x01 => (),
             0x02 => (),
             0x03 => (),
@@ -305,33 +308,4 @@ impl Cpu {
             _ => {}
         }
     }
-}
-
-impl Cpu {
-    // Sub functions
-
-    fn pair_registers(&self) {}
-
-    fn unpair_registers(&self) {}
-
-    // List all the opcodes function here
-
-    // fn mov_r1_r2(&self, mut r1: &u8, mut r2: &u8)
-    // {
-    //     // r1 = r2;
-    // }
-
-    fn mov_m_r(&self) {}
-
-    fn nop(&self) {
-        // Do nothing
-    }
-
-    //
-    // fn lxi_b_d16(&self)
-    // {
-    //     let mut fetched :u16 = self.fetch() as u16;
-    //     fetched<<= 8;
-    //     fetched |= fetched();
-    // }
 }

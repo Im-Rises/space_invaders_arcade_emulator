@@ -1,4 +1,12 @@
-use crate::binary_lib;
+pub enum Flag {
+    //Three bits are unused
+    S = 7,
+    Z = 6,
+    AC = 4,
+    P = 2,
+    C = 0,
+}
+
 
 pub struct Register {
     pub a: u8,
@@ -11,11 +19,22 @@ pub struct Register {
     pub l: u8,
 }
 
+/*
+S - Sign Flag
+Z - Zero Flag
+0 - Not used, always zero
+A - also called AC, Auxiliary Carry Flag
+0 - Not used, always zero
+P - Parity Flag
+1 - Not used, always one
+C - Carry Flag
+*/
+
 impl Register {
     pub fn new() -> Register {
         Register {
             a: 0,
-            f: 0,
+            f: 0b0000_0010,
             b: 0,
             c: 0,
             d: 0,
@@ -41,7 +60,7 @@ impl Register {
     }
 
     pub fn set_bc(&mut self, data: u16) {
-        self.b = u8::from(data >> 8);
+        self.b = (data >> 8) as u8;
         self.c = (data & 0x00ff) as u8;
     }
 
@@ -50,7 +69,7 @@ impl Register {
     }
 
     pub fn set_de(&mut self, data: u16) {
-        self.d = u8::from(data >> 8);
+        self.d = (data >> 8) as u8;
         self.e = (data & 0x00ff) as u8;
     }
 
@@ -59,18 +78,9 @@ impl Register {
     }
 
     pub fn set_hl(&mut self, data: u16) {
-        self.h = u8::from(data >> 8);
+        self.h = (data >> 8) as u8;
         self.l = (data & 0x00ff) as u8;
     }
-}
-
-pub enum Flag {
-    //Three bits are unused
-    S = 7,
-    Z = 6,
-    AC = 4,
-    P = 2,
-    C = 0,
 }
 
 impl Register {
