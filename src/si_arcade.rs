@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::rc::Rc;
 
 mod cpu;
@@ -7,14 +8,14 @@ mod ppu;
 
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
-    mmu: Rc<mmu::Mmu>,
+    mmu: Rc<RefCell<mmu::Mmu>>,
     ppu: ppu::Ppu,
     // inputs: inputs::Imputs,
 }
 
 impl SpaceInvadersArcade {
     pub fn new(roms_path: &str) -> SpaceInvadersArcade {
-        let mmu_init = Rc::new(mmu::Mmu::new(roms_path));
+        let mut mmu_init = Rc::new(RefCell::new(mmu::Mmu::new(roms_path)));
         SpaceInvadersArcade {
             cpu: cpu::Cpu::new(&mmu_init),
             mmu: Rc::clone(&mmu_init),

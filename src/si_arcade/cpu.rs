@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use super::mmu::Mmu;
@@ -15,11 +16,11 @@ pub struct Cpu {
     halted: bool,
     opcode: u8,
     cycles: u8,
-    mmu: Rc<Mmu>,
+    mmu: Rc<RefCell<Mmu>>,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<Mmu>) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Cpu {
         Cpu {
             regs: register::Register::new(),
             sp: 0,
