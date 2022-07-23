@@ -44,7 +44,7 @@ impl Cpu {
     }
 
     fn fetch(&self) -> u8 {
-        self.mmu.read(self.pc)
+        self.mmu.borrow().read(self.pc)
     }
 
     fn compute_opcode(&self, opcode: u8) {
@@ -318,7 +318,7 @@ impl Cpu {
     }
 
     fn mov_m_r(&mut self, r: u8) {
-        self.mmu.write(self.regs.get_hl(), r);
+        self.mmu.borrow_mut().write(self.regs.get_hl(), r);
     }
 
     fn nop(&self) {
