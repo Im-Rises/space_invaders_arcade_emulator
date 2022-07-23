@@ -43,8 +43,22 @@ impl Cpu {
         self.cycles -= 1;
     }
 
-    fn fetch(&self) -> u8 {
-        self.mmu.borrow().read(self.pc)
+    fn fetch(&mut self) -> u8 {
+        let data = self.read(self.pc);
+        self.pc += 1;
+        data
+    }
+
+    fn fetch_two_bytes(&mut self) -> u16 {
+        (self.fetch() | self.fetch() << 8) as u16
+    }
+
+    fn read(&self, address: u16) -> u8 {
+        self.mmu.borrow().read(address)
+    }
+
+    fn write(&self, address: u16, data: u8) {
+        self.mmu.borrow_mut().write(address, data);
     }
 
     fn compute_opcode(&self, opcode: u8) {
@@ -312,13 +326,85 @@ impl Cpu {
 
 impl Cpu {
     // List all the opcodes function here
+    // p9 Datasheet 1
+    // p22 Datasheet 2
+
+    /*MOV Instructions*/
 
     fn mov_r1_r2(&self, r1: &mut u8, r2: u8) {
         *r1 = r2;
     }
 
     fn mov_m_r(&mut self, r: u8) {
-        self.mmu.borrow_mut().write(self.regs.get_hl(), r);
+        self.write(self.regs.get_hl(), r);
+    }
+
+    fn mov_r_m(&mut self, r: &mut u8) {
+        *r = self.read(self.regs.get_hl());
+    }
+
+    /*MVI Instructions*/
+
+    fn mvi_r(&mut self, r: &mut u8) {
+        *r = self.fetch();
+    }
+
+    fn mvi_m(&mut self) {
+        let data = self.fetch(); //???
+        self.write(self.regs.get_hl(), data)
+    }
+
+    /*LXI Instructions*/
+
+    fn lxi_rpair(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
+        *low_reg = self.fetch();
+        *high_reg = self.fetch();
+    }
+
+    fn lxi_sp(&mut self) {
+        self.sp = self.fetch_two_bytes();
+    }
+
+    /*STAX Instructions*/
+
+    fn stax_pair_regs(&mut self, pair_regs: u16) {
+        self.write(pair_regs, self.regs.a);
+    }
+
+    /*LDAX Instructions*/
+
+    fn ldax_pair_regs(&mut self, pair_regs: u16) {
+        self.regs.a = self.read(pair_regs);
+    }
+
+    /*STA Instructions*/
+
+    fn sta(&mut self) {
+        let address = self.fetch_two_bytes(); //???
+        self.write(address, self.regs.a);
+    }
+
+    /*LDA Instructions*/
+
+    fn lda(&mut self) {
+        let address = self.fetch_two_bytes(); //???
+        self.regs.a = self.read(address)
+    }
+
+    /*SHLD Instructions*/
+
+    fn shld(&mut self) {
+        let address = self.fetch_two_bytes();
+        self.write(address, self.regs.l);
+        self.write(address + 1, self.regs.h);
+    }
+
+    /*LHLD Instructions*/
+
+    fn lhld(&mut self) {
+        let address = self.fetch_two_bytes();
+        self.regs.l = self.read(address);
+        self.regs.h = self.read(address + 1);
     }
 
     fn nop(&self) {
