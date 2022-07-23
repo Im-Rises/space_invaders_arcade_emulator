@@ -1,5 +1,8 @@
 use std::cell::RefCell;
+use std::mem;
 use std::rc::Rc;
+
+use crate::si_arcade::cpu::register::Flag;
 
 use super::mmu::Mmu;
 
@@ -35,7 +38,7 @@ impl Cpu {
 
     fn clock(&mut self) {
         if self.cycles == 0 {
-            let opcode = self.fetch();
+            let opcode = self.fetch_byte();
             self.pc += 1;
             self.compute_opcode(opcode);
             // self.cycles+=ocpodeCyclesArray;
@@ -43,14 +46,14 @@ impl Cpu {
         self.cycles -= 1;
     }
 
-    fn fetch(&mut self) -> u8 {
+    fn fetch_byte(&mut self) -> u8 {
         let data = self.read(self.pc);
         self.pc += 1;
         data
     }
 
-    fn fetch_two_bytes(&mut self) -> u16 {
-        (self.fetch() | self.fetch() << 8) as u16
+    fn fetch_word(&mut self) -> u16 {
+        (self.fetch_byte() | self.fetch_byte() << 8) as u16
     }
 
     fn read(&self, address: u16) -> u8 {
@@ -329,6 +332,8 @@ impl Cpu {
     // p9 Datasheet 1
     // p22 Datasheet 2
 
+    /*---------------MOVE, LOAD AND STORE---------------*/
+
     /*MOV Instructions*/
 
     fn mov_r1_r2(&self, r1: &mut u8, r2: u8) {
@@ -346,55 +351,51 @@ impl Cpu {
     /*MVI Instructions*/
 
     fn mvi_r(&mut self, r: &mut u8) {
-        *r = self.fetch();
+        *r = self.fetch_byte();
     }
 
     fn mvi_m(&mut self) {
-        let data = self.fetch(); //???
+        let data = self.fetch_byte(); //???
         self.write(self.regs.get_hl(), data)
     }
 
     /*LXI Instructions*/
 
-    fn lxi_rpair(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
-        *low_reg = self.fetch();
-        *high_reg = self.fetch();
-    }
-
-    fn lxi_sp(&mut self) {
-        self.sp = self.fetch_two_bytes();
+    fn lxi_pr(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
+        *low_reg = self.fetch_byte();
+        *high_reg = self.fetch_byte();
     }
 
     /*STAX Instructions*/
 
-    fn stax_pair_regs(&mut self, pair_regs: u16) {
+    fn stax_pr(&mut self, pair_regs: u16) {
         self.write(pair_regs, self.regs.a);
     }
 
     /*LDAX Instructions*/
 
-    fn ldax_pair_regs(&mut self, pair_regs: u16) {
+    fn ldax_pr(&mut self, pair_regs: u16) {
         self.regs.a = self.read(pair_regs);
     }
 
     /*STA Instructions*/
 
     fn sta(&mut self) {
-        let address = self.fetch_two_bytes(); //???
+        let address = self.fetch_word(); //???
         self.write(address, self.regs.a);
     }
 
     /*LDA Instructions*/
 
     fn lda(&mut self) {
-        let address = self.fetch_two_bytes(); //???
+        let address = self.fetch_word(); //???
         self.regs.a = self.read(address)
     }
 
     /*SHLD Instructions*/
 
     fn shld(&mut self) {
-        let address = self.fetch_two_bytes();
+        let address = self.fetch_word();
         self.write(address, self.regs.l);
         self.write(address + 1, self.regs.h);
     }
@@ -402,9 +403,171 @@ impl Cpu {
     /*LHLD Instructions*/
 
     fn lhld(&mut self) {
-        let address = self.fetch_two_bytes();
+        let address = self.fetch_word();
         self.regs.l = self.read(address);
         self.regs.h = self.read(address + 1);
+    }
+
+    /*xchg Instructions*/
+
+    fn xchg(&mut self) {
+        mem::swap(&mut self.regs.d, &mut self.regs.h);
+        mem::swap(&mut self.regs.e, &mut self.regs.l);
+    }
+
+    /*---------------STACK OPS---------------*/
+
+    /*PUSH Instructions*/
+
+    fn push_pr(&mut self, high_reg: u8, low_reg: u8) {
+        self.write(self.sp - 1, high_reg);
+        self.write(self.sp - 2, low_reg);
+        self.sp -= 2;
+    }
+
+    /*POP Instructions*/
+
+    fn pop(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
+        *low_reg = self.read(self.sp);
+        *high_reg = self.read(self.sp + 1);
+        self.sp += 2;
+    }
+
+    /*XTHL Instructions*/
+
+    fn xthl(&mut self) {
+        let temp_l = self.regs.l;
+        let temp_h = self.regs.h;
+        self.regs.l = self.read(self.sp);
+        self.regs.h = self.read(self.sp + 1);
+        self.write(self.sp, temp_l);
+        self.write(self.sp + 1, temp_h);
+    }
+
+    /*SPHL Instructions*/
+
+    fn sphl(&mut self) {
+        self.sp = self.regs.get_hl();
+    }
+
+    /*LXI SP Instructions*/
+
+    fn lxi_sp(&mut self) {
+        self.sp = self.fetch_word();
+    }
+
+    /*INX SP Instructions*/
+
+    fn inx_sp(&mut self) {
+        self.sp += 1;
+    }
+
+    /*DCX SP Instructions*/
+
+    fn dcx_sp(&mut self) {
+        self.sp -= 1;
+    }
+
+    /*---------------JUMP---------------*/
+
+    /*JUMP Instructions*/
+
+    fn jmp(&mut self) {
+        self.pc = self.fetch_word();
+    }
+
+    // /*JC Instructions*/
+    //
+    // fn jc(&mut self) {
+    //     if self.regs.get_flag(Flag::C) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JNC Instructions*/
+    //
+    // fn jnc(&mut self) {
+    //     if !self.regs.get_flag(Flag::C) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JZ Instructions*/
+    //
+    // fn jz(&mut self) {
+    //     if self.regs.get_flag(Flag::Z) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JNZ Instructions*/
+    //
+    // fn jnz(&mut self) {
+    //     if !self.regs.get_flag(Flag::Z) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JP Instructions*/
+    //
+    // fn jp(&mut self) {
+    //     if !self.regs.get_flag(Flag::S) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JM Instructions*/
+    //
+    // fn jm(&mut self) {
+    //     if self.regs.get_flag(Flag::S) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JPE Instructions*/
+    //
+    // fn jpe(&mut self) {
+    //     if self.regs.get_flag(Flag::P) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+    //
+    // /*JPO Instructions*/
+    //
+    // fn jpo(&mut self) {
+    //     if !self.regs.get_flag(Flag::P) {
+    //         self.jmp();
+    //     } else {
+    //         pc += 1;
+    //     }
+    // }
+
+    fn jmp_flag_condition(&mut self, flag: bool) {
+        if self.regs.get_flag(flag) {
+            self.jmp();
+        } else {
+            pc += 1;
+        }
+    }
+
+    /*PCHL Instructions*/
+
+    fn pchl(&mut self) {
+        self.pc = self.regs.get_hl();
     }
 
     fn nop(&self) {
