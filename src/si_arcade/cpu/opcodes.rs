@@ -5,283 +5,43 @@ use crate::si_arcade::cpu::register::{Flag, Register};
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 
-pub fn mov_a_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.a;
+pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.a = r;
     5
 }
 
-pub fn mov_a_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.b;
+pub fn mov_b_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.b = r;
     5
 }
 
-pub fn mov_a_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.c;
+pub fn mov_c_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.c = r;
     5
 }
 
-pub fn mov_a_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.d;
+pub fn mov_d_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.d = r;
     5
 }
 
-pub fn mov_a_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.e;
+pub fn mov_e_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.e = r;
     5
 }
 
-pub fn mov_a_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.h;
+pub fn mov_h_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.h = r;
     5
 }
 
-pub fn mov_a_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.regs.l;
+pub fn mov_l_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.l = r;
     5
 }
 
-pub fn mov_b_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.a;
-    5
-}
-
-pub fn mov_b_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.b;
-    5
-}
-
-pub fn mov_b_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.c;
-    5
-}
-
-pub fn mov_b_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.d;
-    5
-}
-
-pub fn mov_b_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.e;
-    5
-}
-
-pub fn mov_b_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.h;
-    5
-}
-
-pub fn mov_b_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.regs.l;
-    5
-}
-
-pub fn mov_c_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.a;
-    5
-}
-
-pub fn mov_c_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.b;
-    5
-}
-
-pub fn mov_c_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.c;
-    5
-}
-
-pub fn mov_c_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.d;
-    5
-}
-
-pub fn mov_c_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.e;
-    5
-}
-
-pub fn mov_c_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.h;
-    5
-}
-
-pub fn mov_c_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.regs.l;
-    5
-}
-
-pub fn mov_d_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.a;
-    5
-}
-
-pub fn mov_d_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.b;
-    5
-}
-
-pub fn mov_d_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.c;
-    5
-}
-
-pub fn mov_d_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.d;
-    5
-}
-
-pub fn mov_d_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.e;
-    5
-}
-
-pub fn mov_d_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.h;
-    5
-}
-
-pub fn mov_d_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.regs.l;
-    5
-}
-
-pub fn mov_h_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.a;
-    5
-}
-
-pub fn mov_h_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.b;
-    5
-}
-
-pub fn mov_h_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.c;
-    5
-}
-
-pub fn mov_h_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.d;
-    5
-}
-
-pub fn mov_h_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.e;
-    5
-}
-
-pub fn mov_h_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.h;
-    5
-}
-
-pub fn mov_h_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.regs.l;
-    5
-}
-
-pub fn mov_l_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.a;
-    5
-}
-
-pub fn mov_l_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.b;
-    5
-}
-
-pub fn mov_l_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.c;
-    5
-}
-
-pub fn mov_l_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.d;
-    5
-}
-
-pub fn mov_l_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.e;
-    5
-}
-
-pub fn mov_l_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.h;
-    5
-}
-
-pub fn mov_l_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.regs.l;
-    5
-}
-
-pub fn mov_e_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.a;
-    5
-}
-
-pub fn mov_e_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.b;
-    5
-}
-
-pub fn mov_e_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.c;
-    5
-}
-
-pub fn mov_e_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.d;
-    5
-}
-
-pub fn mov_e_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.e;
-    5
-}
-
-pub fn mov_e_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.h;
-    5
-}
-
-pub fn mov_e_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.regs.l;
-    5
-}
-
-pub fn mov_m_a(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.a);
-    7
-}
-
-pub fn mov_m_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.b);
-    7
-}
-
-pub fn mov_m_c(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.c);
-    7
-}
-
-pub fn mov_m_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.d);
-    7
-}
-
-pub fn mov_m_e(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.e);
-    7
-}
-
-pub fn mov_m_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.h);
-    7
-}
-
-pub fn mov_m_l(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_hl(), cpu.regs.l);
+pub fn mov_m_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.write(cpu.regs.get_hl(), r);
     7
 }
 
@@ -379,22 +139,13 @@ pub fn lxi_h(cpu: &mut cpu::Cpu) -> u8 {
     10
 }
 
-pub fn stax_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_bc(), cpu.regs.a);
+pub fn stax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
+    cpu.write(pr, cpu.regs.a);
     7
 }
 
-pub fn stax_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.regs.get_de(), cpu.regs.a);
-    7
-}
-
-pub fn ldax_b(cpu: &mut cpu::Cpu) {
-    cpu.regs.a = cpu.read(cpu.regs.get_bc());
-}
-
-pub fn ldax_d(cpu: &mut cpu::Cpu) {
-    cpu.regs.a = cpu.read(cpu.regs.get_de());
+pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) {
+    cpu.regs.a = cpu.read(pr);
 }
 
 pub fn sta(cpu: &mut cpu::Cpu) -> u8 {
@@ -438,34 +189,6 @@ pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
     cpu.sp -= 2;
     11
 }
-
-// pub fn push_b(cpu: &mut cpu::Cpu) -> u8 {
-//     cpu.write(cpu.sp - 1, cpu.regs.b);
-//     cpu.write(cpu.sp - 2, cpu.regs.c);
-//     cpu.sp -= 2;
-//     11
-// }
-//
-// pub fn push_d(cpu: &mut cpu::Cpu) -> u8 {
-//     cpu.write(cpu.sp - 1, cpu.regs.d);
-//     cpu.write(cpu.sp - 2, cpu.regs.e);
-//     cpu.sp -= 2;
-//     11
-// }
-//
-// pub fn push_h(cpu: &mut cpu::Cpu) -> u8 {
-//     cpu.write(cpu.sp - 1, cpu.regs.h);
-//     cpu.write(cpu.sp - 2, cpu.regs.l);
-//     cpu.sp -= 2;
-//     11
-// }
-//
-// pub fn push_psw(cpu: &mut cpu::Cpu) -> u8 {
-//     cpu.write(cpu.sp - 1, cpu.regs.a);
-//     cpu.write(cpu.sp - 2, cpu.regs.f);
-//     cpu.sp -= 2;
-//     11
-// }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.c = cpu.read(cpu.sp);
@@ -884,14 +607,14 @@ pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a >>= 1;
     4
 }
-//////////
-/*
+
 pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.set_reset_flag(Flag::C, binary_lib::get_bit(cpu.regs.a, 7));
+    cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 7));
     cpu.regs.a <<= 1;
     4
 }
-
+//////////
+/*
 pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.set_reset_flag(Flag::C, binary_lib::get_bit(cpu.regs.a, 0));
     cpu.regs.a >>= 1;
