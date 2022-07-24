@@ -69,7 +69,7 @@ impl Cpu {
     fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
             // 0x00 => self.nop(),
-            0x01 => mov_b_d(self),
+            0x01 => add_r(self, self.regs.a),
             // 0x02 => (),
             // 0x03 => (),
             // 0x04 => (),

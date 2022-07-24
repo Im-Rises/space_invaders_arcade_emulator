@@ -612,43 +612,130 @@ pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
     cpu.pc = operand as u16;
     11
 }
-//////////
-/*
+
 /*---------------INCREMENT AND DECREMENT---------------*/
 
-pub fn inr_r(&self, r: &mut u8) -> u8 {
-    *r += 1;
+pub fn inr_a(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.a += 1;
     5
 }
 
-pub fn dcr_r(&self, r: &mut u8) -> u8 {
-    *r -= 1;
+pub fn inr_b(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.b += 1;
     5
 }
 
-pub fn inr_m(&self) -> u8 {
+pub fn inr_c(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.c += 1;
+    5
+}
+
+pub fn inr_d(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.d += 1;
+    5
+}
+
+pub fn inr_e(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.e += 1;
+    5
+}
+
+pub fn inr_h(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.h += 1;
+    5
+}
+
+pub fn inr_l(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.l += 1;
+    5
+}
+
+pub fn dcr_a(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.a -= 1;
+    5
+}
+
+pub fn dcr_b(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.b -= 1;
+    5
+}
+
+pub fn dcr_c(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.c -= 1;
+    5
+}
+
+pub fn dcr_d(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.d -= 1;
+    5
+}
+
+pub fn dcr_e(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.e -= 1;
+    5
+}
+
+pub fn dcr_h(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.h -= 1;
+    5
+}
+
+pub fn dcr_l(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.l -= 1;
+    5
+}
+
+pub fn inr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
     cpu.write(address, cpu.read(address) + 1);
     10
 }
 
-pub fn dcr_m(&self) -> u8 {
+pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
     cpu.write(address, cpu.read(address) - 1);
     10
 }
 
-pub fn inx_pr(&self, high_reg: &mut u8, low_reg: &mut u8) -> u8 {
-    let word = register::Register::pair_regs(*high_reg, *low_reg) + 1;
-    *high_reg = ((word & 0xFF00) >> 8) as u8;
-    *low_reg = (word & 0x00FF) as u8;
+pub fn inx_b(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_bc() + 1;
+    cpu.regs.b = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.c = (word & 0x00FF) as u8;
     5
 }
 
-pub fn dcx_pr(&self, high_reg: &mut u8, low_reg: &mut u8) -> u8 {
-    let word = register::Register::pair_regs(*high_reg, *low_reg) - 1;
-    *high_reg = ((word & 0xFF00) >> 8) as u8;
-    *low_reg = (word & 0x00FF) as u8;
+pub fn inx_d(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_de() + 1;
+    cpu.regs.d = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.e = (word & 0x00FF) as u8;
+    5
+}
+
+pub fn inx_h(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_hl() + 1;
+    cpu.regs.h = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.l = (word & 0x00FF) as u8;
+    5
+}
+
+pub fn dcx_b(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_bc() - 1;
+    cpu.regs.b = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.c = (word & 0x00FF) as u8;
+    5
+}
+
+pub fn dcx_d(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_de() - 1;
+    cpu.regs.d = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.e = (word & 0x00FF) as u8;
+    5
+}
+
+pub fn dcx_h(cpu: &mut cpu::Cpu) -> u8 {
+    let word = cpu.regs.get_hl() - 1;
+    cpu.regs.h = ((word & 0xFF00) >> 8) as u8;
+    cpu.regs.l = (word & 0x00FF) as u8;
     5
 }
 
@@ -797,7 +884,8 @@ pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a >>= 1;
     4
 }
-
+//////////
+/*
 pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.set_reset_flag(Flag::C, binary_lib::get_bit(cpu.regs.a, 7));
     cpu.regs.a <<= 1;
