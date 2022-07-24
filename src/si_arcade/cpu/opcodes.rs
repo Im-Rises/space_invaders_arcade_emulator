@@ -257,7 +257,7 @@ pub fn jmp(cpu: &mut cpu::Cpu) -> u8 {
     10
 }
 
-fn jmp_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
+pub fn jmp_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if cpu.regs.get_flag(flag) {
         jmp(cpu)
     } else {
@@ -266,7 +266,7 @@ fn jmp_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     }
 }
 
-fn jmp_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
+pub fn jmp_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if !cpu.regs.get_flag(flag) {
         jmp(cpu)
     } else {
@@ -334,7 +334,7 @@ pub fn ret_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 
 pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
     push(cpu, cpu.pc + 2);
-    cpu.pc = operand as u16;
+    cpu.pc = (operand << 3) as u16;
     11
 }
 
@@ -652,11 +652,11 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 /*---------------INPUT/OUTPUT---------------*/
 
-pub fn input_in() -> u8 {
+pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
     10
 }
 
-pub fn output_out() -> u8 {
+pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
     10
 }
 
