@@ -580,8 +580,7 @@ pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
         11
     }
 }
-//////////
-/*
+
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
@@ -592,7 +591,7 @@ pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn ret_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if cpu.regs.get_flag(flag) {
-        cpu.ret() + 1
+        ret(cpu) + 1
     } else {
         5
     }
@@ -600,7 +599,7 @@ pub fn ret_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 
 pub fn ret_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if !cpu.regs.get_flag(flag) {
-        cpu.ret() + 1
+        ret(cpu) + 1
     } else {
         5
     }
@@ -609,11 +608,12 @@ pub fn ret_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 /*---------------RESTART---------------*/
 
 pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
-    cpu.push_word(cpu.pc + 2);
+    push(cpu, cpu.pc + 2);
     cpu.pc = operand as u16;
     11
 }
-
+//////////
+/*
 /*---------------INCREMENT AND DECREMENT---------------*/
 
 pub fn inr_r(&self, r: &mut u8) -> u8 {
