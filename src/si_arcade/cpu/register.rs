@@ -84,7 +84,7 @@ impl Register {
     }
 
     pub fn pair_regs(hi: u8, lo: u8) -> u16 {
-        ((hi << 8 | lo) as u16)
+        (hi << 8 | lo) as u16
     }
 
     pub fn unpair_regs(pr: u16) -> (u8, u8) {
