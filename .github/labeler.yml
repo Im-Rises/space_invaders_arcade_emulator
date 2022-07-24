@@ -1,17 +1,23 @@
 repo:
-- '*'
+  - '*'
 
 source:
-- 'src'
+  - 'src'
 
 main:
-- 'src/**/main.*'
+  - 'src/**/main.*'
 
 video:
-- 'src/**/Ppu.*'
+  - 'src/**/ppu.*'
 
 audio:
-- 'src/**/Spu.*'
+  - 'src/**/spu.*'
+
+memory:
+  - 'src/**/mmu.*'
 
 controller:
-- 'src/**/Joypad.*'
+  - 'src/**/inputs.*'
+
+binary_lib:
+  - 'stc/**/binary_lib.rs'
