@@ -20,17 +20,6 @@ pub struct Register {
     pub l: u8,
 }
 
-/*
-S - Sign Flag
-Z - Zero Flag
-0 - Not used, always zero
-A - also called AC, Auxiliary Carry Flag
-0 - Not used, always zero
-P - Parity Flag
-1 - Not used, always one
-C - Carry Flag
-*/
-
 impl Register {
     pub fn new() -> Register {
         Register {
@@ -92,6 +81,17 @@ impl Register {
     }
 }
 
+/*
+S - Sign Flag
+Z - Zero Flag
+0 - Not used, always zero
+A - also called AC, Auxiliary Carry Flag
+0 - Not used, always zero
+P - Parity Flag
+1 - Not used, always one
+C - Carry Flag
+*/
+
 impl Register {
     pub fn get_flag(&self, f: Flag) -> bool {
         binary_lib::get_bit(self.f, f as usize)
@@ -103,5 +103,25 @@ impl Register {
         } else {
             self.f = binary_lib::reset_bit(self.f, f as usize)
         }
+    }
+
+    pub fn update_flag_s(&mut self, data: u8) {
+        self.set_reset_flag(Flag::S, data & 0x80 > 0)
+    }
+
+    pub fn update_flag_z(&mut self, data: u8) {
+        self.set_reset_flag(Flag::Z, data == 0)
+    }
+
+    pub fn update_flag_a(&mut self, data: u8) {
+        self.set_reset_flag(Flag::A, data == 0)
+    }
+
+    pub fn update_flag_p(&mut self, data: u8) {
+        self.set_reset_flag(Flag::A, data == 0)
+    }
+
+    pub fn update_flag_c(&mut self, data: u8) {
+        self.set_reset_flag(Flag::A, data == 0)
     }
 }

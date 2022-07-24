@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::process::exit;
 use std::rc::Rc;
 
 use crate::si_arcade::cpu::opcodes::*;
@@ -320,10 +321,10 @@ impl Cpu {
             0xFD => call(self),
             0xFE => cpi(self),
             0xFF => rst(self, 7),
-            // _ => {
-            //     println!("Error: unknown opcode");
-            //     0
-            // }
+            _ => {
+                println!("Error: unknown opcode");
+                exit(1);
+            }
         }
     }
 }

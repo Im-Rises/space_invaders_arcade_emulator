@@ -342,6 +342,7 @@ pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
 
 pub fn inr_a(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a += 1;
+    // cpu.regs.set_reset_flag(Flag::S, cpu.regs.f & 0x80);////HERE
     5
 }
 
