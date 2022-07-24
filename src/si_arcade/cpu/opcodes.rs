@@ -1,7 +1,7 @@
 use std::mem;
 
 use crate::si_arcade::cpu;
-use crate::si_arcade::cpu::register::Flag;
+use crate::si_arcade::cpu::register::{Flag, Register};
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 
@@ -431,33 +431,41 @@ pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
 
 /*---------------STACK OPS---------------*/
 
-pub fn push_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.sp - 1, cpu.regs.b);
-    cpu.write(cpu.sp - 2, cpu.regs.c);
+pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
+    let address = Register::unpair_regs(address);
+    cpu.write(cpu.sp - 1, address.0);
+    cpu.write(cpu.sp - 2, address.1);
     cpu.sp -= 2;
     11
 }
 
-pub fn push_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.sp - 1, cpu.regs.d);
-    cpu.write(cpu.sp - 2, cpu.regs.e);
-    cpu.sp -= 2;
-    11
-}
-
-pub fn push_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.sp - 1, cpu.regs.h);
-    cpu.write(cpu.sp - 2, cpu.regs.l);
-    cpu.sp -= 2;
-    11
-}
-
-pub fn push_psw(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.write(cpu.sp - 1, cpu.regs.a);
-    cpu.write(cpu.sp - 2, cpu.regs.f);
-    cpu.sp -= 2;
-    11
-}
+// pub fn push_b(cpu: &mut cpu::Cpu) -> u8 {
+//     cpu.write(cpu.sp - 1, cpu.regs.b);
+//     cpu.write(cpu.sp - 2, cpu.regs.c);
+//     cpu.sp -= 2;
+//     11
+// }
+//
+// pub fn push_d(cpu: &mut cpu::Cpu) -> u8 {
+//     cpu.write(cpu.sp - 1, cpu.regs.d);
+//     cpu.write(cpu.sp - 2, cpu.regs.e);
+//     cpu.sp -= 2;
+//     11
+// }
+//
+// pub fn push_h(cpu: &mut cpu::Cpu) -> u8 {
+//     cpu.write(cpu.sp - 1, cpu.regs.h);
+//     cpu.write(cpu.sp - 2, cpu.regs.l);
+//     cpu.sp -= 2;
+//     11
+// }
+//
+// pub fn push_psw(cpu: &mut cpu::Cpu) -> u8 {
+//     cpu.write(cpu.sp - 1, cpu.regs.a);
+//     cpu.write(cpu.sp - 2, cpu.regs.f);
+//     cpu.sp -= 2;
+//     11
+// }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.c = cpu.read(cpu.sp);
@@ -542,95 +550,22 @@ fn jmp_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     }
 }
 
-/*pub fn jc(cpu: &mut cpu::Cpu) -> u8 {
-    if cpu.regs.get_flag(Flag::C) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jnc(cpu: &mut cpu::Cpu) -> u8 {
-    if !cpu.regs.get_flag(Flag::C) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jz(cpu: &mut cpu::Cpu) -> u8 {
-    if cpu.regs.get_flag(Flag::Z) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jnz(cpu: &mut cpu::Cpu) -> u8 {
-    if !cpu.regs.get_flag(Flag::Z) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jp(cpu: &mut cpu::Cpu) -> u8 {
-    if !cpu.regs.get_flag(Flag::S) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jm(cpu: &mut cpu::Cpu) -> u8 {
-    if cpu.regs.get_flag(Flag::S) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jpe(cpu: &mut cpu::Cpu) -> u8 {
-    if cpu.regs.get_flag(Flag::P) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}
-
-pub fn jpo(cpu: &mut cpu::Cpu) -> u8 {
-    if !cpu.regs.get_flag(Flag::P) {
-        jmp(cpu)
-    } else {
-        cpu.pc += 1;
-        10
-    }
-}*/
-
 pub fn pchl(cpu: &mut cpu::Cpu) -> u8 {
     cpu.pc = cpu.regs.get_hl();
     5
 }
-//////////
-/*
+
 /*---------------CALL---------------*/
 
 pub fn call(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.push_word(cpu.pc + 2);
+    push(cpu, cpu.pc + 2);
     cpu.pc = cpu.fetch_word();
     17
 }
 
 pub fn call_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if cpu.regs.get_flag(flag) {
-        cpu.call()
+        call(cpu)
     } else {
         cpu.pc += 2;
         11
@@ -639,13 +574,14 @@ pub fn call_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 
 pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
     if !cpu.regs.get_flag(flag) {
-        cpu.call()
+        call(cpu)
     } else {
         cpu.pc += 2;
         11
     }
 }
-
+//////////
+/*
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
