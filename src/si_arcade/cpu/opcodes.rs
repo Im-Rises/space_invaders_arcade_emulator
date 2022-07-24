@@ -1,5 +1,6 @@
 use std::mem;
 
+use crate::binary_lib::*;
 use crate::si_arcade::cpu;
 use crate::si_arcade::cpu::register::{Flag, Register};
 
@@ -144,8 +145,9 @@ pub fn stax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
     7
 }
 
-pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) {
+pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
     cpu.regs.a = cpu.read(pr);
+    7
 }
 
 pub fn sta(cpu: &mut cpu::Cpu) -> u8 {
@@ -613,10 +615,9 @@ pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a <<= 1;
     4
 }
-//////////
-/*
+
 pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.set_reset_flag(Flag::C, binary_lib::get_bit(cpu.regs.a, 0));
+    cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 0));
     cpu.regs.a >>= 1;
     4
 }
@@ -651,11 +652,11 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 /*---------------INPUT/OUTPUT---------------*/
 
-pub fn input_in(&self) -> u8 {
+pub fn input_in() -> u8 {
     10
 }
 
-pub fn output_out(&self) -> u8 {
+pub fn output_out() -> u8 {
     10
 }
 
@@ -671,7 +672,7 @@ pub fn di(cpu: &mut cpu::Cpu) -> u8 {
     4
 }
 
-pub fn nop(&self) -> u8 {
+pub fn nop() -> u8 {
     4
 }
 
@@ -679,4 +680,3 @@ pub fn hlt(cpu: &mut cpu::Cpu) -> u8 {
     cpu.halted = true;
     7
 }
-*/

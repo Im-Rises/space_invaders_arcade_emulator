@@ -23,12 +23,13 @@ impl SpaceInvadersArcade {
             // inputs: inputs::new()
         }
     }
-    fn load_rom(&self) {
-        // mmu.load_rom();
-    }
     pub fn start(&self) {}
-    fn pause_emulation(&self) {}
-    fn restart_emulation(&self) {}
-    fn save_state(&self) {}
-    fn load_state(&self) {}
+
+    // fn load_rom(&self) {
+    //     // mmu.load_rom();
+    // }
+    // fn pause_emulation(&self) {}
+    // fn restart_emulation(&self) {}
+    // fn save_state(&self) {}
+    // fn load_state(&self) {}
 }
