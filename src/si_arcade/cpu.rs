@@ -2,7 +2,8 @@ use std::cell::RefCell;
 use std::mem;
 use std::rc::Rc;
 
-use crate::si_arcade::cpu::register::Flag;
+use crate::binary_lib;
+use crate::si_arcade::cpu::register::{Flag, Register};
 
 use super::mmu::Mmu;
 
@@ -16,6 +17,7 @@ pub struct Cpu {
     sp: u16,
     pc: u16,
     stat: u16,
+    inte: bool,
     halted: bool,
     opcode: u8,
     cycles: u8,
@@ -29,6 +31,7 @@ impl Cpu {
             sp: 0,
             pc: 0,
             stat: 0,
+            inte: false,
             halted: false,
             opcode: 0,
             cycles: 0,
@@ -328,13 +331,7 @@ impl Cpu {
 }
 
 impl Cpu {
-    // List all the opcodes function here
-    // p9 Datasheet 1
-    // p22 Datasheet 2
-
     /*---------------MOVE, LOAD AND STORE---------------*/
-
-    /*MOV Instructions*/
 
     fn mov_r1_r2(&self, r1: &mut u8, r2: u8) {
         *r1 = r2;
@@ -348,8 +345,6 @@ impl Cpu {
         *r = self.read(self.regs.get_hl());
     }
 
-    /*MVI Instructions*/
-
     fn mvi_r(&mut self, r: &mut u8) {
         *r = self.fetch_byte();
     }
@@ -359,40 +354,28 @@ impl Cpu {
         self.write(self.regs.get_hl(), data)
     }
 
-    /*LXI Instructions*/
-
     fn lxi_pr(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
         *low_reg = self.fetch_byte();
         *high_reg = self.fetch_byte();
     }
 
-    /*STAX Instructions*/
-
     fn stax_pr(&mut self, pair_regs: u16) {
         self.write(pair_regs, self.regs.a);
     }
 
-    /*LDAX Instructions*/
-
     fn ldax_pr(&mut self, pair_regs: u16) {
         self.regs.a = self.read(pair_regs);
     }
-
-    /*STA Instructions*/
 
     fn sta(&mut self) {
         let address = self.fetch_word(); //???
         self.write(address, self.regs.a);
     }
 
-    /*LDA Instructions*/
-
     fn lda(&mut self) {
         let address = self.fetch_word(); //???
         self.regs.a = self.read(address)
     }
-
-    /*SHLD Instructions*/
 
     fn shld(&mut self) {
         let address = self.fetch_word();
@@ -400,15 +383,11 @@ impl Cpu {
         self.write(address + 1, self.regs.h);
     }
 
-    /*LHLD Instructions*/
-
     fn lhld(&mut self) {
         let address = self.fetch_word();
         self.regs.l = self.read(address);
         self.regs.h = self.read(address + 1);
     }
-
-    /*xchg Instructions*/
 
     fn xchg(&mut self) {
         mem::swap(&mut self.regs.d, &mut self.regs.h);
@@ -417,23 +396,21 @@ impl Cpu {
 
     /*---------------STACK OPS---------------*/
 
-    /*PUSH Instructions*/
-
-    fn push_pr(&mut self, high_reg: u8, low_reg: u8) {
-        self.write(self.sp - 1, high_reg);
-        self.write(self.sp - 2, low_reg);
+    fn push_hi_lo(&mut self, high: u8, low: u8) {
+        self.write(self.sp - 1, high);
+        self.write(self.sp - 2, low);
         self.sp -= 2;
     }
 
-    /*POP Instructions*/
+    fn push_word(&mut self, data: u16) {
+        self.push_hi_lo(((data & 0xFF00) >> 8) as u8, (data & 0x00FF) as u8);
+    }
 
     fn pop(&mut self, high_reg: &mut u8, low_reg: &mut u8) {
         *low_reg = self.read(self.sp);
         *high_reg = self.read(self.sp + 1);
         self.sp += 2;
     }
-
-    /*XTHL Instructions*/
 
     fn xthl(&mut self) {
         let temp_l = self.regs.l;
@@ -444,33 +421,23 @@ impl Cpu {
         self.write(self.sp + 1, temp_h);
     }
 
-    /*SPHL Instructions*/
-
     fn sphl(&mut self) {
         self.sp = self.regs.get_hl();
     }
-
-    /*LXI SP Instructions*/
 
     fn lxi_sp(&mut self) {
         self.sp = self.fetch_word();
     }
 
-    /*INX SP Instructions*/
-
     fn inx_sp(&mut self) {
         self.sp += 1;
     }
-
-    /*DCX SP Instructions*/
 
     fn dcx_sp(&mut self) {
         self.sp -= 1;
     }
 
     /*---------------JUMP---------------*/
-
-    /*JUMP Instructions*/
 
     fn jmp(&mut self) {
         self.pc = self.fetch_word();
@@ -556,21 +523,283 @@ impl Cpu {
     //     }
     // }
 
-    fn jmp_flag_condition(&mut self, flag: bool) {
+    fn jmp_flag(&mut self, flag: Flag) {
         if self.regs.get_flag(flag) {
             self.jmp();
         } else {
-            pc += 1;
+            self.pc += 2;
         }
     }
 
-    /*PCHL Instructions*/
+    fn jmp_not_flag(&mut self, flag: Flag) {
+        if !self.regs.get_flag(flag) {
+            self.jmp();
+        } else {
+            self.pc += 2;
+        }
+    }
 
     fn pchl(&mut self) {
         self.pc = self.regs.get_hl();
     }
 
+    /*---------------CALL---------------*/
+
+    fn call(&mut self) {
+        self.push_word(self.pc + 2);
+        self.pc = self.fetch_word();
+    }
+
+    fn call_flag(&mut self, flag: Flag) {
+        if self.regs.get_flag(flag) {
+            self.call();
+        } else {
+            self.pc += 2;
+        }
+    }
+
+    fn call_not_flag(&mut self, flag: Flag) {
+        if !self.regs.get_flag(flag) {
+            self.call();
+        } else {
+            self.pc += 2;
+        }
+    }
+
+    /*---------------RETURN---------------*/
+
+    fn ret(&mut self) {
+        self.pc = (self.read(self.sp) | self.read(self.sp + 1) << 8) as u16;
+        self.sp += 2;
+    }
+
+    fn ret_flag(&mut self, flag: Flag) {
+        if self.regs.get_flag(flag) {
+            self.ret();
+        } else {
+        }
+    }
+
+    fn ret_not_flag(&mut self, flag: Flag) {
+        if !self.regs.get_flag(flag) {
+            self.ret();
+        } else {
+        }
+    }
+
+    /*---------------RESTART---------------*/
+
+    fn rst(&mut self, operand: u8) {
+        self.push_word(self.pc + 2);
+        self.pc = operand as u16;
+    }
+
+    /*---------------INCREMENT AND DECREMENT---------------*/
+
+    fn inr_r(&self, r: &mut u8) {
+        *r += 1
+    }
+
+    fn dcr_r(&self, r: &mut u8) {
+        *r -= 1
+    }
+
+    fn inr_m(&self) {
+        let address = self.regs.get_hl();
+        self.write(address, self.read(address) + 1)
+    }
+
+    fn dcr_m(&self) {
+        let address = self.regs.get_hl();
+        self.write(address, self.read(address) - 1)
+    }
+
+    fn inx_pr(&self, high_reg: &mut u8, low_reg: &mut u8) {
+        let mut word = register::Register::pair_regs(*high_reg, *low_reg) + 1;
+        *high_reg = ((word & 0xFF00) >> 8) as u8;
+        *low_reg = (word & 0x00FF) as u8;
+    }
+
+    fn dcx_pr(&self, high_reg: &mut u8, low_reg: &mut u8) {
+        let mut word = register::Register::pair_regs(*high_reg, *low_reg) - 1;
+        *high_reg = ((word & 0xFF00) >> 8) as u8;
+        *low_reg = (word & 0x00FF) as u8;
+    }
+
+    /*---------------ADD---------------*/
+
+    fn add_r(&mut self, r: u8) {
+        self.regs.a += r;
+    }
+
+    fn adc_r(&mut self, r: u8) {
+        self.regs.a += r + self.regs.get_flag(Flag::C) as u8;
+    }
+
+    fn add_m(&mut self) {
+        self.regs.a += self.read(self.regs.get_hl());
+    }
+
+    fn adc_m(&mut self) {
+        self.regs.a += self.read(self.regs.get_hl()) + self.regs.get_flag(Flag::C) as u8;
+    }
+
+    fn adi_m(&mut self) {
+        self.regs.a += self.fetch_byte();
+    }
+
+    fn aci_m(&mut self) {
+        self.regs.a += self.fetch_byte() + self.regs.get_flag(Flag::C) as u8;
+    }
+
+    fn dad_word(&mut self, word: u16) {
+        (self.regs.h, self.regs.l) = Register::unpair_regs(self.regs.get_hl() + word);
+    }
+
+    /*---------------SUBTRACT---------------*/
+
+    fn sub_r(&mut self, r: u8) {
+        self.regs.a -= r;
+    }
+
+    fn sbb_r(&mut self, r: u8) {
+        let subtract = r + self.regs.get_flag(Flag::C) as u8;
+        self.regs.a -= (!subtract + 1);
+    }
+
+    fn sub_m(&mut self) {
+        self.regs.a -= self.read(self.regs.get_hl());
+    }
+
+    fn sbb_m(&mut self) {
+        let subtract = self.read(self.regs.get_hl()) + self.regs.get_flag(Flag::C) as u8;
+        self.regs.a -= (!subtract + 1);
+    }
+
+    fn sui(&mut self) {
+        self.regs.a -= self.fetch_byte();
+    }
+
+    fn sbi(&mut self) {
+        let subtract = self.fetch_byte() + self.regs.get_flag(Flag::C) as u8;
+        self.regs.a -= (!subtract + 1);
+    }
+
+    /*---------------LOGICAL---------------*/
+
+    fn ana_r(&mut self, r: u8) {
+        self.regs.a &= r;
+    }
+
+    fn xra_r(&mut self, r: u8) {
+        self.regs.a ^= r;
+    }
+
+    fn ora_r(&mut self, r: u8) {
+        self.regs.a |= r;
+    }
+
+    fn cmp_r(&mut self, r: u8) {
+        self.regs.a == r;
+    }
+
+    fn ana_m(&mut self) {
+        self.regs.a &= self.read(self.regs.get_hl());
+    }
+
+    fn xra_m(&mut self) {
+        self.regs.a ^= self.read(self.regs.get_hl());
+    }
+
+    fn ora_m(&mut self) {
+        self.regs.a |= self.read(self.regs.get_hl());
+    }
+
+    fn cmp_m(&mut self) {
+        self.regs.a == self.read(self.regs.get_hl());
+    }
+
+    fn ani(&mut self) {
+        self.regs.a &= self.fetch_byte();
+    }
+
+    fn xri(&mut self) {
+        self.regs.a ^= self.fetch_byte();
+    }
+
+    fn ori(&mut self) {
+        self.regs.a |= self.fetch_byte();
+    }
+
+    fn cpi(&mut self) {
+        self.regs.a == self.fetch_byte();
+    }
+
+    /*---------------ROTATE---------------*/
+
+    fn rlc(&mut self) {
+        self.regs.a <<= 1;
+    }
+
+    fn rrc(&mut self) {
+        self.regs.a >>= 1;
+    }
+
+    fn ral(&mut self) {
+        self.regs.set_reset_flag(Flag::C, binary_lib::get_bit(self.regs.a, 7));
+        self.regs.a <<= 1;
+    }
+
+    fn rar(&mut self) {
+        self.regs.set_reset_flag(Flag::C, binary_lib::get_bit(self.regs.a, 0));
+        self.regs.a >>= 1;
+    }
+
+    /*---------------SPECIALS---------------*/
+
+    fn cma(&mut self) {
+        self.regs.a = !self.regs.a;
+    }
+
+    fn stc(&mut self) {
+        self.regs.set_reset_flag(Flag::C, true);
+    }
+
+    fn cmc(&mut self) {
+        self.regs.set_reset_flag(Flag::C, !self.regs.get_flag(Flag::C));
+    }
+
+    fn daa(&mut self) {
+        if self.regs.a & 0x0F > 9 || self.regs.get_flag(Flag::A) {
+            self.regs.a += 0x06;
+        };
+
+        if ((self.regs.a & 0xF0) >> 8) > 9 || self.regs.get_flag(Flag::C) {
+            self.regs.a += 0x60;
+        };
+    }
+
+    /*---------------INPUT/OUTPUT---------------*/
+
+    fn input_in(&self) {}
+
+    fn output_out(&self) {}
+
+    /*---------------CONTROL---------------*/
+
+    fn ei(&mut self) {
+        self.inte = true;
+    }
+
+    fn di(&mut self) {
+        self.inte = false;
+    }
+
     fn nop(&self) {
         // Do nothing
+    }
+
+    fn hlt(&mut self) {
+        self.halted = true;
     }
 }

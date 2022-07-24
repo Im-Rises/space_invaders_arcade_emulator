@@ -82,6 +82,14 @@ impl Register {
         self.h = (data >> 8) as u8;
         self.l = (data & 0x00ff) as u8;
     }
+
+    pub fn pair_regs(hi: u8, lo: u8) -> u16 {
+        ((hi << 8 | lo) as u16)
+    }
+
+    pub fn unpair_regs(pr: u16) -> (u8, u8) {
+        (((pr & 0xFF00) >> 8) as u8, (pr & 0x00FF) as u8)
+    }
 }
 
 impl Register {
@@ -89,7 +97,7 @@ impl Register {
         binary_lib::get_bit(self.f, f as usize)
     }
 
-    pub fn set_flag(&mut self, f: Flag, bit: bool) {
+    pub fn set_reset_flag(&mut self, f: Flag, bit: bool) {
         if bit {
             self.f = binary_lib::set_bit(self.f, f as usize)
         } else {
