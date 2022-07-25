@@ -28,10 +28,17 @@ impl Mmu {
         let f = include_bytes!("invaders.f");
         let e = include_bytes!("invaders.e");
 
+        if h.len() != 0x800 || g.len() != 0x800 || f.len() != 0x800 || e.len() != 0x800 {
+            panic!("Error: Length of roms is not 0x800");
+        }
+
         mmu.memory[0..(h.len())].copy_from_slice(h);
         mmu.memory[0x800..(h.len() + 0x800)].copy_from_slice(g);
         mmu.memory[0x1000..(h.len() + 0x1000)].copy_from_slice(f);
         mmu.memory[0x1800..(h.len() + 0x1800)].copy_from_slice(e);
+
+        // let debugrom = include_bytes!("TST8080.COM");
+        // mmu.memory[0x100..(0x100 + debugrom.len())].copy_from_slice(debugrom);
 
         mmu
     }

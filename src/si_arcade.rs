@@ -39,3 +39,14 @@ impl SpaceInvadersArcade {
     // fn save_state(&self) {}
     // fn load_state(&self) {}
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn internal() {
+        assert_eq!(4, 2 + 2);
+        //test cpu and memory good behaviour here
+    }
+}

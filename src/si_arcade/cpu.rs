@@ -17,7 +17,6 @@ pub struct Cpu {
     regs: Register,
     sp: u16,
     pc: u16,
-    stat: u16,
     inte: bool,
     halted: bool,
     cycles: u8,
@@ -30,7 +29,6 @@ impl Cpu {
             regs: Register::new(),
             sp: 0,
             pc: 0x100,
-            stat: 0,
             inte: false,
             halted: false,
             cycles: 0,
@@ -39,12 +37,19 @@ impl Cpu {
     }
 
     pub fn clock(&mut self) {
+        self.print_data_debug();
+
+        if self.pc == 0x5 {
+            println!("here");
+        }
+
         if !self.halted {
-            if self.cycles == 0 {
-                let opcode = self.fetch_byte();
-                self.cycles = self.compute_opcode(opcode);
-            }
-            self.cycles -= 1;
+            // if self.cycles == 0 {
+            let opcode = self.fetch_byte();
+            // println!("Opcode: {:#X}", opcode);
+            self.cycles = self.compute_opcode(opcode);
+            // }
+            // self.cycles -= 1;
         }
 
         //Handle interrupts here
@@ -331,5 +336,18 @@ impl Cpu {
                 exit(1);
             }
         }
+    }
+
+    fn print_data_debug(&self) {
+        println!(
+            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}",
+            self.pc,
+            self.regs.get_af(),
+            self.regs.get_bc(),
+            self.regs.get_de(),
+            self.regs.get_hl(),
+            self.sp,
+            self.cycles
+        );
     }
 }
