@@ -114,13 +114,7 @@ impl Register {
     }
 
     pub fn update_flag_p(&mut self, value: u8) {
-        let mut nb_one = 0;
-        for i in 0..8 {
-            if binary_lib::get_bit(value, i) {
-                nb_one += 1;
-            }
-        }
-        self.set_reset_flag(Flag::P, (nb_one % 2) == 0);
+        self.set_reset_flag(Flag::P, (value.count_ones() % 2) == 0);
     }
 
     pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
