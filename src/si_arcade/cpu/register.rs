@@ -105,23 +105,29 @@ impl Register {
         }
     }
 
-    pub fn update_flag_s(&mut self, data: u8) {
-        self.set_reset_flag(Flag::S, data & 0x80 > 0)
+    pub fn update_flag_s(&mut self, value: u8) {
+        self.set_reset_flag(Flag::S, value & 0x80 > 0);
     }
 
-    pub fn update_flag_z(&mut self, data: u8) {
-        self.set_reset_flag(Flag::Z, data == 0)
+    pub fn update_flag_z(&mut self, value: u8) {
+        self.set_reset_flag(Flag::Z, value == 0);
     }
 
-    pub fn update_flag_a(&mut self, data: u8) {
-        self.set_reset_flag(Flag::A, data == 0)
+    pub fn update_flag_p(&mut self, value: u8) {
+        let mut nb_one = 0;
+        for i in 0..8 {
+            if binary_lib::get_bit(value, i) {
+                nb_one += 1;
+            }
+        }
+        self.set_reset_flag(Flag::P, (nb_one % 2) == 0);
     }
 
-    pub fn update_flag_p(&mut self, data: u8) {
-        self.set_reset_flag(Flag::A, data == 0)
+    pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
+        self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);
     }
 
-    pub fn update_flag_c(&mut self, data: u8) {
-        self.set_reset_flag(Flag::A, data == 0)
+    pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
+        self.set_reset_flag(Flag::A, operand1 & 0xF + operand2 & 0xF > 0xF);
     }
 }

@@ -341,85 +341,152 @@ pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
 /*---------------INCREMENT AND DECREMENT---------------*/
 
 pub fn inr_a(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.a, 1);
     cpu.regs.a += 1;
-    // cpu.regs.set_reset_flag(Flag::S, cpu.regs.f & 0x80);////HERE
+    cpu.regs.update_flag_s(cpu.regs.a);
+    cpu.regs.update_flag_z(cpu.regs.a);
+    cpu.regs.update_flag_p(cpu.regs.a);
     5
 }
 
 pub fn inr_b(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.b, 1);
     cpu.regs.b += 1;
+    cpu.regs.update_flag_s(cpu.regs.b);
+    cpu.regs.update_flag_z(cpu.regs.b);
+    cpu.regs.update_flag_p(cpu.regs.b);
     5
 }
 
 pub fn inr_c(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.c, 1);
     cpu.regs.c += 1;
+    cpu.regs.update_flag_s(cpu.regs.c);
+    cpu.regs.update_flag_z(cpu.regs.c);
+    cpu.regs.update_flag_p(cpu.regs.c);
     5
 }
 
 pub fn inr_d(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.d, 1);
     cpu.regs.d += 1;
+    cpu.regs.update_flag_s(cpu.regs.d);
+    cpu.regs.update_flag_z(cpu.regs.d);
+    cpu.regs.update_flag_p(cpu.regs.d);
     5
 }
 
 pub fn inr_e(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.e, 1);
     cpu.regs.e += 1;
+    cpu.regs.update_flag_s(cpu.regs.e);
+    cpu.regs.update_flag_z(cpu.regs.e);
+    cpu.regs.update_flag_p(cpu.regs.e);
     5
 }
 
 pub fn inr_h(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.h, 1);
     cpu.regs.h += 1;
+    cpu.regs.update_flag_s(cpu.regs.h);
+    cpu.regs.update_flag_z(cpu.regs.h);
+    cpu.regs.update_flag_p(cpu.regs.h);
     5
 }
 
 pub fn inr_l(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.l, 1);
     cpu.regs.l += 1;
+    cpu.regs.update_flag_s(cpu.regs.l);
+    cpu.regs.update_flag_z(cpu.regs.l);
+    cpu.regs.update_flag_p(cpu.regs.l);
     5
 }
 
 pub fn dcr_a(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.a, 1);
     cpu.regs.a -= 1;
+    cpu.regs.update_flag_s(cpu.regs.a);
+    cpu.regs.update_flag_z(cpu.regs.a);
+    cpu.regs.update_flag_p(cpu.regs.a);
     5
 }
 
 pub fn dcr_b(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.b, 1);
     cpu.regs.b -= 1;
+    cpu.regs.update_flag_s(cpu.regs.b);
+    cpu.regs.update_flag_z(cpu.regs.b);
+    cpu.regs.update_flag_p(cpu.regs.b);
     5
 }
 
 pub fn dcr_c(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.c, 1);
     cpu.regs.c -= 1;
+    cpu.regs.update_flag_s(cpu.regs.c);
+    cpu.regs.update_flag_z(cpu.regs.c);
+    cpu.regs.update_flag_p(cpu.regs.c);
     5
 }
 
 pub fn dcr_d(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.d, 1);
     cpu.regs.d -= 1;
+    cpu.regs.update_flag_s(cpu.regs.d);
+    cpu.regs.update_flag_z(cpu.regs.d);
+    cpu.regs.update_flag_p(cpu.regs.d);
     5
 }
 
 pub fn dcr_e(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.e, 1);
     cpu.regs.e -= 1;
+    cpu.regs.update_flag_s(cpu.regs.e);
+    cpu.regs.update_flag_z(cpu.regs.e);
+    cpu.regs.update_flag_p(cpu.regs.e);
     5
 }
 
 pub fn dcr_h(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.h, 1);
     cpu.regs.h -= 1;
+    cpu.regs.update_flag_s(cpu.regs.h);
+    cpu.regs.update_flag_z(cpu.regs.h);
+    cpu.regs.update_flag_p(cpu.regs.h);
     5
 }
 
 pub fn dcr_l(cpu: &mut cpu::Cpu) -> u8 {
+    cpu.regs.update_flag_a_add(cpu.regs.l, 1);
     cpu.regs.l -= 1;
+    cpu.regs.update_flag_s(cpu.regs.l);
+    cpu.regs.update_flag_z(cpu.regs.l);
+    cpu.regs.update_flag_p(cpu.regs.l);
     5
 }
 
 pub fn inr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
-    cpu.write(address, cpu.read(address) + 1);
+    let data = cpu.read(address);
+    cpu.regs.update_flag_a_add(data, 1);
+    let result = data + 1;
+    cpu.write(address, result);
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
     10
 }
 
 pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
-    cpu.write(address, cpu.read(address) - 1);
+    let data = cpu.read(address);
+    cpu.regs.update_flag_a_add(data, 1);
+    let result = data - 1;
+    cpu.write(address, result);
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
     10
 }
 
@@ -468,72 +535,90 @@ pub fn dcx_h(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------ADD---------------*/
 
 pub fn add_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a += r;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, r);
     4
 }
 
 pub fn adc_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a += r + cpu.regs.get_flag(Flag::C) as u8;
+    let operand = r + cpu.regs.get_flag(Flag::C) as u8;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     4
 }
 
 pub fn add_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a += cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read(cpu.regs.get_hl());
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn adc_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a += cpu.read(cpu.regs.get_hl()) + cpu.regs.get_flag(Flag::C) as u8;
+    let operand = cpu.read(cpu.regs.get_hl()) + cpu.regs.get_flag(Flag::C) as u8;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn adi_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a += cpu.fetch_byte();
+    let operand = cpu.fetch_byte();
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn aci_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a += cpu.fetch_byte() + cpu.regs.get_flag(Flag::C) as u8;
+    let operand = cpu.fetch_byte() + cpu.regs.get_flag(Flag::C) as u8;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn dad_word(cpu: &mut cpu::Cpu, word: u16) -> u8 {
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(cpu.regs.get_hl() + word);
+    let result: u32 = cpu.regs.get_hl() as u32 + word as u32;
+    cpu.regs.set_reset_flag(Flag::C, result > 0xFFFF);
+    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(result as u16);
     10
+}
+
+fn add_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
+    cpu.regs.update_flag_a(operand1, operand2);
+    cpu.regs.update_flag_c(operand1, operand2);
+    let result = operand1 + operand2;
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
+    result
 }
 
 /*---------------SUBTRACT---------------*/
 
 pub fn sub_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a -= r;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, !r + 1);
     4
 }
 
 pub fn sbb_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    let subtract = r + cpu.regs.get_flag(Flag::C) as u8;
-    cpu.regs.a -= !subtract + 1;
+    let operand = !(r + cpu.regs.get_flag(Flag::C) as u8) + 1;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     4
 }
 
 pub fn sub_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a -= cpu.read(cpu.regs.get_hl());
+    let operand = !cpu.read(cpu.regs.get_hl()) + 1;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn sbb_m(cpu: &mut cpu::Cpu) -> u8 {
-    let subtract = cpu.read(cpu.regs.get_hl()) + cpu.regs.get_flag(Flag::C) as u8;
-    cpu.regs.a -= !subtract + 1;
+    let operand = !(cpu.read(cpu.regs.get_hl()) + cpu.regs.get_flag(Flag::C) as u8) + 1;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn sui(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a -= cpu.fetch_byte();
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, !cpu.fetch_byte() + 1);
     7
 }
 
 pub fn sbi(cpu: &mut cpu::Cpu) -> u8 {
-    let subtract = cpu.fetch_byte() + cpu.regs.get_flag(Flag::C) as u8;
-    cpu.regs.a -= !subtract + 1;
+    let operand = !(cpu.fetch_byte() + cpu.regs.get_flag(Flag::C) as u8) + 1;
+    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 

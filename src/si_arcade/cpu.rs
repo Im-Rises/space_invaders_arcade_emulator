@@ -7,6 +7,7 @@ use crate::si_arcade::cpu::register::{Flag, Register};
 
 use super::mmu::Mmu;
 
+mod interrupts;
 mod opcodes;
 mod register;
 
