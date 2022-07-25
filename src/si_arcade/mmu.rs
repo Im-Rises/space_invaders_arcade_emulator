@@ -17,11 +17,11 @@ impl Mmu {
             // rome: vec![],
             memory: [0; MEMORY_SIZE],
         }
+
+        // let romName = "invaders";
     }
 
-    // pub fn load_roms(&self) {}
-
-    // fn load_rom(&self, path: String) {}
+    fn load_roms(&self) {}
 
     pub fn read(&self, address: u16) -> u8 {
         self.memory[address as usize]

@@ -38,12 +38,16 @@ impl Cpu {
         }
     }
 
-    fn clock(&mut self) {
-        if self.cycles == 0 {
-            let opcode = self.fetch_byte();
-            self.cycles = self.compute_opcode(opcode);
+    pub fn clock(&mut self) {
+        if !self.halted {
+            if self.cycles == 0 {
+                let opcode = self.fetch_byte();
+                self.cycles = self.compute_opcode(opcode);
+            }
+            self.cycles -= 1;
         }
-        self.cycles -= 1;
+
+        //Handle interrupts here
     }
 
     fn fetch_byte(&mut self) -> u8 {

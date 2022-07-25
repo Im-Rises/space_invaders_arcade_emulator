@@ -23,7 +23,13 @@ impl SpaceInvadersArcade {
             // inputs: inputs::new()
         }
     }
-    pub fn start(&self) {}
+    pub fn start(&mut self) {
+        // loop {
+        //     self.inputs.readInputs();
+        //     self.cpu.clock();
+        //     self.ppu.clock();
+        // }
+    }
 
     // fn load_rom(&self) {
     //     // mmu.load_rom();

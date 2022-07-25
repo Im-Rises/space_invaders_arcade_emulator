@@ -1,11 +1,12 @@
+#[deny(arithmetic_overflow)]
 use std::mem;
 
 use crate::binary_lib::*;
-use crate::si_arcade::cpu;
-use crate::si_arcade::cpu::register::{Flag, Register};
+
+use super::super::cpu;
+use super::super::cpu::register::{Flag, Register};
 
 /*---------------MOVE, LOAD AND STORE---------------*/
-
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
     cpu.regs.a = r;
     5
@@ -772,10 +773,12 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------INPUT/OUTPUT---------------*/
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
+    let data = cpu.fetch_byte();
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
+    let data = cpu.fetch_byte();
     10
 }
 
