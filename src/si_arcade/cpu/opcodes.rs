@@ -773,12 +773,33 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------INPUT/OUTPUT---------------*/
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
-    let data = cpu.fetch_byte();
+    let port = cpu.fetch_byte();
+    // match data {
+    //     0 => (),
+    //     1 => (),
+    //     2 => (),
+    //     3 => (),
+    //     _ => {
+    //         println!("Error: Writing to port not implemented");
+    //     }
+    // }
+    // cpu.regs.a = 0;
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
-    let data = cpu.fetch_byte();
+    let port = cpu.fetch_byte();
+    // match port {
+    //     2 => (),
+    //     3 => (),
+    //     4 => (),
+    //     5 => (),
+    //     6 => (),
+    //     _ => {
+    //         println!("Error: Reading from port not implemented");
+    //     }
+    // }
+    // cpu.regs.a = 0;
     10
 }
 

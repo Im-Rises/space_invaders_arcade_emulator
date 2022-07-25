@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 mod cpu;
-mod inputs;
+mod inputs_outputs;
 mod mmu;
 mod ppu;
 
