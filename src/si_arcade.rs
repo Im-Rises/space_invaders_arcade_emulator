@@ -24,11 +24,11 @@ impl SpaceInvadersArcade {
         }
     }
     pub fn start(&mut self) {
-        // loop {
-        //     self.inputs.readInputs();
-        //     self.cpu.clock();
-        //     self.ppu.clock();
-        // }
+        loop {
+            // self.inputs.readInputs();
+            self.cpu.clock();
+            // self.ppu.clock();
+        }
     }
 
     // fn load_rom(&self) {

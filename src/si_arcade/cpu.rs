@@ -57,7 +57,7 @@ impl Cpu {
     }
 
     fn fetch_word(&mut self) -> u16 {
-        (self.fetch_byte() | self.fetch_byte() << 8) as u16
+        (self.fetch_byte() as u16 | (self.fetch_byte() as u16) << 8) as u16
     }
 
     fn read(&self, address: u16) -> u8 {

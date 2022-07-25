@@ -310,7 +310,7 @@ pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.pc = (cpu.read(cpu.sp) | cpu.read(cpu.sp + 1) << 8) as u16;
+    cpu.pc = (cpu.read(cpu.sp) as u16 | (cpu.read(cpu.sp + 1) as u16) << 8) as u16;
     cpu.sp += 2;
     10
 }
@@ -764,7 +764,7 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
         cpu.regs.a += 0x06;
     };
 
-    if ((cpu.regs.a & 0xF0) >> 8) > 9 || cpu.regs.get_flag(Flag::C) {
+    if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
         cpu.regs.a += 0x60;
     };
     4
