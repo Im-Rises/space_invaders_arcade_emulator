@@ -626,85 +626,116 @@ pub fn sbi(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn ana_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
     cpu.regs.a &= r;
+    subroutine_logical_operation(cpu);
     4
 }
 
 pub fn xra_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
     cpu.regs.a ^= r;
+    subroutine_logical_operation(cpu);
     4
 }
 
 pub fn ora_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
     cpu.regs.a |= r;
-    4
-}
-
-pub fn cmp_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a == r;
+    subroutine_logical_operation(cpu);
     4
 }
 
 pub fn ana_m(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a &= cpu.read(cpu.regs.get_hl());
+    subroutine_logical_operation(cpu);
     7
 }
 
 pub fn xra_m(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a ^= cpu.read(cpu.regs.get_hl());
+    subroutine_logical_operation(cpu);
     7
 }
 
 pub fn ora_m(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a |= cpu.read(cpu.regs.get_hl());
-    7
-}
-
-pub fn cmp_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a == cpu.read(cpu.regs.get_hl());
+    subroutine_logical_operation(cpu);
     7
 }
 
 pub fn ani(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a &= cpu.fetch_byte();
+    subroutine_logical_operation(cpu);
     7
 }
 
 pub fn xri(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a ^= cpu.fetch_byte();
+    subroutine_logical_operation(cpu);
     7
 }
 
 pub fn ori(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.a |= cpu.fetch_byte();
+    subroutine_logical_operation(cpu);
+    7
+}
+
+pub fn subroutine_logical_operation(cpu: &mut cpu::Cpu) {
+    cpu.regs.set_reset_flag(Flag::S, false);
+    cpu.regs.set_reset_flag(Flag::Z, false);
+    cpu.regs.set_reset_flag(Flag::P, false);
+    cpu.regs.set_reset_flag(Flag::C, false);
+}
+
+pub fn cmp_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    subroutine_logical_compare(cpu, cpu.regs.a, r);
+    4
+}
+
+pub fn cmp_m(cpu: &mut cpu::Cpu) -> u8 {
+    subroutine_logical_compare(cpu, cpu.regs.a, cpu.read(cpu.regs.get_hl()));
     7
 }
 
 pub fn cpi(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a == cpu.fetch_byte();
+    subroutine_logical_compare(cpu, cpu.regs.a, cpu.fetch_byte());
     7
+}
+
+pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) {
+    let result = operand1 - operand2;
+    cpu.regs.set_reset_flag(Flag::C, !(operand1 >= operand2));
+    cpu.regs.update_flag_s(result);
+    cpu.regs.set_reset_flag(Flag::Z, operand1 == operand2);
+    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flag_a(operand1, operand2);
 }
 
 /*---------------ROTATE---------------*/
 
 pub fn rlc(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a <<= 1;
-    4
-}
-
-pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a >>= 1;
-    4
-}
-
-pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 7));
     cpu.regs.a <<= 1;
     4
 }
 
-pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
+pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 0));
     cpu.regs.a >>= 1;
+    4
+}
+
+pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
+    let carry = get_bit(cpu.regs.a, 7);
+    cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 7));
+    cpu.regs.a <<= 1;
+    set_reset_bit(cpu.regs.a, 0, carry);
+    4
+}
+
+pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
+    let carry = get_bit(cpu.regs.a, 0);
+    cpu.regs.set_reset_flag(Flag::C, get_bit(cpu.regs.a, 0));
+    cpu.regs.a >>= 1;
+    set_reset_bit(cpu.regs.a, 7, carry);
     4
 }
 

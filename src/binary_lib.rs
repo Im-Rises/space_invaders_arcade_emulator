@@ -11,3 +11,11 @@ pub fn set_bit(data: u8, bit: usize) -> u8 {
 pub fn reset_bit(data: u8, bit: usize) -> u8 {
     data & !(1 << bit)
 }
+
+pub fn set_reset_bit(data: u8, bit: usize, value: bool) -> u8 {
+    if value {
+        set_bit(data, bit)
+    } else {
+        reset_bit(data, bit)
+    }
+}
