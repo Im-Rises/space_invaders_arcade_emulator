@@ -7,6 +7,9 @@ source:
 main:
   - 'src/**/main.*'
 
+cpu:
+  - 'src/**/cpu.*'
+
 video:
   - 'src/**/ppu.*'
 
