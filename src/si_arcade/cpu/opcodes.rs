@@ -461,19 +461,19 @@ pub fn inx_h(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn dcx_b(cpu: &mut cpu::Cpu) -> u8 {
-    let word = cpu.regs.get_bc().wrapping_add(1);
+    let word = cpu.regs.get_bc().wrapping_sub(1);
     (cpu.regs.b, cpu.regs.c) = Register::unpair_regs(word);
     5
 }
 
 pub fn dcx_d(cpu: &mut cpu::Cpu) -> u8 {
-    let word = cpu.regs.get_de().wrapping_add(1);
+    let word = cpu.regs.get_de().wrapping_sub(1);
     (cpu.regs.d, cpu.regs.e) = Register::unpair_regs(word);
     5
 }
 
 pub fn dcx_h(cpu: &mut cpu::Cpu) -> u8 {
-    let word = cpu.regs.get_hl().wrapping_add(1);
+    let word = cpu.regs.get_hl().wrapping_sub(1);
     (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(word);
     5
 }
@@ -597,64 +597,85 @@ fn sbb_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
 /*---------------LOGICAL---------------*/
 
 pub fn ana_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a &= r;
-    subroutine_logical_operation(cpu);
-    4
-}
-
-pub fn xra_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a ^= r;
-    subroutine_logical_operation(cpu);
-    4
-}
-
-pub fn ora_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a |= r;
-    subroutine_logical_operation(cpu);
+    cpu.regs.a = and_subroutine_function(cpu, cpu.regs.a, r);
     4
 }
 
 pub fn ana_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a &= cpu.read(cpu.regs.get_hl());
-    subroutine_logical_operation(cpu);
-    7
-}
-
-pub fn xra_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a ^= cpu.read(cpu.regs.get_hl());
-    subroutine_logical_operation(cpu);
-    7
-}
-
-pub fn ora_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a |= cpu.read(cpu.regs.get_hl());
-    subroutine_logical_operation(cpu);
+    let operand = cpu.read(cpu.regs.get_hl());
+    cpu.regs.a = and_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn ani(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a &= cpu.fetch_byte();
-    subroutine_logical_operation(cpu);
+    let operand = cpu.fetch_byte();
+    cpu.regs.a = and_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
+fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
+    let result = operand1 & operand2;
+    cpu.regs.set_reset_flag(Flag::C, false);
+    // cpu.regs.set_reset_flag(Flag::A, false);
+    cpu.regs.set_reset_flag(Flag::A, true);
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
+    result
+}
+
+pub fn xra_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.a = xor_subroutine_function(cpu, cpu.regs.a, r);
+    4
+}
+
 pub fn xri(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a ^= cpu.fetch_byte();
-    subroutine_logical_operation(cpu);
+    let operand = cpu.fetch_byte();
+    cpu.regs.a = xor_subroutine_function(cpu, cpu.regs.a, operand);
+    7
+}
+
+pub fn xra_m(cpu: &mut cpu::Cpu) -> u8 {
+    let operand = cpu.read(cpu.regs.get_hl());
+    cpu.regs.a = xor_subroutine_function(cpu, cpu.regs.a, operand);
+    7
+}
+
+fn xor_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
+    let result = operand1 ^ operand2;
+    cpu.regs.set_reset_flag(Flag::C, false);
+    cpu.regs.set_reset_flag(Flag::A, false);
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
+    result
+}
+
+pub fn ora_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
+    cpu.regs.a = or_subroutine_function(cpu, cpu.regs.a, r);
+    4
+}
+
+pub fn ora_m(cpu: &mut cpu::Cpu) -> u8 {
+    let operand = cpu.read(cpu.regs.get_hl());
+    cpu.regs.a = or_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
 pub fn ori(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a |= cpu.fetch_byte();
-    subroutine_logical_operation(cpu);
+    let operand = cpu.fetch_byte();
+    cpu.regs.a = or_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
 
-pub fn subroutine_logical_operation(cpu: &mut cpu::Cpu) {
-    cpu.regs.set_reset_flag(Flag::S, false);
-    cpu.regs.set_reset_flag(Flag::Z, false);
-    cpu.regs.set_reset_flag(Flag::P, false);
+fn or_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
+    let result = operand1 | operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
+    cpu.regs.set_reset_flag(Flag::A, false);
+    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_z(result);
+    cpu.regs.update_flag_p(result);
+    result
 }
 
 pub fn cmp_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
@@ -736,15 +757,38 @@ pub fn cmc(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
+    /*
+    (p15/16)
+    If a carry out of the least significant four bits occurs
+    during Step (1), the Auxiliary Carry bit is set; otherwise it is
+    reset. Likewise, if a carry out of the most significant four
+    bits occurs during Step (2). the normal Carry bit is set;
+    otherwise, it is unaffected.
+    */
+
+    // Step 1
     if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
+        // cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, 0x06);
+
+        cpu.regs.a = cpu.regs.a.wrapping_add(0x06);
         cpu.regs.update_flag_a(cpu.regs.a, 0x06);
-        cpu.regs.a += 0x06;
     };
 
+    // Step 2
     if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
-        cpu.regs.update_flag_c(cpu.regs.a, 0x60);
-        cpu.regs.a += 0x60;
+        // cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, 0x60);
+
+        let result = cpu.regs.a.overflowing_add(0x60);
+        if result.1 {
+            cpu.regs.set_reset_flag(Flag::C, true);
+        }
+        cpu.regs.a = result.0;
     };
+
+    cpu.regs.update_flag_s(cpu.regs.a);
+    cpu.regs.update_flag_z(cpu.regs.a);
+    cpu.regs.update_flag_p(cpu.regs.a);
+
     4
 }
 

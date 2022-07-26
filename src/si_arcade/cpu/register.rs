@@ -122,6 +122,6 @@ impl Register {
     }
 
     pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::A, (operand1 & 0xF + operand2 & 0xF) > 0xF);
+        self.set_reset_flag(Flag::A, ((operand1 & 0xF) + (operand2 & 0xF)) > 0xF);
     }
 }

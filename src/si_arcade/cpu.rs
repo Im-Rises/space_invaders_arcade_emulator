@@ -39,10 +39,6 @@ impl Cpu {
     pub fn clock(&mut self) {
         self.print_data_debug();
 
-        if self.pc == 0x5 {
-            println!("here");
-        }
-
         if !self.halted {
             // if self.cycles == 0 {
             let opcode = self.fetch_byte();
@@ -153,8 +149,8 @@ impl Cpu {
             0x4B => mov_c_r(self, self.regs.e),
             0x4C => mov_c_r(self, self.regs.h),
             0x4D => mov_c_r(self, self.regs.l),
-            0x4E => mov_c_r(self, self.regs.a),
-            0x4F => mov_c_m(self),
+            0x4E => mov_c_m(self), //HERE
+            0x4F => mov_c_r(self, self.regs.a),
             0x50 => mov_d_r(self, self.regs.b),
             0x51 => mov_d_r(self, self.regs.c),
             0x52 => mov_d_r(self, self.regs.d),
