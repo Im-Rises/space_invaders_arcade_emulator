@@ -59,7 +59,3 @@ impl Mmu {
         self.memory[address as usize] = data;
     }
 }
-
-mod tests {
-    fn my_private_func() {}
-}

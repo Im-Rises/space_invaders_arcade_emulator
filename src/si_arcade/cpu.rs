@@ -24,11 +24,11 @@ pub struct Cpu {
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
-            pc: 0x100,
+            pc: ini_pc,
             inte: false,
             halted: false,
             cycles: 0,

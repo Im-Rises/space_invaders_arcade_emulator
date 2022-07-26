@@ -3,7 +3,6 @@ pub mod si_arcade;
 
 /*
 To do list:
-- Review DAA (prevent from reaching pc = 0x05BE) resume at 0x05BD
 - Change file read
 - Add memory mirror
  */
