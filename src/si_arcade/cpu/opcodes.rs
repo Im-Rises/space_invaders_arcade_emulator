@@ -737,10 +737,12 @@ pub fn cmc(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
     if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
+        cpu.regs.update_flag_a(cpu.regs.a, 0x06);
         cpu.regs.a += 0x06;
     };
 
     if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
+        cpu.regs.update_flag_c(cpu.regs.a, 0x60);
         cpu.regs.a += 0x60;
     };
     4
