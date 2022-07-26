@@ -49,8 +49,6 @@ mod tests {
 
     use super::*;
 
-    // Type the following command to get console output
-    //  cargo test -- --nocapture
     #[test]
     fn cpu_test() {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
