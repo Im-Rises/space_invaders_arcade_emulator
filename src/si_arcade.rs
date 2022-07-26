@@ -47,20 +47,27 @@ mod tests {
 
     use super::*;
 
+    // Type the following command to get console output
+    //  cargo test -- --nocapture
     #[test]
     fn cpu_test() {
-        println!("here");
-        // assert_eq!(4, 2 + 2);
-
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
         let mut cpu_debug = Cpu::new(&mmu_debug);
 
         let mut cycles_counter: u64 = 0;
         for i in 0..650 {
-            cpu_debug.print_data_debug();
+            print_data_debug(cpu_debug.get_state(), cycles_counter);
             cycles_counter += cpu_debug.clock() as u64;
         }
-        cpu_debug.print_data_debug();
-        println!("Final state: {:#0X?} {}", cpu_debug.get_state(), cycles_counter);
+        print_data_debug(cpu_debug.get_state(), cycles_counter);
+
+        // assert_eq!(4, 2 + 2);
     }
+}
+
+pub fn print_data_debug(cpu_state: (u16, u16, u16, u16, u16, u16, u8), cycles_total: u64) {
+    println!(
+        "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
+        cpu_state.0, cpu_state.1, cpu_state.2, cpu_state.3, cpu_state.4, cpu_state.5, cpu_state.6, cycles_total
+    );
 }

@@ -37,18 +37,16 @@ impl Cpu {
     }
 
     pub fn clock(&mut self) -> u8 {
-        // self.print_data_debug();
-
         if !self.halted {
             // if self.cycles == 0 {
             let opcode = self.fetch_byte();
-            // println!("Opcode: {:#X}", opcode);
             self.cycles = self.compute_opcode(opcode);
             // }
             // self.cycles -= 1;
         }
 
         //Handle interrupts here
+
         self.cycles
     }
 
@@ -335,20 +333,7 @@ impl Cpu {
         }
     }
 
-    pub fn print_data_debug(&self) {
-        println!(
-            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}",
-            self.pc,
-            self.regs.get_af(),
-            self.regs.get_bc(),
-            self.regs.get_de(),
-            self.regs.get_hl(),
-            self.sp,
-            self.cycles
-        );
-    }
-
-    pub fn get_state(&self) -> (u16, u16, u16, u16, u16, u16) {
+    pub fn get_state(&self) -> (u16, u16, u16, u16, u16, u16, u8) {
         (
             self.pc,
             self.regs.get_af(),
@@ -356,6 +341,7 @@ impl Cpu {
             self.regs.get_de(),
             self.regs.get_hl(),
             self.sp,
+            self.cycles,
         )
     }
 }
