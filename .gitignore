@@ -2,7 +2,7 @@
 [Rr]oms/
 invaders.*
 #*.COM
-#documentations/
+documentations/
 
 # Ignore compilation folder
 [Tt]arget/
