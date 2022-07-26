@@ -1,7 +1,14 @@
 mod binary_lib;
-mod si_arcade;
+pub mod si_arcade;
+
+/*
+To do list:
+- Review DAA (prevent from reaching pc = 0x05BE) resume at 0x05BD
+- Change file read
+- Add memory mirror
+ */
 
 fn main() {
-    let space_invaders_arcade = si_arcade::SpaceInvadersArcade::new("romsPaths");
+    let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new("romsPaths");
     space_invaders_arcade.start();
 }

@@ -10,9 +10,14 @@ Space Invaders arcade game emulator in development made in Rust.
 
 ## Documentation
 
+<https://doc.rust-lang.org/book/ch11-00-testing.html>
+
+<http://www.emulator101.com> !!!!!!!!!!!
+
 <https://en.wikipedia.org/wiki/Intel_8080>
 
-<http://www.emulator101.com>  
+<http://emulator101.com>
+
 <https://pastraiser.com/cpu/i8080/i8080_opcodes.html>
 
 <https://archive.org/details/8080Datasheet>  
