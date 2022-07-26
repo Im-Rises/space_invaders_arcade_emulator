@@ -73,7 +73,7 @@ impl Register {
     }
 
     pub fn pair_regs(hi: u8, lo: u8) -> u16 {
-        (hi << 8 | lo) as u16
+        ((hi as u16) << 8 | lo as u16) as u16
     }
 
     pub fn unpair_regs(pr: u16) -> (u8, u8) {
@@ -122,6 +122,6 @@ impl Register {
     }
 
     pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::A, operand1 & 0xF + operand2 & 0xF > 0xF);
+        self.set_reset_flag(Flag::A, (operand1 & 0xF + operand2 & 0xF) > 0xF);
     }
 }
