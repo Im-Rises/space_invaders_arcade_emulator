@@ -31,22 +31,36 @@ impl SpaceInvadersArcade {
         }
     }
 
-    // fn load_rom(&self) {
+    // fn load_rom() {
     //     // mmu.load_rom();
     // }
     // fn pause_emulation(&self) {}
     // fn restart_emulation(&self) {}
     // fn save_state(&self) {}
-    // fn load_state(&self) {}
+    fn load_state(&self) {}
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::si_arcade::cpu::Cpu;
+    use crate::si_arcade::mmu::Mmu;
+
     use super::*;
 
     #[test]
-    fn internal() {
-        assert_eq!(4, 2 + 2);
-        //test cpu and memory good behaviour here
+    fn cpu_test() {
+        println!("here");
+        // assert_eq!(4, 2 + 2);
+
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
+        let mut cpu_debug = Cpu::new(&mmu_debug);
+
+        let mut cycles_counter: u64 = 0;
+        for i in 0..650 {
+            cpu_debug.print_data_debug();
+            cycles_counter += cpu_debug.clock() as u64;
+        }
+        cpu_debug.print_data_debug();
+        println!("Final state: {:#0X?} {}", cpu_debug.get_state(), cycles_counter);
     }
 }

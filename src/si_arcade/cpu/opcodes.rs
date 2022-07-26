@@ -616,7 +616,6 @@ pub fn ani(cpu: &mut cpu::Cpu) -> u8 {
 fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
     let result = operand1 & operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
-    // cpu.regs.set_reset_flag(Flag::A, false);
     cpu.regs.set_reset_flag(Flag::A, true);
     cpu.regs.update_flag_s(result);
     cpu.regs.update_flag_z(result);

@@ -36,8 +36,8 @@ impl Cpu {
         }
     }
 
-    pub fn clock(&mut self) {
-        self.print_data_debug();
+    pub fn clock(&mut self) -> u8 {
+        // self.print_data_debug();
 
         if !self.halted {
             // if self.cycles == 0 {
@@ -49,6 +49,7 @@ impl Cpu {
         }
 
         //Handle interrupts here
+        self.cycles
     }
 
     fn fetch_byte(&mut self) -> u8 {
@@ -334,7 +335,7 @@ impl Cpu {
         }
     }
 
-    fn print_data_debug(&self) {
+    pub fn print_data_debug(&self) {
         println!(
             "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}",
             self.pc,
@@ -345,5 +346,16 @@ impl Cpu {
             self.sp,
             self.cycles
         );
+    }
+
+    pub fn get_state(&self) -> (u16, u16, u16, u16, u16, u16) {
+        (
+            self.pc,
+            self.regs.get_af(),
+            self.regs.get_bc(),
+            self.regs.get_de(),
+            self.regs.get_hl(),
+            self.sp,
+        )
     }
 }
