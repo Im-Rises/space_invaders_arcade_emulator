@@ -24,3 +24,6 @@ controller:
 
 binary_lib:
   - 'stc/**/binary_lib.rs'
+
+cargo:
+  - 'Cargo.toml'

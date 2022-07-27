@@ -6,6 +6,9 @@ mod inputs_outputs;
 mod mmu;
 mod ppu;
 
+const INTERRUPT_VBLANK_COUNTER: usize = cpu::CLOCK_FREQUENCY / ppu::SCREEN_FREQUENCY;
+const INTERRUPT_MIDDLE_VBLANK: usize = INTERRUPT_VBLANK_COUNTER / 2;
+
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
     mmu: Rc<RefCell<mmu::Mmu>>,
@@ -24,22 +27,33 @@ impl SpaceInvadersArcade {
         }
     }
     pub fn start(&mut self) {
-        print_data_debug(self.cpu.get_state(), 0);
+        let mut frequency_counter: usize = 0;
+        let mut last_frequency_counter: usize = 0;
         loop {
-            // self.inputs.readInputs();
+            // let (cycles, opcode) = self.cpu.clock();
             self.cpu.clock();
-            print_data_debug(self.cpu.get_state(), 0);
-            // self.ppu.clock();
+            frequency_counter += 1;
+            if self.cpu.get_inte() {
+                if frequency_counter >= INTERRUPT_MIDDLE_VBLANK && last_frequency_counter < INTERRUPT_MIDDLE_VBLANK {
+                    cpu::interrupts::interrupt(&mut self.cpu, 1);
+                }
+                if frequency_counter >= INTERRUPT_VBLANK_COUNTER {
+                    cpu::interrupts::interrupt(&mut self.cpu, 2);
+                    frequency_counter = 0;
+                    // ppu.clock();
+                }
+            } else {
+                frequency_counter = 0;
+            }
+
+            last_frequency_counter = frequency_counter;
         }
     }
 
-    // fn load_rom() {
-    //     // mmu.load_rom();
-    // }
     // fn pause_emulation(&self) {}
     // fn restart_emulation(&self) {}
     // fn save_state(&self) {}
-    fn load_state(&self) {}
+    // fn load_state(&self) {}
 }
 
 #[cfg(test)]
@@ -49,8 +63,6 @@ mod tests {
 
     use super::*;
 
-    // Type the following command to get console output
-    //  cargo test -- --nocapture
     #[test]
     fn cpu_test() {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
@@ -59,7 +71,7 @@ mod tests {
         let mut cycles_counter: u64 = 0;
         for i in 0..650 {
             print_data_debug(cpu_debug.get_state(), cycles_counter);
-            cycles_counter += cpu_debug.clock() as u64;
+            cycles_counter += cpu_debug.clock().0 as u64;
         }
         let result = cpu_debug.get_state();
         print_data_debug(result, cycles_counter);

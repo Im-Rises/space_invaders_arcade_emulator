@@ -2,16 +2,18 @@ use std::cell::RefCell;
 use std::process::exit;
 use std::rc::Rc;
 
+use crate::si_arcade::cpu::interrupts::interrupt;
 use crate::si_arcade::cpu::opcodes::*;
 use crate::si_arcade::cpu::register::{Flag, Register};
+use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
-mod interrupts;
+pub(crate) mod interrupts;
 mod opcodes;
 mod register;
 
-const CLOCK_FREQUENCY: usize = 2_000_000;
+pub const CLOCK_FREQUENCY: usize = 1_996_800;
 
 pub struct Cpu {
     regs: Register,
@@ -20,7 +22,9 @@ pub struct Cpu {
     inte: bool,
     halted: bool,
     cycles: u8,
+    opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
+    inputs_outputs: InputsOutputs,
 }
 
 impl Cpu {
@@ -32,22 +36,24 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
+            opcode: 0,
             mmu: Rc::clone(&mmu),
+            inputs_outputs: InputsOutputs::new(),
+            // last_frequency_counter: 0,
+            // frequency_counter: 0,
         }
     }
 
-    pub fn clock(&mut self) -> u8 {
+    pub fn clock(&mut self) -> (u8, u8) {
         if !self.halted {
-            // if self.cycles == 0 {
-            let opcode = self.fetch_byte();
-            self.cycles = self.compute_opcode(opcode);
-            // }
-            // self.cycles -= 1;
+            if self.cycles <= 0 {
+                self.opcode = self.fetch_byte();
+                self.cycles = self.compute_opcode(self.opcode);
+            }
+            self.cycles -= 1;
         }
 
-        //Handle interrupts here
-
-        self.cycles
+        (self.cycles, self.opcode)
     }
 
     fn fetch_byte(&mut self) -> u8 {
@@ -343,5 +349,9 @@ impl Cpu {
             self.sp,
             self.cycles,
         )
+    }
+
+    pub fn get_inte(&self) -> bool {
+        self.inte
     }
 }
