@@ -1,18 +1,14 @@
-use std::fs::{create_dir, File};
-use std::io::prelude::*;
+use std::fs::File;
 use std::io::{Error, Read};
-use std::path::{Path, PathBuf};
-use std::{env, io};
 
 const MEMORY_SIZE: usize = 0x4000;
-// const MEMORY_SIZE: usize = 0x10000;
 
 pub struct Mmu {
     memory: [u8; MEMORY_SIZE],
 }
 
 impl Mmu {
-    pub fn new(roms_path: &str) -> Self {
+    pub fn new() -> Self {
         let mut mmu = Mmu {
             memory: [0; MEMORY_SIZE],
         };
@@ -26,12 +22,10 @@ impl Mmu {
         mmu.memory[0x1000..0x1800].clone_from_slice(&array_f);
         mmu.memory[0x1800..0x2000].clone_from_slice(&array_e);
 
-        // println!("{:?}", mmu.memory);
-
         mmu
     }
 
-    pub fn new_debug(debug_rom_path: &str) -> Self {
+    pub fn new_debug() -> Self {
         let mut mmu = Mmu {
             memory: [0; MEMORY_SIZE],
         };
@@ -47,11 +41,23 @@ impl Mmu {
     }
 
     pub fn read(&self, address: u16) -> u8 {
-        self.memory[address as usize]
+        if address < 0x4000 {
+            self.memory[address as usize]
+        } else {
+            panic!("Error: Reading from not allocated address")
+        }
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
-        self.memory[address as usize] = data;
+        if address < 0x2000 {
+            panic!("Error: Writing to memory rom area");
+        } else if address < 0x4000 {
+            self.memory[address as usize] = data;
+            // } else if address < 0x6000 {
+            //     self.memory[(address - 0x2000) as usize] = data;
+        } else {
+            panic!("Error: Writing to not allocated address")
+        }
     }
 }
 

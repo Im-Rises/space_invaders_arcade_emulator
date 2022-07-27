@@ -17,8 +17,8 @@ pub struct SpaceInvadersArcade {
 }
 
 impl SpaceInvadersArcade {
-    pub fn new(roms_path: &str) -> SpaceInvadersArcade {
-        let mmu_init = Rc::new(RefCell::new(mmu::Mmu::new(roms_path)));
+    pub fn new() -> SpaceInvadersArcade {
+        let mmu_init = Rc::new(RefCell::new(mmu::Mmu::new()));
         SpaceInvadersArcade {
             cpu: cpu::Cpu::new(&mmu_init, 0),
             mmu: Rc::clone(&mmu_init),
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
 
         let mut cycles_counter: u64 = 0;

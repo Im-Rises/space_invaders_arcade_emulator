@@ -5,6 +5,7 @@ name: rust-publish
 # https://www.youtube.com/watch?v=cvvOqNorlZQ
 # other
 # https://github.com/marketplace/actions/create-release
+# https://github.com/marvinpinto/action-automatic-releases
 
 on:
   push:
