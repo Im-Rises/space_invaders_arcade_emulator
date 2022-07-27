@@ -1,9 +1,8 @@
-use std::fs::File;
-// use std::fs::File;
-// use std::{fs, io};
-use std::io;
-use std::io::{BufRead, BufReader, Read};
-use std::path::Path;
+use std::fs::{create_dir, File};
+use std::io::prelude::*;
+use std::io::{Error, Read};
+use std::path::{Path, PathBuf};
+use std::{env, io};
 
 const MEMORY_SIZE: usize = 0x4000;
 // const MEMORY_SIZE: usize = 0x10000;
@@ -16,22 +15,18 @@ impl Mmu {
     pub fn new(roms_path: &str) -> Self {
         let mut mmu = Mmu {
             memory: [0; MEMORY_SIZE],
-            // memory: vec![0; MEMORY_SIZE],
         };
 
-        let h = include_bytes!("invaders.h");
-        let g = include_bytes!("invaders.g");
-        let f = include_bytes!("invaders.f");
-        let e = include_bytes!("invaders.e");
+        let array_h: [u8; 0x800] = read_rom("./game_roms/invaders.h").unwrap();
+        let array_g: [u8; 0x800] = read_rom("./game_roms/invaders.g").unwrap();
+        let array_f: [u8; 0x800] = read_rom("./game_roms/invaders.f").unwrap();
+        let array_e: [u8; 0x800] = read_rom("./game_roms/invaders.e").unwrap();
+        mmu.memory[0..0x800].clone_from_slice(&array_h);
+        mmu.memory[0x800..0x1000].clone_from_slice(&array_g);
+        mmu.memory[0x1000..0x1800].clone_from_slice(&array_f);
+        mmu.memory[0x1800..0x2000].clone_from_slice(&array_e);
 
-        if h.len() != 0x800 || g.len() != 0x800 || f.len() != 0x800 || e.len() != 0x800 {
-            panic!("Error: Length of roms is not 0x800");
-        }
-
-        mmu.memory[0..(h.len())].copy_from_slice(h);
-        mmu.memory[0x800..(h.len() + 0x800)].copy_from_slice(g);
-        mmu.memory[0x1000..(h.len() + 0x1000)].copy_from_slice(f);
-        mmu.memory[0x1800..(h.len() + 0x1800)].copy_from_slice(e);
+        // println!("{:?}", mmu.memory);
 
         mmu
     }
@@ -41,8 +36,8 @@ impl Mmu {
             memory: [0; MEMORY_SIZE],
         };
 
-        let debug_rom = include_bytes!("TST8080.COM");
-        mmu.memory[0x100..(0x100 + debug_rom.len())].copy_from_slice(debug_rom);
+        let debug_rom: [u8; 0x800] = read_rom("test_roms/TST8080.COM").unwrap();
+        mmu.memory[0x100..(0x100 + debug_rom.len())].copy_from_slice(&debug_rom);
         mmu.memory[0x7] = 0xc9;
         mmu.memory[0x5] = 0xd3;
         mmu.memory[0x6] = 0x01;
@@ -58,4 +53,14 @@ impl Mmu {
     pub fn write(&mut self, address: u16, data: u8) {
         self.memory[address as usize] = data;
     }
+}
+
+fn read_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
+    let mut f = File::open(rom_path)?;
+    let mut buffer: [u8; 0x800] = [0; 0x800];
+    let size = f.read(&mut buffer)?;
+    if size > 0x800 {
+        panic!("Error: File is incorrectly sized {}", 0x800);
+    }
+    Ok(buffer)
 }
