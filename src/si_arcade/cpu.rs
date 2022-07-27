@@ -46,11 +46,11 @@ impl Cpu {
 
     pub fn clock(&mut self) -> (u8, u8) {
         if !self.halted {
-            // self.cycles -= 1;
-            // if self.cycles <= 0 {
-            self.opcode = self.fetch_byte();
-            self.cycles = self.compute_opcode(self.opcode);
-            // }
+            if self.cycles <= 0 {
+                self.opcode = self.fetch_byte();
+                self.cycles = self.compute_opcode(self.opcode);
+            }
+            self.cycles -= 1;
         }
 
         (self.cycles, self.opcode)

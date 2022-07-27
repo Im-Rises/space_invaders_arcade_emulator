@@ -30,8 +30,9 @@ impl SpaceInvadersArcade {
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
         loop {
-            let (cycles, opcode) = self.cpu.clock();
-            frequency_counter += cycles as usize;
+            // let (cycles, opcode) = self.cpu.clock();
+            self.cpu.clock();
+            frequency_counter += 1;
             if self.cpu.get_inte() {
                 if frequency_counter >= INTERRUPT_MIDDLE_VBLANK && last_frequency_counter < INTERRUPT_MIDDLE_VBLANK {
                     cpu::interrupts::interrupt(&mut self.cpu, 1);
@@ -52,7 +53,7 @@ impl SpaceInvadersArcade {
     // fn pause_emulation(&self) {}
     // fn restart_emulation(&self) {}
     // fn save_state(&self) {}
-    fn load_state(&self) {}
+    // fn load_state(&self) {}
 }
 
 #[cfg(test)]
