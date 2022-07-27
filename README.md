@@ -4,6 +4,8 @@ Space Invaders arcade game emulator in development made in Rust.
 
 ## Description
 
+Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
+
 ## Features
 
 ## Images

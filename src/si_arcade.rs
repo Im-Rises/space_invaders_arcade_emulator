@@ -57,7 +57,7 @@ mod tests {
         let mut cycles_counter: u64 = 0;
         for i in 0..650 {
             print_data_debug(cpu_debug.get_state(), cycles_counter);
-            cycles_counter += cpu_debug.clock() as u64;
+            cycles_counter += cpu_debug.clock().1 as u64;
         }
         let result = cpu_debug.get_state();
         print_data_debug(result, cycles_counter);

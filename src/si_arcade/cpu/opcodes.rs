@@ -4,6 +4,7 @@ use crate::binary_lib::*;
 
 use super::super::cpu;
 use super::super::cpu::register::{Flag, Register};
+use super::InputsOutputs;
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
@@ -707,7 +708,7 @@ pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8
 pub fn rlc(cpu: &mut cpu::Cpu) -> u8 {
     let high_order_bit = get_bit(cpu.regs.a, 7);
     cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.rotate_left(1);
+    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
     cpu.regs.a = set_reset_bit(cpu.regs.a, 0, high_order_bit);
     4
 }
@@ -715,7 +716,7 @@ pub fn rlc(cpu: &mut cpu::Cpu) -> u8 {
 pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
     let low_order_bit = get_bit(cpu.regs.a, 0);
     cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.rotate_right(1);
+    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
     cpu.regs.a = set_reset_bit(cpu.regs.a, 7, low_order_bit);
     4
 }
@@ -724,7 +725,7 @@ pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
     let high_order_bit = get_bit(cpu.regs.a, 7);
     let carry = cpu.regs.get_flag(Flag::C);
     cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.rotate_left(1);
+    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
     cpu.regs.a = set_reset_bit(cpu.regs.a, 0, carry);
     4
 }
@@ -733,7 +734,7 @@ pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
     let low_order_bit = get_bit(cpu.regs.a, 0);
     let carry = cpu.regs.get_flag(Flag::C);
     cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.rotate_right(1);
+    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
     cpu.regs.a = set_reset_bit(cpu.regs.a, 7, carry);
     4
 }
@@ -795,32 +796,13 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
     let port = cpu.fetch_byte();
-    // match data {
-    //     0 => (),
-    //     1 => (),
-    //     2 => (),
-    //     3 => (),
-    //     _ => {
-    //         println!("Error: Writing to port not implemented");
-    //     }
-    // }
-    // cpu.regs.a = 0;
+    cpu.regs.a = cpu.inputs_outputs.inputs(port, cpu.regs.a);
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
     let port = cpu.fetch_byte();
-    // match port {
-    //     2 => (),
-    //     3 => (),
-    //     4 => (),
-    //     5 => (),
-    //     6 => (),
-    //     _ => {
-    //         println!("Error: Reading from port not implemented");
-    //     }
-    // }
-    // cpu.regs.a = 0;
+    cpu.inputs_outputs.outputs(port, cpu.regs.a);
     10
 }
 
