@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::si_arcade::mmu::Mmu;
 
-const SCREEN_FREQUENCY: usize = 60;
+pub const SCREEN_FREQUENCY: usize = 60;
 const SCREEN_WIDTH: usize = 224;
 const SCREEN_HEIGHT: usize = 256;
 

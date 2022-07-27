@@ -2,17 +2,18 @@ use std::cell::RefCell;
 use std::process::exit;
 use std::rc::Rc;
 
+use crate::si_arcade::cpu::interrupts::interrupt;
 use crate::si_arcade::cpu::opcodes::*;
 use crate::si_arcade::cpu::register::{Flag, Register};
 use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
-mod interrupts;
+pub(crate) mod interrupts;
 mod opcodes;
 mod register;
 
-const CLOCK_FREQUENCY: usize = 2_000_000;
+pub const CLOCK_FREQUENCY: usize = 1_996_800;
 
 pub struct Cpu {
     regs: Register,
@@ -38,19 +39,19 @@ impl Cpu {
             opcode: 0,
             mmu: Rc::clone(&mmu),
             inputs_outputs: InputsOutputs::new(),
+            // last_frequency_counter: 0,
+            // frequency_counter: 0,
         }
     }
 
     pub fn clock(&mut self) -> (u8, u8) {
         if !self.halted {
+            // self.cycles -= 1;
             // if self.cycles <= 0 {
             self.opcode = self.fetch_byte();
             self.cycles = self.compute_opcode(self.opcode);
             // }
-            // self.cycles -= 1;
         }
-
-        //Handle interrupts here
 
         (self.cycles, self.opcode)
     }
@@ -348,5 +349,9 @@ impl Cpu {
             self.sp,
             self.cycles,
         )
+    }
+
+    pub fn get_inte(&self) -> bool {
+        self.inte
     }
 }
