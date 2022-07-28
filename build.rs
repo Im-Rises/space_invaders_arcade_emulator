@@ -1,6 +1,8 @@
 use std::env;
 use std::path::PathBuf;
 
+//https://github.com/Rust-SDL2/rust-sdl2#user-content-windows-with-build-script
+
 fn main() {
     let target = env::var("TARGET").unwrap();
     if target.contains("pc-windows") {

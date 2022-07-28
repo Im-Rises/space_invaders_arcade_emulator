@@ -21,7 +21,12 @@ To use the Emulator, you need the roms. The roms the emulator is working with ar
 - invaders.e
 - invaders.f
 
-Once download
+Download the executable and create a folder named `roms` next to it. In this folder put the roms, now, you can start the
+emulator by just double-clicking it or by typing the command below next to the executable.
+
+```bash
+./space_invaders_arcade_emulator.exe
+```
 
 ## Compilation
 
@@ -29,8 +34,32 @@ First thing you need is to install cargo. You have it if you already have instal
 instruction at the link below:  
 <https://www.rust-lang.org/tools/install>
 
-You also need to install SDL2 for your OS. The setup instruction can be followed in the link below:  
+### Windows
+
+~~Windows users need to install SDL2 for your OS. The setup instruction can be followed in the link below:~~  
 <https://github.com/Rust-SDL2/rust-sdl2>
+
+I set up a static SDL2 Linking so Windows user just need to download the project and everything will be set up for SDL2.
+I used the instructions in the link below to set up the dynamic linking:  
+<https://github.com/Rust-SDL2/rust-sdl2#user-content-windows-with-build-script>
+
+### Linux
+
+Linux Users need to install the SDL2 lib. To do so, type in your bash system the following commands.
+
+If you want to compile the program, install the developer version with the command below:
+
+```bash
+sudo apt-get install libsdl2-dev
+```
+
+or if you just want to use the emulator type this command:
+
+```bash
+sudo apt-get install libsdl2-2.0-0  
+```
+
+---
 
 With Rust and SDL2 libs installed, you can now compile the project in two-way, debug or release. To compile go to the
 project root folder and type one of the two following commands below (If you want to use the emulator please compile
