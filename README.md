@@ -2,7 +2,7 @@
 
 <p align="center">
       <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="rustLogo" style="height:60px;"/>
-      <img src="README_files/Logos/SDL2_logo.png" alt="sdl2Logo" style="height:60px;"/>
+      <img src="https://user-images.githubusercontent.com/59691442/181630275-92b292b4-854c-447c-8da9-f8281c1e89c4.png" alt="sdl2Logo" style="height:60px;"/>
 </p>
 
 ## Description
