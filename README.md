@@ -1,8 +1,13 @@
 # space_invaders_arcade_emulator
 
-Space Invaders arcade game emulator in development made in Rust.
+<p align="center">
+      <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="rustLogo" style="height:60px;"/>
+      <img src="README_files/Logos/SDL2_logo.png" alt="sdl2Logo" style="height:60px;"/>
+</p>
 
 ## Description
+
+Space Invaders arcade game emulator in development made in Rust.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
@@ -21,11 +26,29 @@ To use the Emulator, you need the roms. The roms the emulator is working with ar
 - invaders.e
 - invaders.f
 
+You can download the latest version in the release section of the GitHub repository, you can also download the last
+version by clicking on the icon of you os below.
+
+### Windows
+
+<a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
+
 Download the executable and create a folder named `roms` next to it. In this folder put the roms, now, you can start the
 emulator by just double-clicking it or by typing the command below next to the executable.
 
 ```bash
-./space_invaders_arcade_emulator.exe
+.\space_invaders_arcade_emulator.exe
+```
+
+### Linux
+
+<a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="cmakeLogo" style="height:40px;"/></a>
+
+Download the executable and create a folder named `roms` next to it. In this folder put the roms, now, you can start the
+emulator by just double-clicking it or by typing the command below next to the executable.
+
+```bash
+./space_invaders_arcade_emulator
 ```
 
 ## Compilation
@@ -79,7 +102,10 @@ The compiled app will be in the folder `target/debug` or `target/release` depend
 
 ## Rust tests
 
-<https://doc.rust-lang.org/book/ch11-00-testing.html>
+You can test the good behaviour of the project by typing the commands onf of the following command. It will start the
+unit test of the CPU.
+
+It will start a test rom for the Intel 8080 CPU.
 
 ```bash
 cargo test
@@ -95,6 +121,7 @@ cargo test -- --nocapture
 
 [![Rust](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml)
 [![rust-clippy analyze](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml)
+[![rust-publish](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml)
 
 The project is set with a set of different scripts:
 
