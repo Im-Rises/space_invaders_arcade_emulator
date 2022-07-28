@@ -7,7 +7,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
-use sdl2::render::{Texture, WindowCanvas};
+use sdl2::render::{CanvasBuilder, Texture, WindowCanvas};
 use sdl2::video::Window;
 
 use crate::binary_lib::get_bit;
@@ -19,22 +19,26 @@ const SCREEN_HEIGHT: usize = 256;
 
 pub struct Ppu {
     mmu: Rc<RefCell<Mmu>>,
-    window: Window,
-    screen: [u8; SCREEN_WIDTH * SCREEN_HEIGHT],
+    // window: Window,
+    screen: [u8; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
     // texture: Texture,
+    pub canvas: WindowCanvas,
 }
+
+//https://github.com/Rust-SDL2/rust-sdl2/blob/master/examples/renderer-texture.rs
 
 impl Ppu {
     pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Ppu {
         Ppu {
             mmu: Rc::clone(&mmu),
-            window: Ppu::init_video().unwrap(),
-            screen: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
+            // window: window_canvas,
+            screen: [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
             // texture: (),
+            canvas: Ppu::init_video().unwrap(),
         }
     }
 
-    fn init_video() -> Result<Window, String> {
+    fn init_video() -> Result<WindowCanvas, String> {
         let sdl_context = sdl2::init()?;
         let video_subsystem = sdl_context.video()?;
 
@@ -42,64 +46,52 @@ impl Ppu {
             .window("Space Invaders Arcade Emulator", 800, 600)
             .position_centered()
             .resizable()
-            .hidden()
+            // .hidden()
             .opengl()
             .build()
             .map_err(|e| e.to_string())?;
 
-        Ok(window)
+        let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
+
+        Ok(canvas)
     }
 
     pub fn start_video(&mut self) {
-        self.window.show();
+        // self.window.show();
     }
 
-    pub fn clock(&mut self) /*-> Result<(), String>*/
-    {
+    pub fn clock(&mut self) -> Result<(), String> {
         // self.texture.update(None, self.mmu.borrow().get_vram(), SCREEN_WIDTH)
 
         let mut index: u32 = 0;
+        //Conflict between RefCell's borrow and Borrow's borrow
+        // for data in self.mmu.borrow().get_vram() {
         for data in self.mmu.borrow().get_vram() {
             for bit in 0..7 {
                 if get_bit(*data, bit as usize) {
-                    self.screen[(index * 8 + bit) as usize] = 1
+                    self.screen[(index * 3 + bit) as usize] = 0xFF;
+                    self.screen[(index * 3 + bit + 1) as usize] = 0xFF;
+                    self.screen[(index * 3 + bit + 2) as usize] = 0xFF;
                 } else {
-                    self.screen[(index * 8 + bit) as usize] = 0;
+                    self.screen[(index * 3 + bit) as usize] = 0;
+                    self.screen[(index * 3 + bit + 1) as usize] = 0;
+                    self.screen[(index * 3 + bit + 2) as usize] = 0;
                 }
             }
             index += 1;
         }
-
-        /*        let mut canvas = *self.window.into_canvas().build().map_err(|e| e.to_string())?;
-        let texture_creator = canvas.borrow().texture_creator();
+        let texture_creator = self.canvas.texture_creator();
         let mut texture = texture_creator
-            .create_texture_streaming(PixelFormatEnum::RGB24, 256, 256)
+            .create_texture_streaming(PixelFormatEnum::RGB24, (SCREEN_WIDTH) as u32, SCREEN_HEIGHT as u32)
             .map_err(|e| e.to_string())?;
-        // Create a red-green gradient
-        texture.with_lock(None, |buffer: &mut [u8], pitch: usize| {
-            for y in 0..256 {
-                for x in 0..256 {
-                    let offset = y * pitch + x * 3;
-                    buffer[offset] = x as u8;
-                    buffer[offset + 1] = y as u8;
-                    buffer[offset + 2] = 0;
-                }
-            }
-        })?;
+        texture
+            .update(None, &self.screen, SCREEN_WIDTH * 3)
+            .expect("TODO: panic message");
 
-        canvas.clear();
-        canvas.copy(&texture, None, Some(Rect::new(100, 100, 256, 256)))?;
-        canvas.copy_ex(
-            &texture,
-            None,
-            Some(Rect::new(450, 100, 256, 256)),
-            30.0,
-            None,
-            false,
-            false,
-        )?;
-        canvas.present();
-
-        Ok(())*/
+        // self.canvas.clear();
+        self.canvas.copy(&texture, None, None)?;
+        // self.canvas.copy_ex(&texture, None, None, 90.0, None, false, false)?;
+        self.canvas.present();
+        Ok(())
     }
 }
