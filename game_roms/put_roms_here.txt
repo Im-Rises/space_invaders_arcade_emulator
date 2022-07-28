@@ -1,0 +1,5 @@
+Put the Space Invaders roms here:
+- invaders.h
+- invaders.g
+- invaders.f
+- invaders.e

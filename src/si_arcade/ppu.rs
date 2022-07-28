@@ -3,6 +3,10 @@ use std::rc::Rc;
 
 use crate::si_arcade::mmu::Mmu;
 
+pub const SCREEN_FREQUENCY: usize = 60;
+const SCREEN_WIDTH: usize = 224;
+const SCREEN_HEIGHT: usize = 256;
+
 pub struct Ppu {
     mmu: Rc<RefCell<Mmu>>,
 }

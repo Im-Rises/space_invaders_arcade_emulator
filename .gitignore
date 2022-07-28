@@ -1,5 +1,8 @@
 # Ignore roms
 [Rr]oms/
+invaders.*
+#*.COM
+documentations/
 
 # Ignore compilation folder
 [Tt]arget/

@@ -2,48 +2,58 @@ use std::cell::RefCell;
 use std::process::exit;
 use std::rc::Rc;
 
+use crate::si_arcade::cpu::interrupts::interrupt;
 use crate::si_arcade::cpu::opcodes::*;
 use crate::si_arcade::cpu::register::{Flag, Register};
+use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
-mod interrupts;
+pub(crate) mod interrupts;
 mod opcodes;
 mod register;
 
-const CLOCK_FREQUENCY: usize = 2_000_000;
+pub const CLOCK_FREQUENCY: usize = 1_996_800;
 
 pub struct Cpu {
     regs: Register,
     sp: u16,
     pc: u16,
-    stat: u16,
     inte: bool,
     halted: bool,
     cycles: u8,
+    opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
+    inputs_outputs: InputsOutputs,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
-            pc: 0x100,
-            stat: 0,
+            pc: ini_pc,
             inte: false,
             halted: false,
             cycles: 0,
+            opcode: 0,
             mmu: Rc::clone(&mmu),
+            inputs_outputs: InputsOutputs::new(),
+            // last_frequency_counter: 0,
+            // frequency_counter: 0,
         }
     }
 
-    fn clock(&mut self) {
-        if self.cycles == 0 {
-            let opcode = self.fetch_byte();
-            self.cycles = self.compute_opcode(opcode);
+    pub fn clock(&mut self) -> (u8, u8) {
+        if !self.halted {
+            if self.cycles <= 0 {
+                self.opcode = self.fetch_byte();
+                self.cycles = self.compute_opcode(self.opcode);
+            }
+            self.cycles -= 1;
         }
-        self.cycles -= 1;
+
+        (self.cycles, self.opcode)
     }
 
     fn fetch_byte(&mut self) -> u8 {
@@ -53,7 +63,7 @@ impl Cpu {
     }
 
     fn fetch_word(&mut self) -> u16 {
-        (self.fetch_byte() | self.fetch_byte() << 8) as u16
+        (self.fetch_byte() as u16 | (self.fetch_byte() as u16) << 8) as u16
     }
 
     fn read(&self, address: u16) -> u8 {
@@ -144,8 +154,8 @@ impl Cpu {
             0x4B => mov_c_r(self, self.regs.e),
             0x4C => mov_c_r(self, self.regs.h),
             0x4D => mov_c_r(self, self.regs.l),
-            0x4E => mov_c_r(self, self.regs.a),
-            0x4F => mov_c_m(self),
+            0x4E => mov_c_m(self), //HERE
+            0x4F => mov_c_r(self, self.regs.a),
             0x50 => mov_d_r(self, self.regs.b),
             0x51 => mov_d_r(self, self.regs.c),
             0x52 => mov_d_r(self, self.regs.d),
@@ -327,5 +337,21 @@ impl Cpu {
                 exit(1);
             }
         }
+    }
+
+    pub fn get_state(&self) -> (u16, u16, u16, u16, u16, u16, u8) {
+        (
+            self.pc,
+            self.regs.get_af(),
+            self.regs.get_bc(),
+            self.regs.get_de(),
+            self.regs.get_hl(),
+            self.sp,
+            self.cycles,
+        )
+    }
+
+    pub fn get_inte(&self) -> bool {
+        self.inte
     }
 }
