@@ -74,6 +74,10 @@ Emudev.de:
 Rust:  
 <https://doc.rust-lang.org/book>
 
+SDL2 Rust:  
+<https://www.libsdl.org>  
+<https://github.com/Rust-SDL2/rust-sdl2>
+
 Intel 8080 documentations:  
 <https://pastraiser.com/cpu/i8080/i8080_opcodes.html>  
 <https://archive.org/details/8080Datasheet>  

@@ -41,23 +41,32 @@ impl Mmu {
     }
 
     pub fn read(&self, address: u16) -> u8 {
-        // if address < 0x4000 {
-        self.memory[address as usize]
-        // } else {
-        //     panic!("Error: Reading from not allocated address")
-        // }
+        if address < 0x4000 {
+            self.memory[address as usize]
+        } else if address < 0x8000 {
+            self.memory[(address - 0x4000) as usize]
+        } else if address < 0xC000 {
+            self.memory[(address - 0x8000) as usize]
+        } else {
+            self.memory[(address - 0xC000) as usize]
+        }
+        // panic!("Error: Reading from not allocated address")
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
-        // if address < 0x2000 {
-        //     panic!("Error: Writing to memory rom area");
-        // } else if address < 0x4000 {
-        self.memory[address as usize] = data;
-        // } else if address < 0x6000 {
-        //     self.memory[(address - 0x2000) as usize] = data;
-        // } else {
-        //     panic!("Error: Writing to not allocated address")
-        // }
+        if address < 0x4000 {
+            self.memory[address as usize] = data;
+        } else if address < 0x8000 {
+            self.memory[(address - 0x4000) as usize] = data;
+        } else if address < 0xC000 {
+            self.memory[(address - 0x8000) as usize] = data;
+        } else {
+            self.memory[(address - 0xC000) as usize] = data;
+        }
+    }
+
+    pub fn get_vram(&self) -> &[u8] {
+        &self.memory[0x2400..0x4000]
     }
 }
 

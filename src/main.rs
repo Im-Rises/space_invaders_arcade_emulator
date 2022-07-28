@@ -1,19 +1,14 @@
-/*extern crate core;
+extern crate core;
 
 mod binary_lib;
 mod si_arcade;
 
-/*
-To do list:
-- Add video
- */
-
 fn main() {
     let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new();
     space_invaders_arcade.start();
-}*/
+}
 
-extern crate sdl2;
+/*extern crate sdl2;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -25,7 +20,7 @@ pub fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("rust-sdl2 demo: Video", 800, 600)
+        .window("Space Invaders Arcade Emulator", 800, 600)
         .position_centered()
         .opengl()
         .build()
@@ -80,3 +75,4 @@ pub fn main() -> Result<(), String> {
 
     Ok(())
 }
+*/

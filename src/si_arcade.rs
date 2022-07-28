@@ -27,6 +27,7 @@ impl SpaceInvadersArcade {
         }
     }
     pub fn start(&mut self) {
+        self.ppu.start_video();
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
         loop {
@@ -39,7 +40,7 @@ impl SpaceInvadersArcade {
                 if frequency_counter >= INTERRUPT_VBLANK_COUNTER {
                     cpu::interrupts::interrupt(&mut self.cpu, 2);
                     frequency_counter = 0;
-                    // ppu.clock();
+                    self.ppu.clock();
                 }
             } else {
                 frequency_counter = 0;
