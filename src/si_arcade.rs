@@ -17,8 +17,8 @@ pub struct SpaceInvadersArcade {
 }
 
 impl SpaceInvadersArcade {
-    pub fn new(roms_path: &str) -> SpaceInvadersArcade {
-        let mmu_init = Rc::new(RefCell::new(mmu::Mmu::new(roms_path)));
+    pub fn new() -> SpaceInvadersArcade {
+        let mmu_init = Rc::new(RefCell::new(mmu::Mmu::new()));
         SpaceInvadersArcade {
             cpu: cpu::Cpu::new(&mmu_init, 0),
             mmu: Rc::clone(&mmu_init),
@@ -27,10 +27,10 @@ impl SpaceInvadersArcade {
         }
     }
     pub fn start(&mut self) {
+        self.ppu.start_video();
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
-        loop {
-            // let (cycles, opcode) = self.cpu.clock();
+        while self.ppu.get_window_active().unwrap() {
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
@@ -40,7 +40,7 @@ impl SpaceInvadersArcade {
                 if frequency_counter >= INTERRUPT_VBLANK_COUNTER {
                     cpu::interrupts::interrupt(&mut self.cpu, 2);
                     frequency_counter = 0;
-                    // ppu.clock();
+                    self.ppu.clock().expect("Error : Panic happend in PPU");
                 }
             } else {
                 frequency_counter = 0;
@@ -65,17 +65,19 @@ mod tests {
 
     #[test]
     fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("debug")));
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
 
         let mut cycles_counter: u64 = 0;
+        let mut opcode: u8 = 0;
         for i in 0..650 {
             print_data_debug(cpu_debug.get_state(), cycles_counter);
-            cycles_counter += cpu_debug.clock().0 as u64;
+            let cycles_opcode = cpu_debug.clock_debug();
+            cycles_counter += cycles_opcode.0 as u64;
+            opcode = cycles_opcode.1;
         }
         let result = cpu_debug.get_state();
-        print_data_debug(result, cycles_counter);
-
+        print_data_debug(cpu_debug.get_state(), cycles_counter);
         assert_eq!(result.0, 0); //Verify we reach pc = 0x0 after 651 operations
     }
 }

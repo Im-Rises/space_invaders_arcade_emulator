@@ -14,14 +14,27 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 ## Quick start
 
+To use the Emulator, you need the roms. The roms the emulator is working with are named:
+
+- invaders.h
+- invaders.g
+- invaders.e
+- invaders.f
+
+Once download
+
 ## Compilation
 
 First thing you need is to install cargo. You have it if you already have installed Rust, if not, please follow the
-instruction at the link below:
+instruction at the link below:  
 <https://www.rust-lang.org/tools/install>
 
-With Rust, you can compile the project in two-way, debug and release. To compile go to the project root folder and type
-one of the two following commands below (If you want to use the emulator please compile using the second command).
+You also need to install SDL2 for your OS. The setup instruction can be followed in the link below:  
+<https://github.com/Rust-SDL2/rust-sdl2>
+
+With Rust and SDL2 libs installed, you can now compile the project in two-way, debug or release. To compile go to the
+project root folder and type one of the two following commands below (If you want to use the emulator please compile
+using the second command).
 
 ```bash
 cargo build
@@ -74,10 +87,17 @@ Emudev.de:
 Rust:  
 <https://doc.rust-lang.org/book>
 
+SDL2 Rust:  
+<https://www.libsdl.org>  
+<https://github.com/Rust-SDL2/rust-sdl2>
+
 Intel 8080 documentations:  
 <https://pastraiser.com/cpu/i8080/i8080_opcodes.html>  
 <https://archive.org/details/8080Datasheet>  
 <https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf>
+
+Intel 8080 opcodes table:  
+<https://www.pastraiser.com/cpu/i8080/i8080_opcodes.html>
 
 Wikipedia:  
 <https://en.wikipedia.org/wiki/Intel_8080>

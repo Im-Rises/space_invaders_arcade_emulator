@@ -5,6 +5,8 @@ name: rust-publish
 # https://www.youtube.com/watch?v=cvvOqNorlZQ
 # other
 # https://github.com/marketplace/actions/create-release
+# https://github.com/marvinpinto/action-automatic-releases
+# https://alexene.dev/2019/09/04/Github-actions-CI-rust-SDL2.html
 
 on:
   push:
