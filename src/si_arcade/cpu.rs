@@ -44,7 +44,7 @@ impl Cpu {
 
     pub fn clock(&mut self) {
         if !self.halted {
-            if self.cycles <= 0 {
+            if self.cycles == 0 {
                 self.opcode = self.fetch_byte();
                 self.cycles = self.compute_opcode(self.opcode);
             }
