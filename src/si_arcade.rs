@@ -30,7 +30,6 @@ impl SpaceInvadersArcade {
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
         loop {
-            // let (cycles, opcode) = self.cpu.clock();
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
@@ -69,13 +68,15 @@ mod tests {
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
 
         let mut cycles_counter: u64 = 0;
+        let mut opcode: u8 = 0;
         for i in 0..650 {
             print_data_debug(cpu_debug.get_state(), cycles_counter);
-            cycles_counter += cpu_debug.clock().0 as u64;
+            let cycles_opcode = cpu_debug.clock_debug();
+            cycles_counter += cycles_opcode.0 as u64;
+            opcode = cycles_opcode.1;
         }
         let result = cpu_debug.get_state();
-        print_data_debug(result, cycles_counter);
-
+        print_data_debug(cpu_debug.get_state(), cycles_counter);
         assert_eq!(result.0, 0); //Verify we reach pc = 0x0 after 651 operations
     }
 }

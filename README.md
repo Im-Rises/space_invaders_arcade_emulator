@@ -79,5 +79,8 @@ Intel 8080 documentations:
 <https://archive.org/details/8080Datasheet>  
 <https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf>
 
+Intel 8080 opcodes table:  
+<https://www.pastraiser.com/cpu/i8080/i8080_opcodes.html>
+
 Wikipedia:  
 <https://en.wikipedia.org/wiki/Intel_8080>
