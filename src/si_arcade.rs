@@ -40,7 +40,7 @@ impl SpaceInvadersArcade {
                 if frequency_counter >= INTERRUPT_VBLANK_COUNTER {
                     cpu::interrupts::interrupt(&mut self.cpu, 2);
                     frequency_counter = 0;
-                    self.ppu.clock();
+                    self.ppu.clock().expect("Error : Panic happend in PPU");
                 }
             } else {
                 frequency_counter = 0;

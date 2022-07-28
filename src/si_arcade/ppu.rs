@@ -43,7 +43,7 @@ impl Ppu {
         let video_subsystem = sdl_context.video()?;
 
         let window = video_subsystem
-            .window("Space Invaders Arcade Emulator", 800, 600)
+            .window("Space Invaders Arcade Emulator", 600, 600)
             .position_centered()
             .resizable()
             // .hidden()
@@ -64,8 +64,6 @@ impl Ppu {
         // self.texture.update(None, self.mmu.borrow().get_vram(), SCREEN_WIDTH)
 
         let mut index: u32 = 0;
-        //Conflict between RefCell's borrow and Borrow's borrow
-        // for data in self.mmu.borrow().get_vram() {
         for data in self.mmu.borrow().get_vram() {
             for bit in 0..7 {
                 if get_bit(*data, bit as usize) {
@@ -77,8 +75,8 @@ impl Ppu {
                     self.screen[(index * 3 + bit + 1) as usize] = 0;
                     self.screen[(index * 3 + bit + 2) as usize] = 0;
                 }
+                index += 1;
             }
-            index += 1;
         }
         let texture_creator = self.canvas.texture_creator();
         let mut texture = texture_creator
@@ -89,8 +87,8 @@ impl Ppu {
             .expect("TODO: panic message");
 
         // self.canvas.clear();
-        self.canvas.copy(&texture, None, None)?;
-        // self.canvas.copy_ex(&texture, None, None, 90.0, None, false, false)?;
+        // self.canvas.copy(&texture, None, None)?;
+        self.canvas.copy_ex(&texture, None, None, -90.0, None, false, false)?;
         self.canvas.present();
         Ok(())
     }
