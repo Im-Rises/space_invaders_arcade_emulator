@@ -50,7 +50,6 @@ impl Mmu {
         } else {
             self.memory[(address - 0xC000) as usize]
         }
-        // panic!("Error: Reading from not allocated address")
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
