@@ -19,7 +19,7 @@ permissions:
 jobs:
   build-project:
     name: Build project
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
