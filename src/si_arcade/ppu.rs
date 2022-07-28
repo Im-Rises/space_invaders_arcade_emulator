@@ -9,6 +9,7 @@ use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
 use sdl2::render::{CanvasBuilder, Texture, WindowCanvas};
 use sdl2::video::Window;
+use sdl2::{Sdl, VideoSubsystem};
 
 use crate::binary_lib::get_bit;
 use crate::si_arcade::mmu::Mmu;
@@ -22,23 +23,27 @@ pub struct Ppu {
     // window: Window,
     screen: [u8; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
     // texture: Texture,
-    pub canvas: WindowCanvas,
+    canvas: WindowCanvas,
+    sdl_context: Sdl,
 }
 
 //https://github.com/Rust-SDL2/rust-sdl2/blob/master/examples/renderer-texture.rs
 
 impl Ppu {
     pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Ppu {
+        let video = Ppu::init_video().unwrap();
+
         Ppu {
             mmu: Rc::clone(&mmu),
             // window: window_canvas,
             screen: [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
             // texture: (),
-            canvas: Ppu::init_video().unwrap(),
+            canvas: video.0,
+            sdl_context: video.1,
         }
     }
 
-    fn init_video() -> Result<WindowCanvas, String> {
+    fn init_video() -> Result<(WindowCanvas, Sdl), String> {
         let sdl_context = sdl2::init()?;
         let video_subsystem = sdl_context.video()?;
 
@@ -53,7 +58,7 @@ impl Ppu {
 
         let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
-        Ok(canvas)
+        Ok((canvas, sdl_context))
     }
 
     pub fn start_video(&mut self) {
@@ -91,5 +96,21 @@ impl Ppu {
         self.canvas.copy_ex(&texture, None, None, -90.0, None, false, false)?;
         self.canvas.present();
         Ok(())
+    }
+
+    pub(crate) fn get_window_active(&self) -> Result<bool, String> {
+        let mut event_pump = self.sdl_context.event_pump()?;
+        let mut window_active = true;
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => window_active = false,
+                _ => window_active = true,
+            }
+        }
+        Ok(window_active)
     }
 }

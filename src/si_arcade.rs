@@ -30,7 +30,7 @@ impl SpaceInvadersArcade {
         self.ppu.start_video();
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
-        loop {
+        while self.ppu.get_window_active().unwrap() {
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
