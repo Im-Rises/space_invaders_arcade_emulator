@@ -39,20 +39,22 @@ impl Cpu {
             opcode: 0,
             mmu: Rc::clone(&mmu),
             inputs_outputs: InputsOutputs::new(),
-            // last_frequency_counter: 0,
-            // frequency_counter: 0,
         }
     }
 
-    pub fn clock(&mut self) -> (u8, u8) {
+    pub fn clock(&mut self) {
         if !self.halted {
-            if self.cycles <= 0 {
+            if self.cycles == 0 {
                 self.opcode = self.fetch_byte();
                 self.cycles = self.compute_opcode(self.opcode);
             }
             self.cycles -= 1;
         }
+    }
 
+    pub fn clock_debug(&mut self) -> (u8, u8) {
+        self.opcode = self.fetch_byte();
+        self.cycles = self.compute_opcode(self.opcode);
         (self.cycles, self.opcode)
     }
 
