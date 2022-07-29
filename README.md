@@ -121,14 +121,15 @@ cargo test -- --nocapture
 
 [![Rust](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml)
 [![rust-clippy analyze](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml)
+[![rustfmt check](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rustfmt.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rustfmt.yml)
 [![rust-publish](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml)
 
 The project is set with a set of different scripts:
 
-- Rust : Check the code compilation.
-- Rust clippy : Evaluate the code quality (error, warnings, etc...).
-- Rust publisher : Publish the app to releases when pushing to the main branch.
-- Rust fmt :  Check the code good formatting
+- rust : Check the code compilation.
+- rust-clippy analyze : Evaluate the code quality (error, warnings, etc...).
+- rustfmt check :  Check the code good formatting
+- rust-publisher : Publish the app to releases when pushing to the main branch.
 
 ## Documentation
 
