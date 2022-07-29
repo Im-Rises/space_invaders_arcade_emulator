@@ -1,5 +1,3 @@
-// Get here for emulator and game inputs
-
 pub struct InputsOutputs {
     shift_register: u16,
     shift_offset: u8,
@@ -21,7 +19,7 @@ impl InputsOutputs {
             3 => data = ((self.shift_register >> (8 - self.shift_offset)) & 0xFF) as u8,
             6 => (), //WATCHDOG
             _ => {
-                println!(
+                panic!(
                     "Error: Writing to port not implemented at port {} with data {}",
                     port, data
                 );
@@ -38,7 +36,7 @@ impl InputsOutputs {
             5 => (), //Sound bit
             6 => (), //Watch dog
             _ => {
-                println!(
+                panic!(
                     "Error: Reading from port not implemented at port {} with data {}",
                     port, data
                 );

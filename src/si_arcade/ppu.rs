@@ -18,6 +18,9 @@ pub const SCREEN_FREQUENCY: usize = 60;
 const SCREEN_WIDTH: usize = 256;
 const SCREEN_HEIGHT: usize = 224;
 
+const WINDOW_WIDTH: usize = 600;
+const WINDOW_HEIGHT: usize = 600;
+
 pub struct Ppu {
     mmu: Rc<RefCell<Mmu>>,
     screen: [u8; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
@@ -44,7 +47,11 @@ impl Ppu {
         let video_subsystem = sdl_context.video()?;
 
         let window = video_subsystem
-            .window("Space Invaders Arcade Emulator", 600, 600)
+            .window(
+                "Space Invaders Arcade Emulator",
+                WINDOW_WIDTH as u32,
+                WINDOW_HEIGHT as u32,
+            )
             .position_centered()
             .resizable()
             // .hidden()
@@ -53,7 +60,9 @@ impl Ppu {
             .map_err(|e| e.to_string())?;
 
         let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
-
+        canvas
+            .set_logical_size(WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32)
+            .expect("TODO: panic message");
         Ok((canvas, sdl_context))
     }
 
@@ -93,7 +102,7 @@ impl Ppu {
         Ok(())
     }
 
-    pub(crate) fn get_window_active(&self) -> Result<bool, String> {
+    pub fn get_window_active(&self) -> Result<bool, String> {
         let mut event_pump = self.sdl_context.event_pump()?;
         let mut window_active = true;
         for event in event_pump.poll_iter() {
