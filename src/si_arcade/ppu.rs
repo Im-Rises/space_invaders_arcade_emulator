@@ -3,16 +3,9 @@ extern crate sdl2;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use sdl2::pixels::PixelFormatEnum;
-use sdl2::rect::Rect;
-use sdl2::render::{CanvasBuilder, Texture, WindowCanvas};
-use sdl2::video::Window;
-use sdl2::{Sdl, VideoSubsystem};
-
 use crate::binary_lib::get_bit;
-use crate::si_arcade::mmu::Mmu;
+
+use super::mmu::Mmu;
 
 pub const SCREEN_FREQUENCY: usize = 60;
 pub const SCREEN_WIDTH: usize = 256;
