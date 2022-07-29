@@ -1,17 +1,8 @@
 name: rust-publish
 
-# thanks to:
-# https://github.com/msusdev/end-to-end-github-actions/blob/main/presentations/ci_github_actions.md
-# https://www.youtube.com/watch?v=cvvOqNorlZQ
-# https://github.com/actions/upload-release-asset
-# other
-# https://github.com/marketplace/actions/create-release
-# https://github.com/marvinpinto/action-automatic-releases
-
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
   contents: write
