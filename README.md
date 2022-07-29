@@ -59,6 +59,14 @@ emulator by just double-clicking it or by typing the command below next to the e
 
 You can use the keyboard to play the game.
 
+| Arcade buttons | Emulator buttons |
+|----------------|------------------|
+| Insert coin    | C                |
+| start          | Space            |
+| shoot          | ↑                |
+| ←              | ←                |
+| →              | →                |
+
 ## Compilation
 
 First thing you need is to install cargo. You have it if you already have installed Rust, if not, please follow the
