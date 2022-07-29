@@ -81,17 +81,6 @@ impl Register {
     }
 }
 
-/*
-S - Sign Flag
-Z - Zero Flag
-0 - Not used, always zero
-A - also called AC, Auxiliary Carry Flag
-0 - Not used, always zero
-P - Parity Flag
-1 - Not used, always one
-C - Carry Flag
-*/
-
 impl Register {
     pub fn get_flag(&self, f: Flag) -> bool {
         binary_lib::get_bit(self.f, f as usize)
