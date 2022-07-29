@@ -47,12 +47,14 @@ jobs:
         run: sudo apt-get install libsdl2-dev
       - name: Compile code
         run: cargo build --release
+      - name: Copy exe to root
+        run: cp ./target/release/space_invaders_arcade_emulator .
       - name: Upload artifact release
         uses: actions/upload-artifact@v2
         with:
           name: artifact-ubuntu
           path: |
-            ./target/release/space_invaders_arcade_emulator
+            ./space_invaders_arcade_emulator
             ./game_roms
   build-macos:
     name: Build macos
@@ -66,12 +68,14 @@ jobs:
         run: export LIBRARY_PATH="$LIBRARY_PATH:/opt/local/lib/"
       - name: Compile code
         run: cargo build --release
+      - name: Copy exe to root
+        run: cp ./target/release/space_invaders_arcade_emulator .
       - name: Upload artifact release
         uses: actions/upload-artifact@v2
         with:
           name: artifact-macos
           path: |
-            ./target/release/space_invaders_arcade_emulator
+            ./space_invaders_arcade_emulator
             ./game_roms
   release-project:
     name: Release project

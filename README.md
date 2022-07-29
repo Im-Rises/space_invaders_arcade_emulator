@@ -55,6 +55,10 @@ emulator by just double-clicking it or by typing the command below next to the e
 ./space_invaders_arcade_emulator
 ```
 
+## Controls
+
+You can use the keyboard to play the game.
+
 ## Compilation
 
 First thing you need is to install cargo. You have it if you already have installed Rust, if not, please follow the
