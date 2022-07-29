@@ -371,7 +371,8 @@ mod tests {
     #[test]
     fn cpu_test() {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
-        let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
+        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
+        let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
 
         let mut cycles_counter: u64 = 0;
         let mut opcode: u8 = 0;
