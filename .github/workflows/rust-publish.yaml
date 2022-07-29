@@ -92,7 +92,7 @@ jobs:
       - name: Archive ubuntu release
         uses: thedoctor0/zip-release@master
         with:
-          filename: release-windows.zip
+          filename: release-linux.zip
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
