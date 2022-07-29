@@ -24,8 +24,9 @@ const INTERRUPT_MIDDLE_VBLANK: usize = INTERRUPT_VBLANK_COUNTER / 2;
 
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
-    mmu: Rc<RefCell<mmu::Mmu>>,
     ppu: ppu::Ppu,
+    mmu: Rc<RefCell<mmu::Mmu>>,
+    inputs_outputs: Rc<RefCell<inputs_outputs::InputsOutputs>>,
     canvas: WindowCanvas,
     sdl_context: Sdl,
 }
@@ -33,13 +34,15 @@ pub struct SpaceInvadersArcade {
 impl SpaceInvadersArcade {
     pub fn new() -> SpaceInvadersArcade {
         let mmu_init = Rc::new(RefCell::new(mmu::Mmu::new()));
-        let video = SpaceInvadersArcade::init_video().unwrap();
+        let video_init = SpaceInvadersArcade::init_video().unwrap();
+        let inputs_outputs_init = Rc::new(RefCell::new(inputs_outputs::InputsOutputs::new()));
         SpaceInvadersArcade {
-            cpu: cpu::Cpu::new(&mmu_init, 0),
-            mmu: Rc::clone(&mmu_init),
+            cpu: cpu::Cpu::new(&mmu_init, &inputs_outputs_init, 0),
             ppu: ppu::Ppu::new(&mmu_init),
-            canvas: video.0,
-            sdl_context: video.1,
+            mmu: Rc::clone(&mmu_init),
+            inputs_outputs: Rc::clone(&inputs_outputs_init),
+            canvas: video_init.0,
+            sdl_context: video_init.1,
         }
     }
     pub fn start(&mut self) {
@@ -119,7 +122,7 @@ impl SpaceInvadersArcade {
         Ok(())
     }
 
-    fn get_window_active(&self) -> Result<bool, String> {
+    fn get_window_active(&mut self) -> Result<bool, String> {
         let mut event_pump = self.sdl_context.event_pump()?;
         let mut window_active = true;
         for event in event_pump.poll_iter() {
@@ -129,6 +132,14 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => window_active = false,
+                Event::KeyDown {
+                    keycode: Some(Keycode::C),
+                    ..
+                } => self.inputs_outputs.borrow_mut().set_c(),
+                Event::KeyUp {
+                    keycode: Some(Keycode::C),
+                    ..
+                } => self.inputs_outputs.borrow_mut().reset_c(),
                 _ => window_active = true,
             }
         }

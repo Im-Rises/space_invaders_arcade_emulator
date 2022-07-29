@@ -24,11 +24,11 @@ pub struct Cpu {
     cycles: u8,
     opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
-    inputs_outputs: InputsOutputs,
+    inputs_outputs: Rc<RefCell<InputsOutputs>>,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, inputs_outputs: &Rc<RefCell<InputsOutputs>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
@@ -38,7 +38,7 @@ impl Cpu {
             cycles: 0,
             opcode: 0,
             mmu: Rc::clone(&mmu),
-            inputs_outputs: InputsOutputs::new(),
+            inputs_outputs: Rc::clone(&inputs_outputs),
         }
     }
 

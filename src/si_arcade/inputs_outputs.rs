@@ -1,6 +1,18 @@
+use crate::binary_lib::{set_bit, set_reset_bit};
+
+struct PlayerInputs {
+    left: bool,
+    right: bool,
+    fire: bool,
+    start: bool,
+}
+
 pub struct InputsOutputs {
     shift_register: u16,
     shift_offset: u8,
+    coin: bool,
+    player1: PlayerInputs,
+    player2: PlayerInputs,
 }
 
 impl InputsOutputs {
@@ -8,13 +20,29 @@ impl InputsOutputs {
         InputsOutputs {
             shift_register: 0,
             shift_offset: 0,
+            coin: false,
+            player1: PlayerInputs {
+                left: false,
+                right: false,
+                fire: false,
+                start: false,
+            },
+            player2: PlayerInputs {
+                left: false,
+                right: false,
+                fire: false,
+                start: false,
+            },
         }
     }
 
     pub fn inputs(&self, port: u8, mut data: u8) -> u8 {
         match port {
             0 => (), //INPUTS (Mapped in hardware but never used by the code)
-            1 => (), //INPUTS
+            1 => {
+                data = 0b0000_0000;
+                data = set_reset_bit(data, 0, self.get_c());
+            } //INPUTS
             2 => (), //INPUTS
             3 => data = ((self.shift_register >> (8 - self.shift_offset)) & 0xFF) as u8,
             6 => (), //WATCHDOG
@@ -42,5 +70,17 @@ impl InputsOutputs {
                 );
             }
         }
+    }
+
+    pub fn set_c(&mut self) {
+        self.coin = true;
+    }
+
+    pub fn reset_c(&mut self) {
+        self.coin = false;
+    }
+
+    pub fn get_c(&self) -> bool {
+        self.coin
     }
 }

@@ -796,13 +796,13 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
     let port = cpu.fetch_byte();
-    cpu.regs.a = cpu.inputs_outputs.inputs(port, cpu.regs.a);
+    cpu.regs.a = cpu.inputs_outputs.borrow_mut().inputs(port, cpu.regs.a);
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
     let port = cpu.fetch_byte();
-    cpu.inputs_outputs.outputs(port, cpu.regs.a);
+    cpu.inputs_outputs.borrow_mut().outputs(port, cpu.regs.a);
     10
 }
 
