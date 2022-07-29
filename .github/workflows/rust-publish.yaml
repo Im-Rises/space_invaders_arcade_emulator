@@ -1,4 +1,4 @@
-name: rust-publish
+name: Rust Publish
 
 on:
   push:
@@ -101,7 +101,7 @@ jobs:
           asset_name: space_invaders_arcade_emulator-windows-v${{ github.run_number }}.zip
           asset_content_type: application/zip
       - name: Delete windows release files
-        uses: |
+        run: |
           rm space_invaders_arcade_emulator.exe
           rm release-windows.zip
           rm SDL2.dll
@@ -125,7 +125,7 @@ jobs:
           asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.zip
           asset_content_type: application/zip
       - name: Delete ubuntu release files
-        uses: |
+        run: |
           rm space_invaders_arcade_emulator
       - name: Download macos artifact content
         uses: actions/download-artifact@v2
