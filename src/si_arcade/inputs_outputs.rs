@@ -19,7 +19,7 @@ impl InputsOutputs {
             3 => data = ((self.shift_register >> (8 - self.shift_offset)) & 0xFF) as u8,
             6 => (), //WATCHDOG
             _ => {
-                panic!(
+                println!(
                     "Error: Writing to port not implemented at port {} with data {}",
                     port, data
                 );
@@ -36,7 +36,7 @@ impl InputsOutputs {
             5 => (), //Sound bit
             6 => (), //Watch dog
             _ => {
-                panic!(
+                println!(
                     "Error: Reading from port not implemented at port {} with data {}",
                     port, data
                 );
