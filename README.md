@@ -166,3 +166,12 @@ Wikipedia:
 
 Rustfmt:  
 <https://github.com/rust-lang/rustfmt>
+
+## Contributors
+
+Quentin MOREL :
+
+- @Im-Rises
+- <https://github.com/Im-Rises>
+
+[![GitHub contributors](https://contrib.rocks/image?repo=Im-Rises/GameBoyEmulator)](https://github.com/Im-Rises/GameBoyEmulator/graphs/contributors)
