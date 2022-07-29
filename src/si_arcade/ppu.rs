@@ -95,8 +95,6 @@ impl Ppu {
             .update(None, &self.screen, SCREEN_WIDTH * 3)
             .expect("TODO: panic message");
 
-        // self.canvas.clear();
-        // self.canvas.copy(&texture, None, None)?;
         self.canvas.copy_ex(&texture, None, None, -90.0, None, false, false)?;
         self.canvas.present();
         Ok(())
