@@ -15,14 +15,12 @@ use crate::binary_lib::get_bit;
 use crate::si_arcade::mmu::Mmu;
 
 pub const SCREEN_FREQUENCY: usize = 60;
-const SCREEN_WIDTH: usize = 224;
-const SCREEN_HEIGHT: usize = 256;
+const SCREEN_WIDTH: usize = 256;
+const SCREEN_HEIGHT: usize = 224;
 
 pub struct Ppu {
     mmu: Rc<RefCell<Mmu>>,
-    // window: Window,
     screen: [u8; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
-    // texture: Texture,
     canvas: WindowCanvas,
     sdl_context: Sdl,
 }
@@ -35,9 +33,7 @@ impl Ppu {
 
         Ppu {
             mmu: Rc::clone(&mmu),
-            // window: window_canvas,
             screen: [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
-            // texture: (),
             canvas: video.0,
             sdl_context: video.1,
         }
@@ -66,23 +62,22 @@ impl Ppu {
     }
 
     pub fn clock(&mut self) -> Result<(), String> {
-        // self.texture.update(None, self.mmu.borrow().get_vram(), SCREEN_WIDTH)
-
-        let mut index: u32 = 0;
+        let mut index: usize = 0;
         for data in self.mmu.borrow().get_vram() {
-            for bit in 0..7 {
-                if get_bit(*data, bit as usize) {
-                    self.screen[(index * 3 + bit) as usize] = 0xFF;
-                    self.screen[(index * 3 + bit + 1) as usize] = 0xFF;
-                    self.screen[(index * 3 + bit + 2) as usize] = 0xFF;
+            for bit in 0..8 {
+                let color: u8;
+                if get_bit(*data, bit) {
+                    color = 0xFF;
                 } else {
-                    self.screen[(index * 3 + bit) as usize] = 0;
-                    self.screen[(index * 3 + bit + 1) as usize] = 0;
-                    self.screen[(index * 3 + bit + 2) as usize] = 0;
+                    color = 0;
                 }
-                index += 1;
+                self.screen[index] = color;
+                self.screen[index + 1] = color;
+                self.screen[index + 2] = color;
+                index += 3;
             }
         }
+
         let texture_creator = self.canvas.texture_creator();
         let mut texture = texture_creator
             .create_texture_streaming(PixelFormatEnum::RGB24, (SCREEN_WIDTH) as u32, SCREEN_HEIGHT as u32)
