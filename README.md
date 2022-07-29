@@ -128,6 +128,7 @@ The project is set with a set of different scripts:
 - Rust : Check the code compilation.
 - Rust clippy : Evaluate the code quality (error, warnings, etc...).
 - Rust publisher : Publish the app to releases when pushing to the main branch.
+- Rust fmt :  Check the code good formatting
 
 ## Documentation
 
@@ -157,3 +158,6 @@ Intel 8080 opcodes table:
 
 Wikipedia:  
 <https://en.wikipedia.org/wiki/Intel_8080>
+
+Rustfmt:  
+<https://github.com/rust-lang/rustfmt>
