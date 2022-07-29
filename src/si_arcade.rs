@@ -54,6 +54,10 @@ impl SpaceInvadersArcade {
     // fn restart_emulation(&self) {}
     // fn save_state(&self) {}
     // fn load_state(&self) {}
+
+    fn clock_ppu(&self) {}
+
+    fn handle_inputs(&self) {}
 }
 
 #[cfg(test)]

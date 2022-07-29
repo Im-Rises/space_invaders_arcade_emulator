@@ -9,7 +9,7 @@ use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
-pub(crate) mod interrupts;
+pub mod interrupts;
 mod opcodes;
 mod register;
 
