@@ -11,11 +11,15 @@ Space Invaders arcade game emulator in development made in Rust.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
-## Features
+[//]: # (## Features)
 
 ## Images
 
-## Videos
+| Title screen | Game demo |
+|--------------|-----------|
+|![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png)|![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png)|
+
+[//]: # (## Videos)
 
 ## Quick start
 
@@ -50,6 +54,18 @@ emulator by just double-clicking it or by typing the command below next to the e
 ```bash
 ./space_invaders_arcade_emulator
 ```
+
+## Controls
+
+You can use the keyboard to play the game.
+
+| Arcade buttons | Emulator buttons |
+|----------------|------------------|
+| Insert coin    | C                |
+| start          | Space            |
+| shoot          | ↑                |
+| ←              | ←                |
+| →              | →                |
 
 ## Compilation
 
@@ -121,14 +137,15 @@ cargo test -- --nocapture
 
 [![Rust](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml)
 [![rust-clippy analyze](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-clippy.yml)
+[![rustfmt check](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rustfmt.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rustfmt.yml)
 [![rust-publish](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust-publish.yaml)
 
 The project is set with a set of different scripts:
 
-- Rust : Check the code compilation.
-- Rust clippy : Evaluate the code quality (error, warnings, etc...).
-- Rust publisher : Publish the app to releases when pushing to the main branch.
-- Rust fmt :  Check the code good formatting
+- rust : Check the code compilation.
+- rust-clippy analyze : Evaluate the code quality (error, warnings, etc...).
+- rustfmt check :  Check the code good formatting
+- rust-publisher : Publish the app to releases when pushing to the main branch.
 
 ## Documentation
 
@@ -161,3 +178,12 @@ Wikipedia:
 
 Rustfmt:  
 <https://github.com/rust-lang/rustfmt>
+
+## Contributors
+
+Quentin MOREL :
+
+- @Im-Rises
+- <https://github.com/Im-Rises>
+
+[![GitHub contributors](https://contrib.rocks/image?repo=Im-Rises/GameBoyEmulator)](https://github.com/Im-Rises/GameBoyEmulator/graphs/contributors)

@@ -1,17 +1,8 @@
-name: rust-publish
-
-# thanks to:
-# https://github.com/msusdev/end-to-end-github-actions/blob/main/presentations/ci_github_actions.md
-# https://www.youtube.com/watch?v=cvvOqNorlZQ
-# https://github.com/actions/upload-release-asset
-# other
-# https://github.com/marketplace/actions/create-release
-# https://github.com/marvinpinto/action-automatic-releases
+name: Rust Publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 permissions:
   contents: write
@@ -36,6 +27,7 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator.exe
             ./SDL2.dll
+            ./game_roms
   build-ubuntu:
     name: Build ubuntu
     runs-on: ubuntu-latest
@@ -46,11 +38,36 @@ jobs:
         run: sudo apt-get install libsdl2-dev
       - name: Compile code
         run: cargo build --release
+      - name: Copy exe to root
+        run: cp ./target/release/space_invaders_arcade_emulator .
       - name: Upload artifact release
         uses: actions/upload-artifact@v2
         with:
           name: artifact-ubuntu
-          path: ./target/release/space_invaders_arcade_emulator
+          path: |
+            ./space_invaders_arcade_emulator
+            ./game_roms
+  build-macos:
+    name: Build macos
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download libraries
+        run: brew install sdl2
+      - name: Add lib to path
+        run: export LIBRARY_PATH="$LIBRARY_PATH:/opt/local/lib/"
+      - name: Compile code
+        run: cargo build --release
+      - name: Copy exe to root
+        run: cp ./target/release/space_invaders_arcade_emulator .
+      - name: Upload artifact release
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact-macos
+          path: |
+            ./space_invaders_arcade_emulator
+            ./game_roms
   release-project:
     name: Release project
     runs-on: ubuntu-latest
@@ -83,6 +100,11 @@ jobs:
           asset_path: release-windows.zip
           asset_name: space_invaders_arcade_emulator-windows-v${{ github.run_number }}.zip
           asset_content_type: application/zip
+      - name: Delete windows release files
+        run: |
+          rm space_invaders_arcade_emulator.exe
+          rm release-windows.zip
+          rm SDL2.dll
       - name: Download ubuntu artifact content
         uses: actions/download-artifact@v2
         with:
@@ -101,4 +123,26 @@ jobs:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: release-linux.zip
           asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.zip
+          asset_content_type: application/zip
+      - name: Delete ubuntu release files
+        run: |
+          rm space_invaders_arcade_emulator
+      - name: Download macos artifact content
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact-macos
+      - name: View content
+        run: ls -R
+      - name: Archive macos release
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: release-macos.zip
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: release-macos.zip
+          asset_name: space_invaders_arcade_emulator-macos-v${{ github.run_number }}.zip
           asset_content_type: application/zip

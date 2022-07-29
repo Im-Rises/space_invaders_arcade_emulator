@@ -9,7 +9,7 @@ use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
-pub(crate) mod interrupts;
+pub mod interrupts;
 mod opcodes;
 mod register;
 
@@ -24,11 +24,11 @@ pub struct Cpu {
     cycles: u8,
     opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
-    inputs_outputs: InputsOutputs,
+    inputs_outputs: Rc<RefCell<InputsOutputs>>,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, inputs_outputs: &Rc<RefCell<InputsOutputs>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
@@ -38,21 +38,22 @@ impl Cpu {
             cycles: 0,
             opcode: 0,
             mmu: Rc::clone(&mmu),
-            inputs_outputs: InputsOutputs::new(),
+            inputs_outputs: Rc::clone(&inputs_outputs),
         }
     }
 
     pub fn clock(&mut self) {
         if !self.halted {
             if self.cycles == 0 {
-                self.opcode = self.fetch_byte();
-                self.cycles = self.compute_opcode(self.opcode);
+                self.fetch_compute();
+                // self.opcode = self.fetch_byte();
+                // self.cycles = self.compute_opcode(self.opcode);
             }
             self.cycles -= 1;
         }
     }
 
-    pub fn clock_debug(&mut self) -> (u8, u8) {
+    pub fn fetch_compute(&mut self) -> (u8, u8) {
         self.opcode = self.fetch_byte();
         self.cycles = self.compute_opcode(self.opcode);
         (self.cycles, self.opcode)
@@ -341,8 +342,13 @@ impl Cpu {
         }
     }
 
-    pub fn get_state(&self) -> (u16, u16, u16, u16, u16, u16, u8) {
-        (
+    pub fn get_inte(&self) -> bool {
+        self.inte
+    }
+
+    pub fn print_regs(&self, cycles_total: u64) {
+        println!(
+            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
             self.pc,
             self.regs.get_af(),
             self.regs.get_bc(),
@@ -350,10 +356,33 @@ impl Cpu {
             self.regs.get_hl(),
             self.sp,
             self.cycles,
-        )
+            cycles_total
+        );
     }
+}
 
-    pub fn get_inte(&self) -> bool {
-        self.inte
+#[cfg(test)]
+mod tests {
+    use crate::si_arcade::cpu::Cpu;
+    use crate::si_arcade::mmu::Mmu;
+
+    use super::*;
+
+    #[test]
+    fn cpu_test() {
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
+        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
+        let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
+
+        let mut cycles_counter: u64 = 0;
+        let mut opcode: u8 = 0;
+        for i in 0..650 {
+            cpu_debug.print_regs(cycles_counter);
+            let cycles_opcode = cpu_debug.fetch_compute();
+            cycles_counter += cycles_opcode.0 as u64;
+            opcode = cycles_opcode.1;
+        }
+        cpu_debug.print_regs(cycles_counter);
+        assert_eq!(cpu_debug.pc, 0); //Verify we reach pc = 0x0 after 651 operations
     }
 }
