@@ -135,11 +135,43 @@ impl SpaceInvadersArcade {
                 Event::KeyDown {
                     keycode: Some(Keycode::C),
                     ..
-                } => self.inputs_outputs.borrow_mut().set_c(),
+                } => self.inputs_outputs.borrow_mut().coin = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.left = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.right = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Up),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.shot = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.start = true,
                 Event::KeyUp {
                     keycode: Some(Keycode::C),
                     ..
-                } => self.inputs_outputs.borrow_mut().reset_c(),
+                } => self.inputs_outputs.borrow_mut().coin = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.left = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.right = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::Up),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.shot = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player1.start = false,
                 _ => window_active = true,
             }
         }
