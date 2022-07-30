@@ -127,6 +127,7 @@ jobs:
       - name: Delete ubuntu release files
         run: |
           rm space_invaders_arcade_emulator
+          rm release-linux.zip
       - name: Download macos artifact content
         uses: actions/download-artifact@v2
         with:

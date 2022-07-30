@@ -3,6 +3,8 @@
 invaders.*
 #*.COM
 documentations/
+*.wav
+*.zip
 
 # Ignore compilation folder
 [Tt]arget/
