@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -22,6 +23,8 @@ const WINDOW_HEIGHT: usize = 600;
 const INTERRUPT_VBLANK_COUNTER: usize = cpu::CLOCK_FREQUENCY / ppu::SCREEN_FREQUENCY;
 const INTERRUPT_MIDDLE_VBLANK: usize = INTERRUPT_VBLANK_COUNTER / 2;
 
+const SCREEN_REFRESH_TIME: u128 = 16;
+
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
     ppu: ppu::Ppu,
@@ -29,6 +32,7 @@ pub struct SpaceInvadersArcade {
     inputs_outputs: Rc<RefCell<inputs_outputs::InputsOutputs>>,
     canvas: WindowCanvas,
     sdl_context: Sdl,
+    extraship_btn_last_state: bool,
 }
 
 impl SpaceInvadersArcade {
@@ -43,12 +47,14 @@ impl SpaceInvadersArcade {
             inputs_outputs: Rc::clone(&inputs_outputs_init),
             canvas: video_init.0,
             sdl_context: video_init.1,
+            extraship_btn_last_state: false,
         }
     }
     pub fn start(&mut self) {
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
         while self.get_window_active().unwrap() {
+            let time = Instant::now();
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
@@ -60,6 +66,9 @@ impl SpaceInvadersArcade {
                     frequency_counter = 0;
                     self.ppu.clock();
                     self.update_screen().expect("Error: Cannot update screen");
+                    while time.elapsed().as_millis() < SCREEN_REFRESH_TIME {
+                        // println!("{}", time.elapsed().as_millis())
+                    }
                 }
             } else {
                 frequency_counter = 0;
@@ -210,6 +219,59 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::G),
                     ..
                 } => self.inputs_outputs.borrow_mut().player2.start = false,
+
+                //DIP 3
+                Event::KeyDown {
+                    keycode: Some(Keycode::K),
+                    ..
+                } => self.inputs_outputs.borrow_mut().dip3 = true,
+                Event::KeyUp {
+                    keycode: Some(Keycode::K),
+                    ..
+                } => self.inputs_outputs.borrow_mut().dip3 = false,
+
+                //DIP 5
+                Event::KeyDown {
+                    keycode: Some(Keycode::L),
+                    ..
+                } => self.inputs_outputs.borrow_mut().dip5 = true,
+                Event::KeyUp {
+                    keycode: Some(Keycode::L),
+                    ..
+                } => self.inputs_outputs.borrow_mut().dip5 = false,
+
+                //DIP 6
+                Event::KeyDown {
+                    keycode: Some(Keycode::M),
+                    ..
+                } => {
+                    if !self.extraship_btn_last_state {
+                        self.inputs_outputs.borrow_mut().dip6 = !self.inputs_outputs.borrow_mut().dip6;
+                        self.extraship_btn_last_state = true;
+                        if self.inputs_outputs.borrow().dip6 {
+                            println!("Extra ship at 1000 points");
+                        } else {
+                            println!("Extra ship at 1000 points");
+                        }
+                    }
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::M),
+                    ..
+                } => {
+                    self.inputs_outputs.borrow_mut().dip6 = false;
+                    self.extraship_btn_last_state = false;
+                }
+
+                // //DIP7 Coin info displayed in demo screen 0=ON
+                // Event::KeyDown {
+                //     keycode: Some(Keycode::O),
+                //     ..
+                // } => self.inputs_outputs.borrow_mut().dip7 = true,
+                // Event::KeyUp {
+                //     keycode: Some(Keycode::O),
+                //     ..
+                // } => self.inputs_outputs.borrow_mut().dip7 = false,
 
                 // Default
                 _ => window_active = true,
