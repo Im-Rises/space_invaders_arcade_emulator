@@ -436,7 +436,7 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_sub(1);
-    cpu.regs.set_reset_flag(Flag::C, !result.1);
+    cpu.regs.set_reset_flag(Flag::C, result.1);
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
     cpu.regs.update_flag_p(result.0);
