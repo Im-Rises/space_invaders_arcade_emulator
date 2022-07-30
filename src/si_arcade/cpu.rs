@@ -22,13 +22,13 @@ pub struct Cpu {
     inte: bool,
     halted: bool,
     cycles: u8,
-    opcode: u8,
+    // opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
-    inputs_outputs: Rc<RefCell<InputsOutputs>>,
+    // inputs_outputs: Rc<RefCell<InputsOutputs>>,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>, inputs_outputs: &Rc<RefCell<InputsOutputs>>, ini_pc: u16) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
@@ -36,34 +36,38 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
-            opcode: 0,
+            // opcode: 0,
             mmu: Rc::clone(&mmu),
-            inputs_outputs: Rc::clone(&inputs_outputs),
+            // inputs_outputs: Rc::clone(&inputs_outputs),
         }
     }
 
-    pub fn clock(&mut self) {
-        if !self.halted {
-            if self.cycles == 0 {
-                self.fetch_compute();
-            }
-            self.cycles -= 1;
-        }
+    pub fn fetch_opcode(&mut self) -> u8 {
+        self.fetch_byte()
     }
 
-    pub fn fetch_compute(&mut self) -> (u8, u8) {
-        self.opcode = self.fetch_byte();
-        self.cycles = self.compute_opcode(self.opcode);
-        (self.cycles, self.opcode)
-    }
+    // pub fn clock(&mut self) {
+    //     if !self.halted {
+    //         if self.cycles == 0 {
+    //             self.fetch_compute();
+    //         }
+    //         self.cycles -= 1;
+    //     }
+    // }
+    //
+    // pub fn fetch_compute(&mut self) -> (u8, u8) {
+    //     self.opcode = self.fetch_byte();
+    //     self.cycles = self.compute_opcode(self.opcode);
+    //     (self.cycles, self.opcode)
+    // }
 
-    fn fetch_byte(&mut self) -> u8 {
+    pub fn fetch_byte(&mut self) -> u8 {
         let data = self.read(self.pc);
         self.pc += 1;
         data
     }
 
-    fn fetch_word(&mut self) -> u16 {
+    pub fn fetch_word(&mut self) -> u16 {
         (self.fetch_byte() as u16 | (self.fetch_byte() as u16) << 8) as u16
     }
 
@@ -75,7 +79,7 @@ impl Cpu {
         self.mmu.borrow_mut().write(address, data);
     }
 
-    fn compute_opcode(&mut self, opcode: u8) -> u8 {
+    pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
             0x00 => nop(),
             0x01 => lxi_b(self),
@@ -342,6 +346,26 @@ impl Cpu {
 
     pub fn get_inte(&self) -> bool {
         self.inte
+    }
+
+    pub fn get_halted(&self) -> bool {
+        self.halted
+    }
+
+    pub fn get_cycles(&self) -> u8 {
+        self.cycles
+    }
+
+    pub fn get_a(&self) -> u8 {
+        self.regs.a
+    }
+
+    pub fn set_a(&mut self, value: u8) {
+        self.regs.a = value;
+    }
+
+    pub fn set_cycles(&mut self, value: u8) {
+        self.cycles = value;
     }
 
     pub fn print_regs(&self, cycles_total: u64) {
