@@ -46,8 +46,6 @@ impl Cpu {
         if !self.halted {
             if self.cycles == 0 {
                 self.fetch_compute();
-                // self.opcode = self.fetch_byte();
-                // self.cycles = self.compute_opcode(self.opcode);
             }
             self.cycles -= 1;
         }
@@ -370,7 +368,7 @@ mod tests {
 
     #[test]
     fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("test_roms/TST8080.COM")));
         let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
         let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
 
@@ -385,4 +383,22 @@ mod tests {
         cpu_debug.print_regs(cycles_counter);
         assert_eq!(cpu_debug.pc, 0); //Verify we reach pc = 0x0 after 651 operations
     }
+
+    // #[test]
+    // fn cpu_test2() {
+    //     let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("test_roms/cpudiag.BIN")));
+    //     let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
+    //     let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
+    //
+    //     let mut cycles_counter: u64 = 0;
+    //     let mut opcode: u8 = 0;
+    //     for i in 0..650 {
+    //         cpu_debug.print_regs(cycles_counter);
+    //         let cycles_opcode = cpu_debug.fetch_compute();
+    //         cycles_counter += cycles_opcode.0 as u64;
+    //         opcode = cycles_opcode.1;
+    //     }
+    //     cpu_debug.print_regs(cycles_counter);
+    //     assert_eq!(cpu_debug.pc, 0); //Verify we reach pc = 0x0 after 651 operations
+    // }
 }

@@ -526,8 +526,6 @@ pub fn aci_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    // let result = unsafe { operand1.carrying_add(operand2, cpu.regs.get_flag(Flag::C)) };
-
     let result_u16: u16 = operand1 as u16 + operand2 as u16 + cpu.regs.get_flag(Flag::C) as u16;
     let result_u8 = (result_u16 & 0x00FF) as u8;
     cpu.regs.set_reset_flag(Flag::C, result_u16 > 0xFF);
@@ -768,16 +766,12 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
     // Step 1
     if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
-        // cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, 0x06);
-
         cpu.regs.a = cpu.regs.a.wrapping_add(0x06);
         cpu.regs.update_flag_a(cpu.regs.a, 0x06);
     };
 
     // Step 2
     if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
-        // cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, 0x60);
-
         let result = cpu.regs.a.overflowing_add(0x60);
         if result.1 {
             cpu.regs.set_reset_flag(Flag::C, true);

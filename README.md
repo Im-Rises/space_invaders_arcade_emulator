@@ -92,7 +92,10 @@ Then you can start by double-clicking the executable of typing the following com
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-For MaxOs users you will need to type the following command to install SDL2.
+For MaxOs users you will need to install Brew, please follow the instruction in the link below:  
+<https://brew.sh>
+
+Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
