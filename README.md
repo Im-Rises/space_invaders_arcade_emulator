@@ -90,7 +90,7 @@ Then you can start by double-clicking the executable of typing the following com
 
 ### MacOs
 
-<a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="	https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
+<a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
 For MaxOs users you will need to type the following command to install SDL2.
 

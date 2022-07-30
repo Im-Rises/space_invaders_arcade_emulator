@@ -28,6 +28,7 @@ jobs:
             ./space_invaders_arcade_emulator.exe
             ./SDL2.dll
             ./game_roms
+            ./game_audios
   build-ubuntu:
     name: Build ubuntu
     runs-on: ubuntu-latest
@@ -47,6 +48,7 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator
             ./game_roms
+            ./game_audios
   build-macos:
     name: Build macos
     runs-on: macos-latest
@@ -68,6 +70,7 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator
             ./game_roms
+            ./game_audios
   release-project:
     name: Release project
     runs-on: ubuntu-latest

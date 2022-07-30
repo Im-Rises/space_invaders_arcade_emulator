@@ -132,10 +132,19 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => window_active = false,
+
+                //Insert Coin KeyDown
                 Event::KeyDown {
                     keycode: Some(Keycode::C),
                     ..
                 } => self.inputs_outputs.borrow_mut().coin = true,
+                //Insert Coin KeyUp
+                Event::KeyUp {
+                    keycode: Some(Keycode::C),
+                    ..
+                } => self.inputs_outputs.borrow_mut().coin = false,
+
+                //Player 1 KeyDown
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
@@ -152,10 +161,8 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Space),
                     ..
                 } => self.inputs_outputs.borrow_mut().player1.start = true,
-                Event::KeyUp {
-                    keycode: Some(Keycode::C),
-                    ..
-                } => self.inputs_outputs.borrow_mut().coin = false,
+
+                //Player 1 KeyUp
                 Event::KeyUp {
                     keycode: Some(Keycode::Left),
                     ..
@@ -172,6 +179,43 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Space),
                     ..
                 } => self.inputs_outputs.borrow_mut().player1.start = false,
+
+                //Player 2 KeyDown
+                Event::KeyDown {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.left = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::F),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.right = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::E),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.shot = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::G),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.start = true,
+                //Player 2 KeyUp
+                Event::KeyUp {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.left = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::F),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.right = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::E),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.shot = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::G),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.start = false,
+
+                // Default
                 _ => window_active = true,
             }
         }
