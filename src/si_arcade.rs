@@ -53,8 +53,8 @@ impl SpaceInvadersArcade {
     pub fn start(&mut self) {
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
+        let mut time = Instant::now();
         while self.get_window_active().unwrap() {
-            let time = Instant::now();
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
@@ -69,6 +69,7 @@ impl SpaceInvadersArcade {
                     while time.elapsed().as_millis() < SCREEN_REFRESH_TIME {
                         // println!("{}", time.elapsed().as_millis())
                     }
+                    time = Instant::now();
                 }
             } else {
                 frequency_counter = 0;
