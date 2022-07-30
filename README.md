@@ -15,30 +15,52 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 ## Images
 
-| Title screen | Game demo |
-|--------------|-----------|
-|![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png)|![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png)|
+| Title screen | Game screen                                                                                                            |
+|--------------|------------------------------------------------------------------------------------------------------------------------|
+|![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png)| ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
 
 [//]: # (## Videos)
 
 ## Quick start
 
-To use the Emulator, you need the roms. The roms the emulator is working with are named:
+To download the emulator, you can click one of the icons below depending on your operating system or you can click the
+release section of the GitHub page.
+
+For each version when you unzip the downloaded release, you will get the executable and two folder, one
+named `game_roms` where you must put the game's roms:
 
 - invaders.h
 - invaders.g
 - invaders.e
 - invaders.f
 
-You can download the latest version in the release section of the GitHub repository, you can also download the last
-version by clicking on the icon of you os below.
+The other folder named `game_audios`, need to contain the different .wav files audio. of the game:
+
+- 0.wav
+- 1.wav
+- 2.wav
+- 3.wav
+- 4.wav
+- 5.wav
+- 6.wav
+- 7.wav
+- 8.wav
+
+The `wav` files wan be downloaded in the links below:  
+<https://github.com/howprice/invaders-emulator>
+
+Depending on you `operating system` you will need to install some libs, they are installed differently depending on your
+system, please follow one of the section belwo `Windows` or `Linux` or `MacOs`.
 
 ### Windows
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-Download the executable and create a folder named `roms` next to it. In this folder put the roms, now, you can start the
-emulator by just double-clicking it or by typing the command below next to the executable.
+For Windows users you don't need to install the libs, you just need to be carefully that you have the `sdl2.dll` next to
+the `space_invaders_arcade_emulator.exe` or the emulator won't start.
+
+Once everything is set up by you can start the emulator by double-clicking the executable of typing the following
+command next to it:
 
 ```bash
 .\space_invaders_arcade_emulator.exe
@@ -48,8 +70,44 @@ emulator by just double-clicking it or by typing the command below next to the e
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="cmakeLogo" style="height:40px;"/></a>
 
-Download the executable and create a folder named `roms` next to it. In this folder put the roms, now, you can start the
-emulator by just double-clicking it or by typing the command below next to the executable.
+For Linux useres, you need to install the SDL2 lib, to do so type one of the following commands:
+
+```bash
+sudo apt-get install libsdl2-2.0-0
+```
+
+or if you're a developer and want to compile the Emulator, please install this version of SDL2:
+
+```bash
+sudo apt-get install libsdl2-dev
+```
+
+Then you can start by double-clicking the executable of typing the following command next to it:
+
+```bash
+./space_invaders_arcade_emulator
+```
+
+### MacOs
+
+<a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
+
+For MaxOs users you will need to install Brew, please follow the instruction in the link below:  
+<https://brew.sh>
+
+Once it is installed, you can type the following command to install SDL2.
+
+```bash
+brew install sdl2
+```
+
+You also need to add `SDL2` to the paths by typing:
+
+```bash
+export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
+```
+
+Then you can start by double-clicking the executable of typing the following command next to it:
 
 ```bash
 ./space_invaders_arcade_emulator
@@ -62,10 +120,14 @@ You can use the keyboard to play the game.
 | Arcade buttons | Emulator buttons |
 |----------------|------------------|
 | Insert coin    | C                |
-| start          | Space            |
-| shoot          | ↑                |
-| ←              | ←                |
-| →              | →                |
+| P1 start       | Space            |
+| P1 shoot       | ↑                |
+| P1 ←           | ←                |
+| P1 →           | →                |
+| P2 start       | G                |
+| P2 shoot       | E                |
+| P2 ←           | S                |
+| P2 →           | F                |
 
 ## Compilation
 
@@ -90,12 +152,6 @@ If you want to compile the program, install the developer version with the comma
 
 ```bash
 sudo apt-get install libsdl2-dev
-```
-
-or if you just want to use the emulator type this command:
-
-```bash
-sudo apt-get install libsdl2-2.0-0  
 ```
 
 ---
@@ -166,9 +222,9 @@ SDL2 Rust:
 <https://github.com/Rust-SDL2/rust-sdl2>
 
 Intel 8080 documentations:  
-<https://pastraiser.com/cpu/i8080/i8080_opcodes.html>  
 <https://archive.org/details/8080Datasheet>  
 <https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf>
+<http://bitsavers.org/components/intel/MCS80/9800301D_8080_8085_Assembly_Language_Programming_Manual_May81.pdf>
 
 Intel 8080 opcodes table:  
 <https://www.pastraiser.com/cpu/i8080/i8080_opcodes.html>

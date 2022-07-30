@@ -52,14 +52,14 @@ impl SpaceInvadersArcade {
             self.cpu.clock();
             frequency_counter += 1;
             if self.cpu.get_inte() {
-                if frequency_counter >= INTERRUPT_MIDDLE_VBLANK && last_frequency_counter < INTERRUPT_MIDDLE_VBLANK {
+                if frequency_counter > INTERRUPT_MIDDLE_VBLANK && last_frequency_counter <= INTERRUPT_MIDDLE_VBLANK {
                     cpu::interrupts::interrupt(&mut self.cpu, 1);
                 }
-                if frequency_counter >= INTERRUPT_VBLANK_COUNTER {
+                if frequency_counter > INTERRUPT_VBLANK_COUNTER {
                     cpu::interrupts::interrupt(&mut self.cpu, 2);
                     frequency_counter = 0;
                     self.ppu.clock();
-                    self.update_screen().expect("TODO: panic message");
+                    self.update_screen().expect("Error: Cannot update screen");
                 }
             } else {
                 frequency_counter = 0;
@@ -73,10 +73,6 @@ impl SpaceInvadersArcade {
     // fn restart_emulation(&self) {}
     // fn save_state(&self) {}
     // fn load_state(&self) {}
-
-    fn clock_ppu(&self) {}
-
-    fn handle_inputs(&self) {}
 
     /*-------------------SDL2 Video and Inputs---------------------*/
 
@@ -93,14 +89,14 @@ impl SpaceInvadersArcade {
             .position_centered()
             .resizable()
             // .hidden()
-            .opengl()
+            // .opengl()
             .build()
             .map_err(|e| e.to_string())?;
 
         let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
         canvas
             .set_logical_size(WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32)
-            .expect("TODO: panic message");
+            .expect("Error: Cannot create canvas");
         Ok((canvas, sdl_context))
     }
 
@@ -115,7 +111,7 @@ impl SpaceInvadersArcade {
             .map_err(|e| e.to_string())?;
         texture
             .update(None, self.ppu.get_screen(), ppu::SCREEN_WIDTH * 3)
-            .expect("TODO: panic message");
+            .expect("Error: Cannot create texture");
 
         self.canvas.copy_ex(&texture, None, None, -90.0, None, false, false)?;
         self.canvas.present();
@@ -132,10 +128,19 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => window_active = false,
+
+                //Insert Coin KeyDown
                 Event::KeyDown {
                     keycode: Some(Keycode::C),
                     ..
                 } => self.inputs_outputs.borrow_mut().coin = true,
+                //Insert Coin KeyUp
+                Event::KeyUp {
+                    keycode: Some(Keycode::C),
+                    ..
+                } => self.inputs_outputs.borrow_mut().coin = false,
+
+                //Player 1 KeyDown
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
@@ -152,10 +157,8 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Space),
                     ..
                 } => self.inputs_outputs.borrow_mut().player1.start = true,
-                Event::KeyUp {
-                    keycode: Some(Keycode::C),
-                    ..
-                } => self.inputs_outputs.borrow_mut().coin = false,
+
+                //Player 1 KeyUp
                 Event::KeyUp {
                     keycode: Some(Keycode::Left),
                     ..
@@ -172,6 +175,43 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Space),
                     ..
                 } => self.inputs_outputs.borrow_mut().player1.start = false,
+
+                //Player 2 KeyDown
+                Event::KeyDown {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.left = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::F),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.right = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::E),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.shot = true,
+                Event::KeyDown {
+                    keycode: Some(Keycode::G),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.start = true,
+                //Player 2 KeyUp
+                Event::KeyUp {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.left = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::F),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.right = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::E),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.shot = false,
+                Event::KeyUp {
+                    keycode: Some(Keycode::G),
+                    ..
+                } => self.inputs_outputs.borrow_mut().player2.start = false,
+
+                // Default
                 _ => window_active = true,
             }
         }
