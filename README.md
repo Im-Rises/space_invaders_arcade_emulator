@@ -222,9 +222,9 @@ SDL2 Rust:
 <https://github.com/Rust-SDL2/rust-sdl2>
 
 Intel 8080 documentations:  
-<https://pastraiser.com/cpu/i8080/i8080_opcodes.html>  
 <https://archive.org/details/8080Datasheet>  
 <https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf>
+<http://bitsavers.org/components/intel/MCS80/9800301D_8080_8085_Assembly_Language_Programming_Manual_May81.pdf>
 
 Intel 8080 opcodes table:  
 <https://www.pastraiser.com/cpu/i8080/i8080_opcodes.html>
