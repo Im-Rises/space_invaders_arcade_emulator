@@ -46,8 +46,6 @@ impl Cpu {
         if !self.halted {
             if self.cycles == 0 {
                 self.fetch_compute();
-                // self.opcode = self.fetch_byte();
-                // self.cycles = self.compute_opcode(self.opcode);
             }
             self.cycles -= 1;
         }
@@ -370,7 +368,7 @@ mod tests {
 
     #[test]
     fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug()));
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("test_roms/TST8080.COM")));
         let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
         let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
 

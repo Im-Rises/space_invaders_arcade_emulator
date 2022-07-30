@@ -25,12 +25,12 @@ impl Mmu {
         mmu
     }
 
-    pub fn new_debug() -> Self {
+    pub fn new_debug(rom_path: &str) -> Self {
         let mut mmu = Mmu {
             memory: [0; MEMORY_SIZE],
         };
 
-        let debug_rom: [u8; 0x800] = read_rom("test_roms/TST8080.COM").unwrap();
+        let debug_rom: [u8; 0x800] = read_rom(rom_path).unwrap();
         mmu.memory[0x100..(0x100 + debug_rom.len())].copy_from_slice(&debug_rom);
         mmu.memory[0x7] = 0xc9;
         mmu.memory[0x5] = 0xd3;
