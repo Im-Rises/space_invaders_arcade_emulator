@@ -24,6 +24,10 @@ pub struct InputsOutputs {
     pub coin: bool,
     pub player1: PlayerInputs,
     pub player2: PlayerInputs,
+    pub dip3: bool,
+    pub dip5: bool,
+    pub dip6: bool,
+    pub dip7: bool,
 }
 
 impl InputsOutputs {
@@ -34,6 +38,10 @@ impl InputsOutputs {
             coin: false,
             player1: PlayerInputs::new(),
             player2: PlayerInputs::new(),
+            dip3: false,
+            dip5: false,
+            dip6: false,
+            dip7: false,
         }
     }
 
@@ -53,9 +61,13 @@ impl InputsOutputs {
             } //INPUTS
             2 => {
                 data = 0b0000_0000;
+                data = set_reset_bit(data, 0, self.dip3);
+                data = set_reset_bit(data, 1, self.dip5);
+                data = set_reset_bit(data, 3, self.dip6);
                 data = set_reset_bit(data, 4, self.player2.shot);
                 data = set_reset_bit(data, 5, self.player2.left);
                 data = set_reset_bit(data, 6, self.player2.right);
+                data = set_reset_bit(data, 7, self.dip7);
             } //INPUTS
             3 => data = ((self.shift_register >> (8 - self.shift_offset)) & 0xFF) as u8,
             6 => (), //WATCHDOG

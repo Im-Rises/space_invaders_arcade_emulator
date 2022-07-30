@@ -19,7 +19,9 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 |--------------|------------------------------------------------------------------------------------------------------------------------|
 |![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png)| ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
 
-[//]: # (## Videos)
+## Videos
+
+Placeholder
 
 ## Quick start
 
@@ -92,7 +94,7 @@ Then you can start by double-clicking the executable of typing the following com
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-For MaxOs users you will need to install Brew, please follow the instruction in the link below:  
+For MacOs users you will need to install Brew, please follow the instruction in the link below:  
 <https://brew.sh>
 
 Once it is installed, you can type the following command to install SDL2.
@@ -117,17 +119,33 @@ Then you can start by double-clicking the executable of typing the following com
 
 You can use the keyboard to play the game.
 
-| Arcade buttons | Emulator buttons |
-|----------------|------------------|
-| Insert coin    | C                |
-| P1 start       | Space            |
-| P1 shoot       | ↑                |
-| P1 ←           | ←                |
-| P1 →           | →                |
-| P2 start       | G                |
-| P2 shoot       | E                |
-| P2 ←           | S                |
-| P2 →           | F                |
+| Arcade buttons | Emulator/Keyboard |
+|----------------|-------------------|
+| Insert coin    | C                 |
+| P1 start       | Space             |
+| P1 shoot       | ↑                 |
+| P1 ←           | ←                 |
+| P1 →           | →                 |
+| P2 start       | G                 |
+| P2 shoot       | E                 |
+| P2 ←           | S                 |
+| P2 →           | F                 |
+
+The original game is mapped with some inputs that allow the constructor to choose the difficulty. I Mapped those inputs
+to the keyboard. This allows you to increase the numer of lives and change the extra ship necessity points.
+
+Before pressing start with player 1 or 2, you can choose the number of life you want to have for a game party.
+
+| Emulator/Keyboard | Emulator buttons                   |
+|-------------------|------------------------------------|
+| K                 | 1 more life                        |
+| L                 | 2 more lives                       |
+| M                 | extra ship at 1000 instead of 1500 |
+
+> *Note*  
+> If you don't keep pressed K or L before pressing start and starting a new game you will have 3 lives.  
+> In the same way, you can enable the extra ship to came at 1000 points instead of 1500, but you just need to press
+> the button one time (a confirmation will be displayed in the console).
 
 ## Compilation
 
@@ -154,6 +172,17 @@ If you want to compile the program, install the developer version with the comma
 sudo apt-get install libsdl2-dev
 ```
 
+### MacOs
+
+For MacOs users you will need to install Brew, please follow the instruction in the link below:  
+<https://brew.sh>
+
+Once it is installed, you can type the following command to install SDL2.
+
+```bash
+brew install sdl2
+```
+
 ---
 
 With Rust and SDL2 libs installed, you can now compile the project in two-way, debug or release. To compile go to the
@@ -177,7 +206,8 @@ The compiled app will be in the folder `target/debug` or `target/release` depend
 You can test the good behaviour of the project by typing the commands onf of the following command. It will start the
 unit test of the CPU.
 
-It will start a test rom for the Intel 8080 CPU.
+It will start a test rom for the Intel 8080 CPU. You can find it in the link below:  
+<https://altairclone.com/downloads/cpu_tests/>
 
 ```bash
 cargo test
@@ -234,6 +264,9 @@ Wikipedia:
 
 Rustfmt:  
 <https://github.com/rust-lang/rustfmt>
+
+Test Roms for the Intel 8080:  
+<https://altairclone.com/downloads/cpu_tests/>
 
 ## Contributors
 
