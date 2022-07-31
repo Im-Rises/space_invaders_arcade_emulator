@@ -4,7 +4,6 @@ use crate::binary_lib::*;
 
 use super::super::cpu;
 use super::super::cpu::register::{Flag, Register};
-use super::InputsOutputs;
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {

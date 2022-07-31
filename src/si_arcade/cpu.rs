@@ -22,9 +22,7 @@ pub struct Cpu {
     inte: bool,
     halted: bool,
     cycles: u8,
-    // opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
-    // inputs_outputs: Rc<RefCell<InputsOutputs>>,
 }
 
 impl Cpu {
@@ -36,30 +34,13 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
-            // opcode: 0,
             mmu: Rc::clone(&mmu),
-            // inputs_outputs: Rc::clone(&inputs_outputs),
         }
     }
 
     pub fn fetch_opcode(&mut self) -> u8 {
         self.fetch_byte()
     }
-
-    // pub fn clock(&mut self) {
-    //     if !self.halted {
-    //         if self.cycles == 0 {
-    //             self.fetch_compute();
-    //         }
-    //         self.cycles -= 1;
-    //     }
-    // }
-    //
-    // pub fn fetch_compute(&mut self) -> (u8, u8) {
-    //     self.opcode = self.fetch_byte();
-    //     self.cycles = self.compute_opcode(self.opcode);
-    //     (self.cycles, self.opcode)
-    // }
 
     pub fn fetch_byte(&mut self) -> u8 {
         let data = self.read(self.pc);
@@ -373,6 +354,10 @@ impl Cpu {
     }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*++++++++++++++++++++++++++++++++++++++++++++++UNIT TESTS++++++++++++++++++++++++++++++++++++++++++++++*/
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 #[cfg(test)]
 mod tests {
     use crate::si_arcade::cpu::Cpu;
@@ -398,18 +383,17 @@ mod tests {
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
-    // #[test]
-    // fn cpu_test_rom_8080exm() {
-    //     println!("------------------------------------8080EXM------------------------------------");
-    //     cpu_test("test_roms/8080EXM.COM", 23803381171);
-    // }
+    #[test]
+    fn cpu_test_rom_8080exm() {
+        println!("------------------------------------8080EXM------------------------------------");
+        cpu_test("test_roms/8080EXM.COM", 23803381171);
+    }
 
     fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
-        // cpu_debug.print_regs(cycles_counter);
         while !test_finished {
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
@@ -425,7 +409,6 @@ mod tests {
                 cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
             }
             cycles_counter += cpu_debug.cycles as u64;
-            // cpu_debug.print_regs(cycles_counter);
         }
         assert_eq!(cycles_counter, cycles_to_do);
     }
@@ -442,7 +425,6 @@ mod tests {
             let operation: u8 = cpu.regs.c;
             if operation == 2 {
                 // print a character stored in E
-                // println!("{:#0X}", cpu.regs.e);
                 print!("{}", cpu.regs.e as char);
             } else if operation == 9 {
                 // print from memory at (DE) until '$' char
@@ -451,7 +433,6 @@ mod tests {
                     print!("{}", cpu.read(addr) as char);
                     addr += 1;
                 }
-                println!();
             }
         }
 

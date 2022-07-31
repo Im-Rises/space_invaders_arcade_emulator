@@ -11,7 +11,17 @@ Space Invaders arcade game emulator in development made in Rust.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
-[//]: # (## Features)
+## Features
+
+- Full emulation
+- Sound
+- two-players mode
+
+[//]: # (joystick support)
+
+[//]: # (high score automatically saved)
+
+[//]: # (joystick support)
 
 ## Images
 
@@ -21,7 +31,13 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 ## Videos
 
-Placeholder
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
 
 ## Quick start
 
@@ -235,7 +251,7 @@ The tests are named:
 - cpu_test_rom_8080pre
 - cpu_test_rom_8080exm
 
-You can start them individuality by typing typing:
+You can start them individuality by typing:
 
 ```bash
 cargo test <test_name>
@@ -246,6 +262,13 @@ Example: If you wan to start the cpu_test_rom_tst8080 test.
 ```bash
 cargo test cpu_test_rom_tst8080
 ```
+
+> *Note*  
+> Depending on the test the output is different. Refer to this project for more explanation about how they work.
+> https://github.com/superzazu/8080
+
+> *Warning*
+> Be carefull, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.
 
 <!--
 or if you want to see the output
