@@ -266,6 +266,7 @@ Rustfmt:
 <https://github.com/rust-lang/rustfmt>
 
 Test Roms for the Intel 8080:  
+<https://github.com/superzazu/8080/>  
 <https://altairclone.com/downloads/cpu_tests/>
 
 ## Contributors

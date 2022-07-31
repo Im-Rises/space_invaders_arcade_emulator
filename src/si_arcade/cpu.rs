@@ -391,20 +391,76 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("test_roms/TST8080.COM")));
-        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
-        let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
+    fn cpu_test_rom_tst8080() {
+        cpu_test("test_roms/TST8080.COM", 4924);
+    }
 
-        let mut cycles_counter: u64 = 0;
-        let mut opcode: u8 = 0;
-        for i in 0..650 {
-            cpu_debug.print_regs(cycles_counter);
-            let cycles_opcode = cpu_debug.fetch_compute();
-            cycles_counter += cycles_opcode.0 as u64;
-            opcode = cycles_opcode.1;
+    #[test]
+    fn cpu_test_rom_cputest() {
+        cpu_test("test_roms/CPUTEST.COM", 255653383);
+    }
+
+    #[test]
+    fn cpu_test_rom_8080pre() {
+        cpu_test("test_roms/8080PRE.COM", 7817);
+    }
+
+    #[test]
+    fn cpu_test_rom_8080exm() {
+        cpu_test("test_roms/8080EXM.COM", 23803381171);
+    }
+
+    fn cpu_test(rom_path: &str, cycles_to_do: u128) {
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
+        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
+        let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
+        let mut cycles_counter: u128 = 0;
+        let mut test_finished = false;
+
+        while !test_finished {
+            let opcode = cpu_debug.fetch_opcode();
+            if opcode == 0xDB {
+                let port = cpu_debug.fetch_byte();
+                cpu_debug.regs.a = inputs(port, cpu_debug.regs.a);
+                cpu_debug.cycles = 10;
+            } else if opcode == 0xd3 {
+                let port = cpu_debug.fetch_byte();
+                let a = cpu_debug.regs.a;
+                test_finished = outputs(&mut cpu_debug, port, a);
+                cpu_debug.cycles = 10;
+            } else {
+                cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
+            }
+            cycles_counter += cpu_debug.cycles as u128;
         }
-        cpu_debug.print_regs(cycles_counter);
-        assert_eq!(cpu_debug.pc, 0); //Verify we reach pc = 0x0 after 651 operations
+        assert_eq!(cycles_counter, cycles_to_do); //Verify we reach pc = 0x0 after 651 operations
+    }
+
+    fn inputs(port: u8, data: u8) -> u8 {
+        0x00
+    }
+
+    fn outputs(cpu: &mut Cpu, port: u8, data: u8) -> bool {
+        let mut test_finished = false;
+        if port == 0 {
+            test_finished = true;
+        } else if port == 1 {
+            let operation: u8 = cpu.regs.c;
+            if operation == 2 {
+                // print a character stored in E
+                println!("{:#0X}", cpu.regs.e);
+            } else if operation == 9 {
+                // print from memory at (DE) until '$' char
+                let mut addr: u16 = cpu.regs.get_de();
+
+                while cpu.read(addr) != u8::try_from('$').unwrap() {
+                    print!("{}", char::from(cpu.read(addr)));
+                    addr += 1;
+                }
+                println!();
+            }
+        }
+
+        test_finished
     }
 }

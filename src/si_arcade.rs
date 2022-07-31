@@ -203,6 +203,7 @@ impl SpaceInvadersArcade {
     fn get_window_active(&mut self) -> Result<bool, String> {
         let mut event_pump = self.sdl_context.event_pump()?;
         let mut window_active = true;
+        static EXTRA_SHIP_BUTTON_UP: bool = false;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -239,7 +240,6 @@ impl SpaceInvadersArcade {
                     keycode: Some(Keycode::Space),
                     ..
                 } => self.inputs_outputs.player1.start = true,
-
                 //Player 1 KeyUp
                 Event::KeyUp {
                     keycode: Some(Keycode::Left),
@@ -313,29 +313,27 @@ impl SpaceInvadersArcade {
                     ..
                 } => self.inputs_outputs.dip5 = false,
 
-                // //DIP 6
-                // Event::KeyDown {
-                //     keycode: Some(Keycode::M),
-                //     ..
-                // } => {
-                //     if !self.extraship_btn_last_state {
-                //         let state = self.inputs_outputs.borrow_mut().dip6;
-                //         self.inputs_outputs.borrow_mut().dip6 = !state;
-                //         self.extraship_btn_last_state = true;
-                //         if state {
-                //             println!("Extra ship at 1000 points");
-                //         } else {
-                //             println!("Extra ship at 1000 points");
-                //         }
-                //     }
-                // }
-                // Event::KeyUp {
-                //     keycode: Some(Keycode::M),
-                //     ..
-                // } => {
-                //     self.inputs_outputs.borrow_mut().dip6 = false;
-                //     self.extraship_btn_last_state = false;
-                // }
+                //DIP 6
+                Event::KeyDown {
+                    keycode: Some(Keycode::M),
+                    ..
+                } => {
+                    if !self.extraship_btn_last_state {
+                        self.inputs_outputs.dip6 = !self.inputs_outputs.dip6;
+                        self.extraship_btn_last_state = true;
+                        if self.inputs_outputs.dip6 {
+                            println!("Extra ship at 1000 points");
+                        } else {
+                            println!("Extra ship at 1500 points");
+                        }
+                    }
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::M),
+                    ..
+                } => {
+                    self.extraship_btn_last_state = false;
+                }
 
                 // //DIP7 Coin info displayed in demo screen 0=ON
                 // Event::KeyDown {
