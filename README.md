@@ -225,7 +225,7 @@ Currently, the CPU is passing the following tests:
 
 - [x] TST8080.COM
 - [ ] CPUTEST.COM
-- [ ] 8080PRE.COM
+- [x] 8080PRE.COM
 - [ ] 8080EXM.COM
 
 The tests are named:

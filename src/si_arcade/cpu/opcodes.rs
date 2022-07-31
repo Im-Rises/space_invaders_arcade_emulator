@@ -187,37 +187,37 @@ pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
     let address = Register::unpair_regs(address);
-    cpu.write(cpu.sp - 1, address.0);
-    cpu.write(cpu.sp - 2, address.1);
-    cpu.sp -= 2;
+    cpu.write(cpu.sp.wrapping_sub(1), address.0);
+    cpu.write(cpu.sp.wrapping_sub(2), address.1);
+    cpu.sp = cpu.sp.wrapping_sub(2);
     11
 }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.c = cpu.read(cpu.sp);
     cpu.regs.b = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_d(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.e = cpu.read(cpu.sp);
     cpu.regs.d = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_h(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.l = cpu.read(cpu.sp);
     cpu.regs.h = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.f = cpu.read(cpu.sp);
     cpu.regs.a = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
