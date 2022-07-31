@@ -219,6 +219,13 @@ If you want some debug infos about the cpu type:
 cargo test -- --nocapture
 ```
 
+Currently, the CPU is passing the following tests:
+
+- [x] TST8080.COM
+- [ ] CPUTEST.COM
+- [ ] 8080PRE.COM
+- [ ] 8080EXM.COM
+
 ## GitHub Actions
 
 [![Rust](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/Im-Rises/space_invaders_arcade_emulator/actions/workflows/rust.yml)

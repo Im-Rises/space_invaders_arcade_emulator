@@ -392,29 +392,33 @@ mod tests {
 
     #[test]
     fn cpu_test_rom_tst8080() {
+        println!("------------------------------------TST8080------------------------------------");
         cpu_test("test_roms/TST8080.COM", 4924);
     }
 
     #[test]
     fn cpu_test_rom_cputest() {
+        println!("------------------------------------CPUTEST------------------------------------");
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
     #[test]
     fn cpu_test_rom_8080pre() {
+        println!("------------------------------------8080PRE------------------------------------");
         cpu_test("test_roms/8080PRE.COM", 7817);
     }
 
     #[test]
     fn cpu_test_rom_8080exm() {
+        println!("------------------------------------8080EXM------------------------------------");
         cpu_test("test_roms/8080EXM.COM", 23803381171);
     }
 
-    fn cpu_test(rom_path: &str, cycles_to_do: u128) {
+    fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
         let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
-        let mut cycles_counter: u128 = 0;
+        let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
 
         while !test_finished {
@@ -431,7 +435,7 @@ mod tests {
             } else {
                 cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
             }
-            cycles_counter += cpu_debug.cycles as u128;
+            cycles_counter += cpu_debug.cycles as u64;
         }
         assert_eq!(cycles_counter, cycles_to_do); //Verify we reach pc = 0x0 after 651 operations
     }

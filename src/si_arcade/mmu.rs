@@ -1,7 +1,8 @@
 use std::fs::File;
 use std::io::{Error, Read};
 
-const MEMORY_SIZE: usize = 0x4000;
+// const MEMORY_SIZE: usize = 0x4000;
+const MEMORY_SIZE: usize = 0x10000;
 
 pub struct Mmu {
     memory: [u8; MEMORY_SIZE],
@@ -41,27 +42,27 @@ impl Mmu {
     }
 
     pub fn read(&self, address: u16) -> u8 {
-        if address < 0x4000 {
-            self.memory[address as usize]
-        } else if address < 0x8000 {
-            self.memory[(address - 0x4000) as usize]
-        } else if address < 0xC000 {
-            self.memory[(address - 0x8000) as usize]
-        } else {
-            self.memory[(address - 0xC000) as usize]
-        }
+        // if address < 0x4000 {
+        self.memory[address as usize]
+        // } else if address < 0x8000 {
+        //     self.memory[(address - 0x4000) as usize]
+        // } else if address < 0xC000 {
+        //     self.memory[(address - 0x8000) as usize]
+        // } else {
+        //     self.memory[(address - 0xC000) as usize]
+        // }
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
-        if address < 0x4000 {
-            self.memory[address as usize] = data;
-        } else if address < 0x8000 {
-            self.memory[(address - 0x4000) as usize] = data;
-        } else if address < 0xC000 {
-            self.memory[(address - 0x8000) as usize] = data;
-        } else {
-            self.memory[(address - 0xC000) as usize] = data;
-        }
+        // if address < 0x4000 {
+        self.memory[address as usize] = data;
+        // } else if address < 0x8000 {
+        //     self.memory[(address - 0x4000) as usize] = data;
+        // } else if address < 0xC000 {
+        //     self.memory[(address - 0x8000) as usize] = data;
+        // } else {
+        //     self.memory[(address - 0xC000) as usize] = data;
+        // }
     }
 
     pub fn get_vram(&self) -> &[u8] {
