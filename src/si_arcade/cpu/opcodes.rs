@@ -117,7 +117,7 @@ pub fn mvi_l(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
-    let data = cpu.fetch_byte(); //???
+    let data = cpu.fetch_byte();
     cpu.write(cpu.regs.get_hl(), data);
     10
 }
@@ -177,10 +177,9 @@ pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
-    //?
     mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
     mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
-    4
+    4 //HERE    //? or 5 ?????
 }
 
 /*---------------STACK OPS---------------*/

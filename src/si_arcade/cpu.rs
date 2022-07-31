@@ -140,7 +140,7 @@ impl Cpu {
             0x4B => mov_c_r(self, self.regs.e),
             0x4C => mov_c_r(self, self.regs.h),
             0x4D => mov_c_r(self, self.regs.l),
-            0x4E => mov_c_m(self), //HERE
+            0x4E => mov_c_m(self),
             0x4F => mov_c_r(self, self.regs.a),
             0x50 => mov_d_r(self, self.regs.b),
             0x51 => mov_d_r(self, self.regs.c),
@@ -297,7 +297,7 @@ impl Cpu {
             0xE8 => ret_flag(self, Flag::P),
             0xE9 => pchl(self),
             0xEA => jmp_flag(self, Flag::P),
-            0xEB => xchg(self),
+            0xEB => xchg(self), /////?
             0xEC => call_flag(self, Flag::P),
             0xED => call(self),
             0xEE => xri(self),
@@ -364,6 +364,12 @@ mod tests {
     use crate::si_arcade::mmu::Mmu;
 
     use super::*;
+
+    #[test]
+    fn cpu_test_rom_cpudiag() {
+        println!("------------------------------------CPUDIAG------------------------------------");
+        cpu_test("test_roms/cpudiag.bin", 4775);
+    }
 
     #[test]
     fn cpu_test_rom_tst8080() {
