@@ -5,6 +5,7 @@ mod si_arcade;
 
 // Add audio
 // Correct CPU
+// Add interupt delay ???
 
 fn main() {
     let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new();
