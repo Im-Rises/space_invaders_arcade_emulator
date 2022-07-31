@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::io;
 use std::io::{Error, Read};
 
 // const MEMORY_SIZE: usize = 0x4000;
@@ -81,5 +82,12 @@ fn read_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
     if size > 0x800 {
         panic!("Error: File is incorrectly sized {}", 0x800);
     }
+    Ok(buffer)
+}
+
+fn read_complete_rom(rom_path: &str) -> io::Result<(Vec<u8>)> {
+    let mut f = File::open("foo.txt")?;
+    let mut buffer = Vec::new();
+    f.read_to_end(&mut buffer)?;
     Ok(buffer)
 }

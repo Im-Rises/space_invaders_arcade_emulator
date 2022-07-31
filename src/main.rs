@@ -1,3 +1,5 @@
+extern crate core;
+
 mod binary_lib;
 mod si_arcade;
 

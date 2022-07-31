@@ -43,7 +43,9 @@ impl Cpu {
     }
 
     pub fn fetch_opcode(&mut self) -> u8 {
-        self.fetch_byte()
+        let opcode = self.fetch_byte();
+        println!("Opcode = {:#0X}", opcode);
+        opcode
     }
 
     // pub fn clock(&mut self) {
@@ -369,6 +371,9 @@ impl Cpu {
     }
 
     pub fn print_regs(&self, cycles_total: u64) {
+        if self.pc >= 0xFFF {
+            panic!("here panic");
+        }
         println!(
             "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
             self.pc,
@@ -378,7 +383,7 @@ impl Cpu {
             self.regs.get_hl(),
             self.sp,
             self.cycles,
-            cycles_total
+            cycles_total,
         );
     }
 }
@@ -421,7 +426,7 @@ mod tests {
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
 
-        // cpu_debug.print_regs(cycles_counter);
+        cpu_debug.print_regs(cycles_counter);
         while !test_finished {
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
@@ -437,9 +442,9 @@ mod tests {
                 cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
             }
             cycles_counter += cpu_debug.cycles as u64;
-            // cpu_debug.print_regs(cycles_counter);
+            cpu_debug.print_regs(cycles_counter);
         }
-        assert_eq!(cycles_counter, cycles_to_do); //Verify we reach pc = 0x0 after 651 operations
+        assert_eq!(cycles_counter, cycles_to_do);
     }
 
     fn inputs(port: u8, data: u8) -> u8 {
