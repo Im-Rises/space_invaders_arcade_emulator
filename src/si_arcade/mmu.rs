@@ -33,10 +33,14 @@ impl Mmu {
 
         let debug_rom: [u8; 0x800] = read_rom(rom_path).unwrap();
         mmu.memory[0x100..(0x100 + debug_rom.len())].copy_from_slice(&debug_rom);
-        mmu.memory[0x7] = 0xc9;
-        mmu.memory[0x5] = 0xd3;
-        mmu.memory[0x6] = 0x01;
-        mmu.memory[0x0] = 0xd3;
+
+        // inject "out 0,a" at 0x0000 (signal to stop the test)
+        mmu.memory[0x0000] = 0xD3;
+        mmu.memory[0x0001] = 0x00;
+        // inject "out 1,a" at 0x0005 (signal to output some characters)
+        mmu.memory[0x0005] = 0xD3;
+        mmu.memory[0x0006] = 0x01;
+        mmu.memory[0x0007] = 0xC9;
 
         mmu
     }

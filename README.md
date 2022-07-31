@@ -213,11 +213,13 @@ It will start a test rom for the Intel 8080 CPU. You can find it in the link bel
 cargo test
 ```
 
+<!--
 If you want some debug infos about the cpu type:
 
 ```bash
-cargo test -- --nocapture
+cargo test -- --show-output
 ```
+-->
 
 Currently, the CPU is passing the following tests:
 
@@ -225,6 +227,33 @@ Currently, the CPU is passing the following tests:
 - [ ] CPUTEST.COM
 - [ ] 8080PRE.COM
 - [ ] 8080EXM.COM
+
+The tests are named:
+
+- cpu_test_rom_tst8080
+- cpu_test_rom_cputest
+- cpu_test_rom_8080pre
+- cpu_test_rom_8080exm
+
+You can start them individuality by typing typing:
+
+```bash
+cargo test <test_name>
+```
+
+Example: If you wan to start the cpu_test_rom_tst8080 test.
+
+```bash
+cargo test cpu_test_rom_tst8080
+```
+
+<!--
+or if you want to see the output
+
+```bash
+cargo test cpu_test_rom_tst8080 -- --show-output
+```
+-->
 
 ## GitHub Actions
 

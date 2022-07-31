@@ -393,19 +393,19 @@ mod tests {
     #[test]
     fn cpu_test_rom_tst8080() {
         println!("------------------------------------TST8080------------------------------------");
-        cpu_test("test_roms/TST8080.COM", 4924);
-    }
-
-    #[test]
-    fn cpu_test_rom_cputest() {
-        println!("------------------------------------CPUTEST------------------------------------");
-        cpu_test("test_roms/CPUTEST.COM", 255653383);
+        cpu_test("test_roms/TST8080.COM", 4897); //4924
     }
 
     #[test]
     fn cpu_test_rom_8080pre() {
         println!("------------------------------------8080PRE------------------------------------");
         cpu_test("test_roms/8080PRE.COM", 7817);
+    }
+
+    #[test]
+    fn cpu_test_rom_cputest() {
+        println!("------------------------------------CPUTEST------------------------------------");
+        cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
     #[test]
@@ -421,6 +421,7 @@ mod tests {
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
 
+        // cpu_debug.print_regs(cycles_counter);
         while !test_finished {
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
@@ -436,6 +437,7 @@ mod tests {
                 cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
             }
             cycles_counter += cpu_debug.cycles as u64;
+            // cpu_debug.print_regs(cycles_counter);
         }
         assert_eq!(cycles_counter, cycles_to_do); //Verify we reach pc = 0x0 after 651 operations
     }
@@ -467,4 +469,18 @@ mod tests {
 
         test_finished
     }
+
+    // pub fn print_regs(cpu: &Cpu, cycles_total: u64) {
+    //     println!(
+    //         "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
+    //         cpu.pc,
+    //         cpu.regs.get_af(),
+    //         cpu.regs.get_bc(),
+    //         cpu.regs.get_de(),
+    //         cpu.regs.get_hl(),
+    //         cpu.sp,
+    //         cpu.cycles,
+    //         cycles_total
+    //     );
+    // }
 }

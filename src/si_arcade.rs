@@ -203,7 +203,6 @@ impl SpaceInvadersArcade {
     fn get_window_active(&mut self) -> Result<bool, String> {
         let mut event_pump = self.sdl_context.event_pump()?;
         let mut window_active = true;
-        static EXTRA_SHIP_BUTTON_UP: bool = false;
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
