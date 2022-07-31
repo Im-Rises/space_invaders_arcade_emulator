@@ -43,9 +43,7 @@ impl Cpu {
     }
 
     pub fn fetch_opcode(&mut self) -> u8 {
-        let opcode = self.fetch_byte();
-        println!("Opcode = {:#0X}", opcode);
-        opcode
+        self.fetch_byte()
     }
 
     // pub fn clock(&mut self) {
@@ -346,6 +344,8 @@ impl Cpu {
         }
     }
 
+    // Getters
+
     pub fn get_inte(&self) -> bool {
         self.inte
     }
@@ -362,29 +362,14 @@ impl Cpu {
         self.regs.a
     }
 
+    // Setters
+
     pub fn set_a(&mut self, value: u8) {
         self.regs.a = value;
     }
 
     pub fn set_cycles(&mut self, value: u8) {
         self.cycles = value;
-    }
-
-    pub fn print_regs(&self, cycles_total: u64) {
-        if self.pc >= 0xFFF {
-            panic!("here panic");
-        }
-        println!(
-            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
-            self.pc,
-            self.regs.get_af(),
-            self.regs.get_bc(),
-            self.regs.get_de(),
-            self.regs.get_hl(),
-            self.sp,
-            self.cycles,
-            cycles_total,
-        );
     }
 }
 
@@ -398,7 +383,7 @@ mod tests {
     #[test]
     fn cpu_test_rom_tst8080() {
         println!("------------------------------------TST8080------------------------------------");
-        cpu_test("test_roms/TST8080.COM", 4897); //4924
+        cpu_test("test_roms/TST8080.COM", 4924);
     }
 
     #[test]
@@ -413,20 +398,18 @@ mod tests {
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
-    #[test]
-    fn cpu_test_rom_8080exm() {
-        println!("------------------------------------8080EXM------------------------------------");
-        cpu_test("test_roms/8080EXM.COM", 23803381171);
-    }
+    // #[test]
+    // fn cpu_test_rom_8080exm() {
+    //     println!("------------------------------------8080EXM------------------------------------");
+    //     cpu_test("test_roms/8080EXM.COM", 23803381171);
+    // }
 
     fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
-        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
-
-        cpu_debug.print_regs(cycles_counter);
+        // cpu_debug.print_regs(cycles_counter);
         while !test_finished {
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
@@ -442,7 +425,7 @@ mod tests {
                 cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
             }
             cycles_counter += cpu_debug.cycles as u64;
-            cpu_debug.print_regs(cycles_counter);
+            // cpu_debug.print_regs(cycles_counter);
         }
         assert_eq!(cycles_counter, cycles_to_do);
     }
@@ -459,13 +442,13 @@ mod tests {
             let operation: u8 = cpu.regs.c;
             if operation == 2 {
                 // print a character stored in E
-                println!("{:#0X}", cpu.regs.e);
+                // println!("{:#0X}", cpu.regs.e);
+                print!("{}", cpu.regs.e as char);
             } else if operation == 9 {
                 // print from memory at (DE) until '$' char
                 let mut addr: u16 = cpu.regs.get_de();
-
                 while cpu.read(addr) != u8::try_from('$').unwrap() {
-                    print!("{}", char::from(cpu.read(addr)));
+                    print!("{}", cpu.read(addr) as char);
                     addr += 1;
                 }
                 println!();
@@ -474,18 +457,4 @@ mod tests {
 
         test_finished
     }
-
-    // pub fn print_regs(cpu: &Cpu, cycles_total: u64) {
-    //     println!(
-    //         "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
-    //         cpu.pc,
-    //         cpu.regs.get_af(),
-    //         cpu.regs.get_bc(),
-    //         cpu.regs.get_de(),
-    //         cpu.regs.get_hl(),
-    //         cpu.sp,
-    //         cpu.cycles,
-    //         cycles_total
-    //     );
-    // }
 }

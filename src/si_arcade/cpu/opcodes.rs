@@ -154,7 +154,7 @@ pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
 pub fn sta(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word(); //???
     cpu.write(address, cpu.regs.a);
-    7
+    13
 }
 
 pub fn lda(cpu: &mut cpu::Cpu) -> u8 {
@@ -180,7 +180,7 @@ pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
     mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
     mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
-    5
+    4
 }
 
 /*---------------STACK OPS---------------*/
