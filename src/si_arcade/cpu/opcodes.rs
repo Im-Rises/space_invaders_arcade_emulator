@@ -180,7 +180,7 @@ pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
     let de: u16 = cpu.regs.get_de();
     cpu.regs.set_de(cpu.regs.get_hl());
     cpu.regs.set_hl(de);
-    4 //HERE    //? or 5
+    4
 }
 
 /*---------------STACK OPS---------------*/
@@ -426,7 +426,7 @@ pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
-    let result: u8 = data + 1;
+    let result: u8 = data.wrapping_add(1);
     cpu.regs.set_reset_flag(Flag::A, (result & 0xF) == 0);
     cpu.regs.update_flags_szp(result);
     result
@@ -441,37 +441,37 @@ fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 pub fn inx_b(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_bc().wrapping_add(1);
-    (cpu.regs.b, cpu.regs.c) = Register::unpair_regs(word);
+    cpu.regs.set_bc(word);
     5
 }
 
 pub fn inx_d(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_de().wrapping_add(1);
-    (cpu.regs.d, cpu.regs.e) = Register::unpair_regs(word);
+    cpu.regs.set_de(word);
     5
 }
 
 pub fn inx_h(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_hl().wrapping_add(1);
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(word);
+    cpu.regs.set_hl(word);
     5
 }
 
 pub fn dcx_b(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_bc().wrapping_sub(1);
-    (cpu.regs.b, cpu.regs.c) = Register::unpair_regs(word);
+    cpu.regs.set_bc(word);
     5
 }
 
 pub fn dcx_d(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_de().wrapping_sub(1);
-    (cpu.regs.d, cpu.regs.e) = Register::unpair_regs(word);
+    cpu.regs.set_de(word);
     5
 }
 
 pub fn dcx_h(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_hl().wrapping_sub(1);
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(word);
+    cpu.regs.set_hl(word);
     5
 }
 
@@ -524,7 +524,7 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: b
 pub fn dad_word(cpu: &mut cpu::Cpu, word: u16) -> u8 {
     let result: u32 = (cpu.regs.get_hl() as u32 + word as u32);
     cpu.regs.set_reset_flag(Flag::C, ((result >> 16) & 1) != 0);
-    cpu.regs.set_hl(cpu.regs.get_hl() + word);
+    cpu.regs.set_hl(cpu.regs.get_hl().wrapping_add(word));
     10
 }
 

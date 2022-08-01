@@ -414,11 +414,11 @@ mod tests {
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
-    #[test]
-    fn cpu_test_rom_8080exm() {
-        println!("------------------------------------8080EXM------------------------------------");
-        cpu_test("test_roms/8080EXM.COM", 23803381171);
-    }
+    // #[test]
+    // fn cpu_test_rom_8080exm() {
+    //     println!("------------------------------------8080EXM------------------------------------");
+    //     cpu_test("test_roms/8080EXM.COM", 23803381171);
+    // }
 
     fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
@@ -442,6 +442,7 @@ mod tests {
             }
             cycles_counter += cpu_debug.cycles as u64;
         }
+        // cpu_debug.print_regs(cycles_counter);
         assert_eq!(cycles_counter, cycles_to_do);
     }
 
