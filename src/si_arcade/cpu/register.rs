@@ -112,11 +112,24 @@ impl Register {
         self.set_reset_flag(Flag::P, (value.count_ones() & 1) == 0);
     }
 
-    pub fn calculate_half_carry(&self, operand1: u8, operand2: u8, cy: bool) -> bool {
-        let result: u8 = operand1 as u16 + operand2 as u16 + cy as u16;
+    pub fn update_half_carry(&mut self, operand1: u8, operand2: u8, cy: bool) {
+        let result = operand1.wrapping_add(operand2);
+        let result = result.wrapping_add(cy as u8);
         let carry: u8 = result ^ operand1 ^ operand2;
-        carry >> 4
+        self.set_reset_flag(Flag::A, get_bit(carry, 4));
     }
+
+    pub fn update_carry(&mut self, operand1: u8, operand2: u8, cy: bool) {
+        let result: u16 = operand1 as u16 + operand2 as u16 + cy as u16;
+        let carry: u16 = (result as u16) ^ (operand1 as u16) ^ (operand2 as u16);
+        self.set_reset_flag(Flag::A, ((carry >> 8) & 0x1) != 0);
+    }
+
+    // fn calculate_half_carry(&self, operand1: u8, operand2: u8, cy: bool) -> bool {
+    //     let result: u8 = operand1 as u8 + operand2 as u8 + cy as u8;
+    //     let carry: u8 = result ^ operand1 ^ operand2;
+    //     get_bit(carry, 4)
+    // }
 
     // pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
     //     self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);

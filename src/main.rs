@@ -4,7 +4,7 @@ mod binary_lib;
 mod si_arcade;
 
 // Add audio
-// Correct CPU error, changing wrong flag... Swap between C and A linke in INR
+// Correct CPU error
 
 fn main() {
     println!("+----------------------------------+");
