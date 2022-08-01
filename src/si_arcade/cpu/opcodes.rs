@@ -179,7 +179,7 @@ pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
     mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
     mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
-    4 //HERE    //? or 5 ?????
+    4 //HERE    //? or 5
 }
 
 /*---------------STACK OPS---------------*/

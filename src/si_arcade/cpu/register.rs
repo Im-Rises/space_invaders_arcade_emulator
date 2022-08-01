@@ -1,4 +1,5 @@
 use crate::binary_lib;
+use crate::binary_lib::get_bit;
 
 pub enum Flag {
     //Three bits are unused
@@ -95,7 +96,7 @@ impl Register {
     }
 
     pub fn update_flag_s(&mut self, value: u8) {
-        self.set_reset_flag(Flag::S, value & 0x80 > 0);
+        self.set_reset_flag(Flag::S, get_bit(value, 7));
     }
 
     pub fn update_flag_z(&mut self, value: u8) {
