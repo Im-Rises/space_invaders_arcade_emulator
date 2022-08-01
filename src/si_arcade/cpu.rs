@@ -352,6 +352,22 @@ impl Cpu {
     pub fn set_cycles(&mut self, value: u8) {
         self.cycles = value;
     }
+
+    // Debug
+
+    fn print_regs(&self, cycles_total: u64) {
+        println!(
+            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
+            self.pc,
+            self.regs.get_af(),
+            self.regs.get_bc(),
+            self.regs.get_de(),
+            self.regs.get_hl(),
+            self.sp,
+            self.cycles,
+            cycles_total
+        );
+    }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -401,6 +417,7 @@ mod tests {
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
         while !test_finished {
+            // cpu_debug.print_regs(cycles_counter);
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
                 let port = cpu_debug.fetch_byte();

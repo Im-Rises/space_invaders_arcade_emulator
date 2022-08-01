@@ -694,7 +694,7 @@ pub fn cpi(cpu: &mut cpu::Cpu) -> u8 {
 pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) {
     let result = operand1.wrapping_sub(operand2);
     cpu.regs.set_reset_flag(Flag::C, !(operand1 >= operand2));
-    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_s(result); // Inverting result with !result allow CPUTEST.COM to pass ?
     cpu.regs.set_reset_flag(Flag::Z, operand1 == operand2);
     cpu.regs.update_flag_p(result);
     cpu.regs.update_flag_a(operand1, operand2);

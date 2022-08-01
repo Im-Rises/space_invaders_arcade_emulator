@@ -21,8 +21,6 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 [//]: # (high score automatically saved)
 
-[//]: # (joystick support)
-
 ## Images
 
 | Title screen | Game screen                                                                                                            |
@@ -158,7 +156,7 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 | L                 | 2 more lives                       |
 | M                 | extra ship at 1000 instead of 1500 |
 
-> *Note*  
+> **Note**  
 > If you don't keep pressed K or L before pressing start and starting a new game you will have 3 lives.  
 > In the same way, you can enable the extra ship to came at 1000 points instead of 1500, but you just need to press
 > the button one time (a confirmation will be displayed in the console).
@@ -197,6 +195,12 @@ Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
+```
+
+You also need to add `SDL2` to the paths by typing:
+
+```bash
+export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
 ```
 
 ---
@@ -265,12 +269,12 @@ Example: If you wan to start the cpu_test_rom_tst8080 test.
 cargo test cpu_test_rom_tst8080
 ```
 
-> *Note*  
+> **Note**  
 > Depending on the test the output is different. Refer to this project for more explanation about how they work.  
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
 
-> *Warning*
+> **Warning**  
 > Be carefull, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.
 
 <!--
