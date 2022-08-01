@@ -4,7 +4,6 @@ use crate::binary_lib::*;
 
 use super::super::cpu;
 use super::super::cpu::register::{Flag, Register};
-use super::InputsOutputs;
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
@@ -118,7 +117,7 @@ pub fn mvi_l(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
-    let data = cpu.fetch_byte(); //???
+    let data = cpu.fetch_byte();
     cpu.write(cpu.regs.get_hl(), data);
     10
 }
@@ -152,13 +151,13 @@ pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
 }
 
 pub fn sta(cpu: &mut cpu::Cpu) -> u8 {
-    let address = cpu.fetch_word(); //???
+    let address = cpu.fetch_word();
     cpu.write(address, cpu.regs.a);
-    7
+    13
 }
 
 pub fn lda(cpu: &mut cpu::Cpu) -> u8 {
-    let address = cpu.fetch_word(); //???
+    let address = cpu.fetch_word();
     cpu.regs.a = cpu.read(address);
     13
 }
@@ -180,44 +179,44 @@ pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
     mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
     mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
-    5
+    4 //HERE    //? or 5
 }
 
 /*---------------STACK OPS---------------*/
 
 pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
     let address = Register::unpair_regs(address);
-    cpu.write(cpu.sp - 1, address.0);
-    cpu.write(cpu.sp - 2, address.1);
-    cpu.sp -= 2;
+    cpu.write(cpu.sp.wrapping_sub(1), address.0);
+    cpu.write(cpu.sp.wrapping_sub(2), address.1);
+    cpu.sp = cpu.sp.wrapping_sub(2);
     11
 }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.c = cpu.read(cpu.sp);
     cpu.regs.b = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_d(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.e = cpu.read(cpu.sp);
     cpu.regs.d = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_h(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.l = cpu.read(cpu.sp);
     cpu.regs.h = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
     cpu.regs.f = cpu.read(cpu.sp);
     cpu.regs.a = cpu.read(cpu.sp + 1);
-    cpu.sp += 2;
+    cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
@@ -427,7 +426,8 @@ pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
 
 fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_add(1);
-    cpu.regs.set_reset_flag(Flag::C, result.1);
+    // cpu.regs.set_reset_flag(Flag::C, result.1); //?
+    cpu.regs.update_flag_a(data, 1);
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
     cpu.regs.update_flag_p(result.0);
@@ -436,7 +436,11 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_sub(1);
-    cpu.regs.set_reset_flag(Flag::C, result.1);
+    // cpu.regs.set_reset_flag(Flag::C, result.1);//?
+    // cpu.regs.set_reset_flag(Flag::A, )
+    // cpu.regs.update_flag_a(data, u8::MAX);
+    // cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
+    // cpu.regs.set_reset_flag(Flag::A, !((result.0 & 0xF) == 0xF));
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
     cpu.regs.update_flag_p(result.0);
@@ -529,6 +533,7 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result_u16: u16 = operand1 as u16 + operand2 as u16 + cpu.regs.get_flag(Flag::C) as u16;
     let result_u8 = (result_u16 & 0x00FF) as u8;
     cpu.regs.set_reset_flag(Flag::C, result_u16 > 0xFF);
+    cpu.regs.set_reset_flag(Flag::A, (result_u8 & 0xF0) > 0xF); //?
     cpu.regs.update_flag_s(result_u8);
     cpu.regs.update_flag_z(result_u8);
     cpu.regs.update_flag_p(result_u8);
@@ -565,6 +570,7 @@ fn sub_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let operand2 = (!operand2).wrapping_add(1);
     let result = add_subroutine_function(cpu, operand1, operand2);
     cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
     result
 }
 
@@ -590,6 +596,7 @@ fn sbb_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let operand2 = (!operand2).wrapping_add(1); // Two's complement
     let result = add_subroutine_function(cpu, operand1, operand2);
     cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
     result
 }
 
@@ -615,7 +622,7 @@ pub fn ani(cpu: &mut cpu::Cpu) -> u8 {
 fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
     let result = operand1 & operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
-    cpu.regs.set_reset_flag(Flag::A, true);
+    cpu.regs.set_reset_flag(Flag::A, true); //?
     cpu.regs.update_flag_s(result);
     cpu.regs.update_flag_z(result);
     cpu.regs.update_flag_p(result);
@@ -695,10 +702,11 @@ pub fn cpi(cpu: &mut cpu::Cpu) -> u8 {
 pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) {
     let result = operand1.wrapping_sub(operand2);
     cpu.regs.set_reset_flag(Flag::C, !(operand1 >= operand2));
-    cpu.regs.update_flag_s(result);
+    cpu.regs.update_flag_s(result); // Inverting result with !result allow CPUTEST.COM to pass ?
     cpu.regs.set_reset_flag(Flag::Z, operand1 == operand2);
     cpu.regs.update_flag_p(result);
     cpu.regs.update_flag_a(operand1, operand2);
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
 }
 
 /*---------------ROTATE---------------*/
@@ -789,14 +797,16 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------INPUT/OUTPUT---------------*/
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
-    let port = cpu.fetch_byte();
-    cpu.regs.a = cpu.inputs_outputs.borrow_mut().inputs(port, cpu.regs.a);
+    // let port = cpu.fetch_byte();
+    // cpu.regs.a = cpu.inputs_outputs.borrow_mut().inputs(port, cpu.regs.a);
+    // panic!("Error: Input opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
-    let port = cpu.fetch_byte();
-    cpu.inputs_outputs.borrow_mut().outputs(port, cpu.regs.a);
+    // let port = cpu.fetch_byte();
+    // cpu.inputs_outputs.borrow_mut().outputs(port, cpu.regs.a);
+    // panic!("Error: Output opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
     10
 }
 
