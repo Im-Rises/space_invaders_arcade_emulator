@@ -2,7 +2,6 @@ use crate::binary_lib;
 use crate::binary_lib::get_bit;
 
 pub enum Flag {
-    //Three bits are unused
     S = 7,
     Z = 6,
     A = 4,
@@ -101,23 +100,29 @@ impl Register {
         self.update_flag_p(value);
     }
 
-    pub fn update_flag_s(&mut self, value: u8) {
+    fn update_flag_s(&mut self, value: u8) {
         self.set_reset_flag(Flag::S, get_bit(value, 7));
     }
 
-    pub fn update_flag_z(&mut self, value: u8) {
+    fn update_flag_z(&mut self, value: u8) {
         self.set_reset_flag(Flag::Z, value == 0);
     }
 
-    pub fn update_flag_p(&mut self, value: u8) {
+    fn update_flag_p(&mut self, value: u8) {
         self.set_reset_flag(Flag::P, (value.count_ones() & 1) == 0);
     }
 
-    pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);
+    pub fn calculate_half_carry(&self, operand1: u8, operand2: u8, cy: bool) -> bool {
+        let result: u8 = operand1 as u16 + operand2 as u16 + cy as u16;
+        let carry: u8 = result ^ operand1 ^ operand2;
+        carry >> 4
     }
 
-    pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::A, ((operand1 & 0xF) + (operand2 & 0xF)) > 0xF);
-    }
+    // pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
+    //     self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);
+    // }
+
+    // pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
+    //     self.set_reset_flag(Flag::A, ((operand1 & 0xF) + (operand2 & 0xF)) > 0xF);
+    // }
 }

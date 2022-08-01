@@ -117,20 +117,20 @@ jobs:
       - name: Archive ubuntu release
         uses: thedoctor0/zip-release@master
         with:
-          filename: release-linux.zip
+          filename: release-linux.tar.gz
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: release-linux.zip
-          asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.zip
+          asset_path: release-linux.tar.gz
+          asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.tar.gz
           asset_content_type: application/zip
       - name: Delete ubuntu release files
         run: |
           rm space_invaders_arcade_emulator
-          rm release-linux.zip
+          rm release-linux.tar.gz
       - name: Download macos artifact content
         uses: actions/download-artifact@v2
         with:
@@ -140,13 +140,13 @@ jobs:
       - name: Archive macos release
         uses: thedoctor0/zip-release@master
         with:
-          filename: release-macos.zip
+          filename: release-macos.tar.gz
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: release-macos.zip
-          asset_name: space_invaders_arcade_emulator-macos-v${{ github.run_number }}.zip
+          asset_path: release-macos.tar.gz
+          asset_name: space_invaders_arcade_emulator-macos-v${{ github.run_number }}.tar.gz
           asset_content_type: application/zip

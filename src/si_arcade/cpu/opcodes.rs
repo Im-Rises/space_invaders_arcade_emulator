@@ -42,42 +42,42 @@ pub fn mov_l_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn mov_m_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.write(cpu.regs.get_hl(), r);
+    cpu.write_byte(cpu.regs.get_hl(), r);
     7
 }
 
 pub fn mov_a_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.a = cpu.read(cpu.regs.get_hl());
+    cpu.regs.a = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_b_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.b = cpu.read(cpu.regs.get_hl());
+    cpu.regs.b = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_c_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.read(cpu.regs.get_hl());
+    cpu.regs.c = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_d_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.d = cpu.read(cpu.regs.get_hl());
+    cpu.regs.d = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_e_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.read(cpu.regs.get_hl());
+    cpu.regs.e = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_h_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.h = cpu.read(cpu.regs.get_hl());
+    cpu.regs.h = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
 pub fn mov_l_m(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.read(cpu.regs.get_hl());
+    cpu.regs.l = cpu.read_byte(cpu.regs.get_hl());
     7
 }
 
@@ -118,7 +118,7 @@ pub fn mvi_l(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
     let data = cpu.fetch_byte();
-    cpu.write(cpu.regs.get_hl(), data);
+    cpu.write_byte(cpu.regs.get_hl(), data);
     10
 }
 
@@ -141,38 +141,38 @@ pub fn lxi_h(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn stax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
-    cpu.write(pr, cpu.regs.a);
+    cpu.write_byte(pr, cpu.regs.a);
     7
 }
 
 pub fn ldax_pr(cpu: &mut cpu::Cpu, pr: u16) -> u8 {
-    cpu.regs.a = cpu.read(pr);
+    cpu.regs.a = cpu.read_byte(pr);
     7
 }
 
 pub fn sta(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.write(address, cpu.regs.a);
+    cpu.write_byte(address, cpu.regs.a);
     13
 }
 
 pub fn lda(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.regs.a = cpu.read(address);
+    cpu.regs.a = cpu.read_byte(address);
     13
 }
 
 pub fn shld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.write(address, cpu.regs.l);
-    cpu.write(address + 1, cpu.regs.h);
+    cpu.write_byte(address, cpu.regs.l);
+    cpu.write_byte(address + 1, cpu.regs.h);
     16
 }
 
 pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.regs.l = cpu.read(address);
-    cpu.regs.h = cpu.read(address + 1);
+    cpu.regs.l = cpu.read_byte(address);
+    cpu.regs.h = cpu.read_byte(address + 1);
     16
 }
 
@@ -185,37 +185,35 @@ pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------STACK OPS---------------*/
 
 pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
-    let address = Register::unpair_regs(address);
-    cpu.write(cpu.sp.wrapping_sub(1), address.0);
-    cpu.write(cpu.sp.wrapping_sub(2), address.1);
     cpu.sp = cpu.sp.wrapping_sub(2);
+    cpu.write_word(cpu.sp, address);
     11
 }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.read(cpu.sp);
-    cpu.regs.b = cpu.read(cpu.sp + 1);
+    cpu.regs.c = cpu.read_byte(cpu.sp);
+    cpu.regs.b = cpu.read_byte(cpu.sp + 1);
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.read(cpu.sp);
-    cpu.regs.d = cpu.read(cpu.sp + 1);
+    cpu.regs.e = cpu.read_byte(cpu.sp);
+    cpu.regs.d = cpu.read_byte(cpu.sp + 1);
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
+    cpu.regs.l = cpu.read_byte(cpu.sp);
+    cpu.regs.h = cpu.read_byte(cpu.sp + 1);
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.f = cpu.read(cpu.sp);
-    cpu.regs.a = cpu.read(cpu.sp + 1);
+    cpu.regs.f = cpu.read_byte(cpu.sp);
+    cpu.regs.a = cpu.read_byte(cpu.sp + 1);
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
@@ -223,10 +221,10 @@ pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
 pub fn xthl(cpu: &mut cpu::Cpu) -> u8 {
     let temp_l = cpu.regs.l;
     let temp_h = cpu.regs.h;
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
-    cpu.write(cpu.sp, temp_l);
-    cpu.write(cpu.sp + 1, temp_h);
+    cpu.regs.l = cpu.read_byte(cpu.sp);
+    cpu.regs.h = cpu.read_byte(cpu.sp + 1);
+    cpu.write_byte(cpu.sp, temp_l);
+    cpu.write_byte(cpu.sp + 1, temp_h);
     18
 }
 
@@ -309,7 +307,7 @@ pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.pc = (cpu.read(cpu.sp) as u16 | (cpu.read(cpu.sp + 1) as u16) << 8) as u16;
+    cpu.pc = (cpu.read_byte(cpu.sp) as u16 | (cpu.read_byte(cpu.sp + 1) as u16) << 8) as u16;
     cpu.sp += 2;
     10
 }
@@ -412,15 +410,15 @@ pub fn dcr_l(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn inr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
-    let result = inr_subroutine(cpu, cpu.read(address));
-    cpu.write(address, result);
+    let result = inr_subroutine(cpu, cpu.read_byte(address));
+    cpu.write_byte(address, result);
     10
 }
 
 pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.regs.get_hl();
-    let result = dcr_subroutine(cpu, cpu.read(address));
-    cpu.write(address, result);
+    let result = dcr_subroutine(cpu, cpu.read_byte(address));
+    cpu.write_byte(address, result);
     10
 }
 
@@ -491,7 +489,7 @@ pub fn add_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn add_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -505,10 +503,8 @@ pub fn adi_m(cpu: &mut cpu::Cpu) -> u8 {
 fn add_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
     let result = operand1.overflowing_add(operand2);
     cpu.regs.set_reset_flag(Flag::C, result.1);
-    cpu.regs.update_flag_a(operand1, operand2);
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
+
+    cpu.regs.update_flag_szp(result.0);
     result.0
 }
 
@@ -518,7 +514,7 @@ pub fn adc_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn adc_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -555,7 +551,7 @@ pub fn sub_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn sub_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = sub_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -580,7 +576,7 @@ pub fn sbb_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn sbb_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -608,7 +604,7 @@ pub fn ana_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn ana_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = and_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -641,7 +637,7 @@ pub fn xri(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn xra_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = xor_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -662,7 +658,7 @@ pub fn ora_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn ora_m(cpu: &mut cpu::Cpu) -> u8 {
-    let operand = cpu.read(cpu.regs.get_hl());
+    let operand = cpu.read_byte(cpu.regs.get_hl());
     cpu.regs.a = or_subroutine_function(cpu, cpu.regs.a, operand);
     7
 }
@@ -689,7 +685,7 @@ pub fn cmp_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
 }
 
 pub fn cmp_m(cpu: &mut cpu::Cpu) -> u8 {
-    subroutine_logical_compare(cpu, cpu.regs.a, cpu.read(cpu.regs.get_hl()));
+    subroutine_logical_compare(cpu, cpu.regs.a, cpu.read_byte(cpu.regs.get_hl()));
     7
 }
 

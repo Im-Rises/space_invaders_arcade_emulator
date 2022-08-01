@@ -43,7 +43,7 @@ impl Cpu {
     }
 
     pub fn fetch_byte(&mut self) -> u8 {
-        let data = self.read(self.pc);
+        let data = self.read_byte(self.pc);
         self.pc += 1;
         data
     }
@@ -52,22 +52,22 @@ impl Cpu {
         (self.fetch_byte() as u16 | (self.fetch_byte() as u16) << 8) as u16
     }
 
-    fn read(&self, address: u16) -> u8 {
+    fn read_byte(&self, address: u16) -> u8 {
         self.mmu.borrow().read(address)
     }
 
-    fn write(&mut self, address: u16, data: u8) {
+    fn write_byte(&mut self, address: u16, data: u8) {
         self.mmu.borrow_mut().write(address, data);
     }
 
-    // fn read_word(&self, address: u16) -> u16 {
-    //     (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
-    // }
-    //
-    // fn write_word(&mut self, address: u16, data: u16) {
-    //     self.write(address, (data & 0xFF) as u8);
-    //     self.write(address + 1, (data >> 8) as u8);
-    // }
+    fn read_word(&self, address: u16) -> u16 {
+        (self.read_byte(address) as u16) | ((self.read_byte(address + 1) as u16) << 8)
+    }
+
+    fn write_word(&mut self, address: u16, data: u16) {
+        self.write_byte(address, (data & 0xFF) as u8);
+        self.write_byte(address + 1, (data >> 8) as u8);
+    }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
@@ -461,8 +461,8 @@ mod tests {
             } else if operation == 9 {
                 // print from memory at (DE) until '$' char
                 let mut addr: u16 = cpu.regs.get_de();
-                while cpu.read(addr) != u8::try_from('$').unwrap() {
-                    print!("{}", cpu.read(addr) as char);
+                while cpu.read_byte(addr) != u8::try_from('$').unwrap() {
+                    print!("{}", cpu.read_byte(addr) as char);
                     addr += 1;
                 }
             }
