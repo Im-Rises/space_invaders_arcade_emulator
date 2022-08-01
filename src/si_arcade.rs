@@ -1,16 +1,14 @@
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
-use sdl2::rect::Rect;
-use sdl2::render::{CanvasBuilder, Texture, WindowCanvas};
-use sdl2::video::Window;
-use sdl2::{Sdl, VideoSubsystem};
+use sdl2::render::WindowCanvas;
+use sdl2::Sdl;
 
-use crate::binary_lib::{get_bit, set_reset_bit};
+use crate::binary_lib::*;
 use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 mod cpu;

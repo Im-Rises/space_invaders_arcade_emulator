@@ -1,11 +1,8 @@
 use std::cell::RefCell;
-use std::process::exit;
 use std::rc::Rc;
 
-use crate::si_arcade::cpu::interrupts::interrupt;
 use crate::si_arcade::cpu::opcodes::*;
 use crate::si_arcade::cpu::register::{Flag, Register};
-use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
@@ -327,10 +324,10 @@ impl Cpu {
             0xFD => call(self),
             0xFE => cpi(self),
             0xFF => rst(self, 7),
-            _ => {
-                println!("Error: unknown opcode");
-                exit(1);
-            }
+            // _ => {
+            //     println!("Error: unknown opcode");
+            //     exit(1);
+            // }
         }
     }
 
@@ -362,21 +359,21 @@ impl Cpu {
         self.cycles = value;
     }
 
-    // Debug
-
-    fn print_regs(&self, cycles_total: u64) {
-        println!(
-            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
-            self.pc,
-            self.regs.get_af(),
-            self.regs.get_bc(),
-            self.regs.get_de(),
-            self.regs.get_hl(),
-            self.sp,
-            self.cycles,
-            cycles_total
-        );
-    }
+    // // Debug
+    //
+    // fn print_regs(&self, cycles_total: u64) {
+    //     println!(
+    //         "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
+    //         self.pc,
+    //         self.regs.get_af(),
+    //         self.regs.get_bc(),
+    //         self.regs.get_de(),
+    //         self.regs.get_hl(),
+    //         self.sp,
+    //         self.cycles,
+    //         cycles_total
+    //     );
+    // }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

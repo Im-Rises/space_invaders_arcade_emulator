@@ -1,6 +1,4 @@
-use std::mem;
-
-use crate::binary_lib::*;
+// use std::mem;
 
 use super::super::cpu;
 use super::super::cpu::register::{Flag, Register};
@@ -522,7 +520,7 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: b
 }
 
 pub fn dad_word(cpu: &mut cpu::Cpu, word: u16) -> u8 {
-    let result: u32 = (cpu.regs.get_hl() as u32 + word as u32);
+    let result: u32 = cpu.regs.get_hl() as u32 + word as u32;
     cpu.regs.set_reset_flag(Flag::C, ((result >> 16) & 1) != 0);
     cpu.regs.set_hl(cpu.regs.get_hl().wrapping_add(word));
     10
@@ -738,13 +736,13 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 /*---------------INPUT/OUTPUT---------------*/
 
-pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
+pub fn input_in(_cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
     // cpu.regs.a = inputs(port, cpu.regs.a);
     10
 }
 
-pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
+pub fn output_out(_cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
     // outputs(port, cpu.regs.a);
     10

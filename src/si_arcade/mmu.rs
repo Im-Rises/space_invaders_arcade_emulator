@@ -2,19 +2,17 @@ use std::fs::File;
 use std::io;
 use std::io::{Error, Read};
 
-// const MEMORY_SIZE: usize = 0x4000;
-const MEMORY_SIZE: usize = 0x10000;
+const MEMORY_SIZE: usize = 0x4000;
+const DEBUG_MEMORY_SIZE: usize = 0x10000;
 
 pub struct Mmu {
-    // memory: [u8; MEMORY_SIZE],
     memory: Vec<u8>,
 }
 
 impl Mmu {
     pub fn new() -> Self {
         let mut mmu = Mmu {
-            // memory: [0; MEMORY_SIZE],
-            memory: vec![0; 0x4000],
+            memory: vec![0; MEMORY_SIZE],
         };
 
         let array_h: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.h").unwrap();
@@ -31,7 +29,7 @@ impl Mmu {
 
     pub fn new_debug(rom_path: &str) -> Self {
         let mut mmu = Mmu {
-            memory: vec![0; 0x10000],
+            memory: vec![0; DEBUG_MEMORY_SIZE],
         };
 
         let debug_rom_and_size = read_complete_rom(rom_path).unwrap();
@@ -87,7 +85,7 @@ fn space_invaders_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
     Ok(buffer)
 }
 
-fn read_complete_rom(rom_path: &str) -> io::Result<((Vec<u8>, usize))> {
+fn read_complete_rom(rom_path: &str) -> io::Result<(Vec<u8>, usize)> {
     let mut f = File::open(rom_path)?;
     let mut buffer = Vec::new();
     let size = f.read_to_end(&mut buffer)?;
