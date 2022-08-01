@@ -22,13 +22,11 @@ pub struct Cpu {
     inte: bool,
     halted: bool,
     cycles: u8,
-    opcode: u8,
     mmu: Rc<RefCell<Mmu>>,
-    inputs_outputs: Rc<RefCell<InputsOutputs>>,
 }
 
 impl Cpu {
-    pub fn new(mmu: &Rc<RefCell<Mmu>>, inputs_outputs: &Rc<RefCell<InputsOutputs>>, ini_pc: u16) -> Cpu {
+    pub fn new(mmu: &Rc<RefCell<Mmu>>, ini_pc: u16) -> Cpu {
         Cpu {
             regs: Register::new(),
             sp: 0,
@@ -36,34 +34,21 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
-            opcode: 0,
             mmu: Rc::clone(&mmu),
-            inputs_outputs: Rc::clone(&inputs_outputs),
         }
     }
 
-    pub fn clock(&mut self) {
-        if !self.halted {
-            if self.cycles == 0 {
-                self.fetch_compute();
-            }
-            self.cycles -= 1;
-        }
+    pub fn fetch_opcode(&mut self) -> u8 {
+        self.fetch_byte()
     }
 
-    pub fn fetch_compute(&mut self) -> (u8, u8) {
-        self.opcode = self.fetch_byte();
-        self.cycles = self.compute_opcode(self.opcode);
-        (self.cycles, self.opcode)
-    }
-
-    fn fetch_byte(&mut self) -> u8 {
+    pub fn fetch_byte(&mut self) -> u8 {
         let data = self.read(self.pc);
         self.pc += 1;
         data
     }
 
-    fn fetch_word(&mut self) -> u16 {
+    pub fn fetch_word(&mut self) -> u16 {
         (self.fetch_byte() as u16 | (self.fetch_byte() as u16) << 8) as u16
     }
 
@@ -71,11 +56,20 @@ impl Cpu {
         self.mmu.borrow().read(address)
     }
 
-    fn write(&self, address: u16, data: u8) {
+    fn write(&mut self, address: u16, data: u8) {
         self.mmu.borrow_mut().write(address, data);
     }
 
-    fn compute_opcode(&mut self, opcode: u8) -> u8 {
+    // fn read_word(&self, address: u16) -> u16 {
+    //     (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
+    // }
+    //
+    // fn write_word(&mut self, address: u16, data: u16) {
+    //     self.write(address, (data & 0xFF) as u8);
+    //     self.write(address + 1, (data >> 8) as u8);
+    // }
+
+    pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
             0x00 => nop(),
             0x01 => lxi_b(self),
@@ -155,7 +149,7 @@ impl Cpu {
             0x4B => mov_c_r(self, self.regs.e),
             0x4C => mov_c_r(self, self.regs.h),
             0x4D => mov_c_r(self, self.regs.l),
-            0x4E => mov_c_m(self), //HERE
+            0x4E => mov_c_m(self),
             0x4F => mov_c_r(self, self.regs.a),
             0x50 => mov_d_r(self, self.regs.b),
             0x51 => mov_d_r(self, self.regs.c),
@@ -312,7 +306,7 @@ impl Cpu {
             0xE8 => ret_flag(self, Flag::P),
             0xE9 => pchl(self),
             0xEA => jmp_flag(self, Flag::P),
-            0xEB => xchg(self),
+            0xEB => xchg(self), /////?
             0xEC => call_flag(self, Flag::P),
             0xED => call(self),
             0xEE => xri(self),
@@ -340,11 +334,37 @@ impl Cpu {
         }
     }
 
+    // Getters
+
     pub fn get_inte(&self) -> bool {
         self.inte
     }
 
-    pub fn print_regs(&self, cycles_total: u64) {
+    pub fn get_halted(&self) -> bool {
+        self.halted
+    }
+
+    pub fn get_cycles(&self) -> u8 {
+        self.cycles
+    }
+
+    pub fn get_a(&self) -> u8 {
+        self.regs.a
+    }
+
+    // Setters
+
+    pub fn set_a(&mut self, value: u8) {
+        self.regs.a = value;
+    }
+
+    pub fn set_cycles(&mut self, value: u8) {
+        self.cycles = value;
+    }
+
+    // Debug
+
+    fn print_regs(&self, cycles_total: u64) {
         println!(
             "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
             self.pc,
@@ -359,6 +379,10 @@ impl Cpu {
     }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*++++++++++++++++++++++++++++++++++++++++++++++UNIT TESTS++++++++++++++++++++++++++++++++++++++++++++++*/
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 #[cfg(test)]
 mod tests {
     use crate::si_arcade::cpu::Cpu;
@@ -367,20 +391,83 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cpu_test() {
-        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug("test_roms/TST8080.COM")));
-        let inputs_outputs_debug = Rc::new(RefCell::new(InputsOutputs::new()));
-        let mut cpu_debug = Cpu::new(&mmu_debug, &inputs_outputs_debug, 0x100);
+    fn cpu_test_rom_cpudiag() {
+        println!("------------------------------------CPUDIAG------------------------------------");
+        cpu_test("test_roms/cpudiag.bin", 4775);
+    }
 
+    #[test]
+    fn cpu_test_rom_tst8080() {
+        println!("------------------------------------TST8080------------------------------------");
+        cpu_test("test_roms/TST8080.COM", 4924);
+    }
+
+    #[test]
+    fn cpu_test_rom_8080pre() {
+        println!("------------------------------------8080PRE------------------------------------");
+        cpu_test("test_roms/8080PRE.COM", 7817);
+    }
+
+    // #[test]
+    // fn cpu_test_rom_cputest() {
+    //     println!("------------------------------------CPUTEST------------------------------------");
+    //     cpu_test("test_roms/CPUTEST.COM", 255653383);
+    // }
+    //
+    // #[test]
+    // fn cpu_test_rom_8080exm() {
+    //     println!("------------------------------------8080EXM------------------------------------");
+    //     cpu_test("test_roms/8080EXM.COM", 23803381171);
+    // }
+
+    fn cpu_test(rom_path: &str, cycles_to_do: u64) {
+        let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
+        let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
-        let mut opcode: u8 = 0;
-        for i in 0..650 {
-            cpu_debug.print_regs(cycles_counter);
-            let cycles_opcode = cpu_debug.fetch_compute();
-            cycles_counter += cycles_opcode.0 as u64;
-            opcode = cycles_opcode.1;
+        let mut test_finished = false;
+        while !test_finished {
+            // cpu_debug.print_regs(cycles_counter);
+            let opcode = cpu_debug.fetch_opcode();
+            if opcode == 0xDB {
+                let port = cpu_debug.fetch_byte();
+                cpu_debug.regs.a = inputs(port, cpu_debug.regs.a);
+                cpu_debug.cycles = 10;
+            } else if opcode == 0xd3 {
+                let port = cpu_debug.fetch_byte();
+                let a = cpu_debug.regs.a;
+                test_finished = outputs(&mut cpu_debug, port, a);
+                cpu_debug.cycles = 10;
+            } else {
+                cpu_debug.cycles = cpu_debug.compute_opcode(opcode);
+            }
+            cycles_counter += cpu_debug.cycles as u64;
         }
-        cpu_debug.print_regs(cycles_counter);
-        assert_eq!(cpu_debug.pc, 0); //Verify we reach pc = 0x0 after 651 operations
+        assert_eq!(cycles_counter, cycles_to_do);
+    }
+
+    fn inputs(port: u8, data: u8) -> u8 {
+        0x00
+    }
+
+    fn outputs(cpu: &mut Cpu, port: u8, data: u8) -> bool {
+        let mut test_finished = false;
+        if port == 0 {
+            test_finished = true;
+        } else if port == 1 {
+            let operation: u8 = cpu.regs.c;
+            if operation == 2 {
+                // print a character stored in E
+                print!("{}", cpu.regs.e as char);
+            } else if operation == 9 {
+                // print from memory at (DE) until '$' char
+                let mut addr: u16 = cpu.regs.get_de();
+                while cpu.read(addr) != u8::try_from('$').unwrap() {
+                    print!("{}", cpu.read(addr) as char);
+                    addr += 1;
+                }
+            }
+        }
+
+        test_finished
     }
 }

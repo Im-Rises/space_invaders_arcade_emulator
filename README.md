@@ -11,7 +11,15 @@ Space Invaders arcade game emulator in development made in Rust.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
-[//]: # (## Features)
+## Features
+
+- Full emulation
+- Sound
+- two-players mode
+
+[//]: # (joystick support)
+
+[//]: # (high score automatically saved)
 
 ## Images
 
@@ -21,7 +29,13 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 ## Videos
 
-Placeholder
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
+
+PLACEHOLDER HERE
 
 ## Quick start
 
@@ -142,7 +156,7 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 | L                 | 2 more lives                       |
 | M                 | extra ship at 1000 instead of 1500 |
 
-> *Note*  
+> **Note**  
 > If you don't keep pressed K or L before pressing start and starting a new game you will have 3 lives.  
 > In the same way, you can enable the extra ship to came at 1000 points instead of 1500, but you just need to press
 > the button one time (a confirmation will be displayed in the console).
@@ -183,6 +197,12 @@ Once it is installed, you can type the following command to install SDL2.
 brew install sdl2
 ```
 
+You also need to add `SDL2` to the paths by typing:
+
+```bash
+export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
+```
+
 ---
 
 With Rust and SDL2 libs installed, you can now compile the project in two-way, debug or release. To compile go to the
@@ -213,11 +233,57 @@ It will start a test rom for the Intel 8080 CPU. You can find it in the link bel
 cargo test
 ```
 
+<!--
 If you want some debug infos about the cpu type:
 
 ```bash
-cargo test -- --nocapture
+cargo test -- --show-output
 ```
+-->
+
+Currently, the CPU is passing the following tests:
+
+- [x] cpudiag.bin
+- [x] TST8080.COM
+- [x] 8080PRE.COM
+- [ ] CPUTEST.COM
+- [ ] 8080EXM.COM
+
+The tests are named:
+
+- cpu_test_rom_cpudiag
+- cpu_test_rom_tst8080
+- cpu_test_rom_8080pre
+- cpu_test_rom_cputest
+- cpu_test_rom_8080exm
+
+You can start them individuality by typing:
+
+```bash
+cargo test <test_name>
+```
+
+Example: If you wan to start the cpu_test_rom_tst8080 test.
+
+```bash
+cargo test cpu_test_rom_tst8080
+```
+
+> **Note**  
+> Depending on the test the output is different. Refer to this project for more explanation about how they work.  
+> https://github.com/superzazu/8080  
+> http://www.emulator101.com/full-8080-emulation.html
+
+> **Warning**  
+> Be carefull, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.
+
+<!--
+or if you want to see the output
+
+```bash
+cargo test cpu_test_rom_tst8080 -- --show-output
+```
+-->
 
 ## GitHub Actions
 
@@ -266,7 +332,9 @@ Rustfmt:
 <https://github.com/rust-lang/rustfmt>
 
 Test Roms for the Intel 8080:  
-<https://altairclone.com/downloads/cpu_tests/>
+<https://github.com/superzazu/8080/>  
+<https://altairclone.com/downloads/cpu_tests/>  
+<http://www.emulator101.com/full-8080-emulation.html>
 
 ## Contributors
 

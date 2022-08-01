@@ -5,7 +5,6 @@ invaders.*
 documentations/
 *.wav
 *.zip
-*.bin
 
 # Ignore compilation folder
 [Tt]arget/
