@@ -177,8 +177,9 @@ pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
-    mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
-    mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
+    let de: u16 = cpu.regs.get_de();
+    cpu.regs.set_de(cpu.regs.get_hl());
+    cpu.regs.set_hl(de);
     4 //HERE    //? or 5
 }
 
@@ -433,7 +434,7 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result: u8 = data.wrapping_sub(1);
-    cpu.regs.set_reset_flag(Flag::C, !((result & 0xF) == 0xF));
+    cpu.regs.set_reset_flag(Flag::A, !((result & 0xF) == 0xF));
     cpu.regs.update_flags_szp(result);
     result
 }
@@ -673,36 +674,28 @@ pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8
 /*---------------ROTATE---------------*/
 
 pub fn rlc(cpu: &mut cpu::Cpu) -> u8 {
-    let high_order_bit = get_bit(cpu.regs.a, 7);
-    cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 0, high_order_bit);
+    cpu.regs.set_reset_flag(Flag::C, ((cpu.regs.a >> 7) & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a << 1) | (cpu.regs.get_flag(Flag::C) as u8);
     4
 }
 
 pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
-    let low_order_bit = get_bit(cpu.regs.a, 0);
-    cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 7, low_order_bit);
+    cpu.regs.set_reset_flag(Flag::C, (cpu.regs.a & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a >> 1) | ((cpu.regs.get_flag(Flag::C) as u8) << 7);
     4
 }
 
 pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
-    let high_order_bit = get_bit(cpu.regs.a, 7);
-    let carry = cpu.regs.get_flag(Flag::C);
-    cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 0, carry);
+    let cy: bool = cpu.regs.get_flag(Flag::C);
+    cpu.regs.set_reset_flag(Flag::C, ((cpu.regs.a >> 7) & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a << 1) | (cy as u8);
     4
 }
 
 pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
-    let low_order_bit = get_bit(cpu.regs.a, 0);
-    let carry = cpu.regs.get_flag(Flag::C);
-    cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 7, carry);
+    let cy: bool = cpu.regs.get_flag(Flag::C);
+    cpu.regs.set_reset_flag(Flag::C, (cpu.regs.a & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a >> 1) | ((cy as u8) << 7);
     4
 }
 
@@ -724,21 +717,22 @@ pub fn cmc(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
-    if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
-        cpu.regs.a = cpu.regs.a.wrapping_add(0x06);
-        cpu.regs.update_flag_a(cpu.regs.a, 0x06);
-    };
+    let mut cy = cpu.regs.get_flag(Flag::C);
+    let mut correction: u8 = 0;
+    let lsb = cpu.regs.a & 0x0F;
+    let msb = cpu.regs.a >> 4;
 
-    if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
-        let result = cpu.regs.a.overflowing_add(0x60);
-        if result.1 {
-            cpu.regs.set_reset_flag(Flag::C, true);
-        }
-        cpu.regs.a = result.0;
-    };
+    if (cpu.regs.get_flag(Flag::A)) || (lsb > 9) {
+        correction += 0x06;
+    }
 
-    cpu.regs.update_flags_szp(cpu.regs.a);
+    if (cpu.regs.get_flag(Flag::C)) || (msb > 9) || (msb >= 9 && lsb > 9) {
+        correction += 0x60;
+        cy = true;
+    }
 
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, correction, false);
+    cpu.regs.set_reset_flag(Flag::C, cy);
     4
 }
 
