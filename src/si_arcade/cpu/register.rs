@@ -87,11 +87,11 @@ impl Register {
         binary_lib::get_bit(self.f, f as usize)
     }
 
-    pub fn set_reset_flag(&mut self, f: Flag, bit: bool) {
+    pub fn set_reset_flag(&mut self, flag: Flag, bit: bool) {
         if bit {
-            self.f = binary_lib::set_bit(self.f, f as usize)
+            self.f = binary_lib::set_bit(self.f, flag as usize)
         } else {
-            self.f = binary_lib::reset_bit(self.f, f as usize)
+            self.f = binary_lib::reset_bit(self.f, flag as usize)
         }
     }
 

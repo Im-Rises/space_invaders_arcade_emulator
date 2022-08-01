@@ -440,6 +440,7 @@ fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     // cpu.regs.set_reset_flag(Flag::A, )
     // cpu.regs.update_flag_a(data, u8::MAX);
     // cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
+    // cpu.regs.set_reset_flag(Flag::A, !((result.0 & 0xF) == 0xF));
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
     cpu.regs.update_flag_p(result.0);
@@ -532,6 +533,7 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result_u16: u16 = operand1 as u16 + operand2 as u16 + cpu.regs.get_flag(Flag::C) as u16;
     let result_u8 = (result_u16 & 0x00FF) as u8;
     cpu.regs.set_reset_flag(Flag::C, result_u16 > 0xFF);
+    cpu.regs.set_reset_flag(Flag::A, (result_u8 & 0xF0) > 0xF); //?
     cpu.regs.update_flag_s(result_u8);
     cpu.regs.update_flag_z(result_u8);
     cpu.regs.update_flag_p(result_u8);
@@ -568,6 +570,7 @@ fn sub_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let operand2 = (!operand2).wrapping_add(1);
     let result = add_subroutine_function(cpu, operand1, operand2);
     cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
     result
 }
 
@@ -593,6 +596,7 @@ fn sbb_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let operand2 = (!operand2).wrapping_add(1); // Two's complement
     let result = add_subroutine_function(cpu, operand1, operand2);
     cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
     result
 }
 
@@ -702,6 +706,7 @@ pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8
     cpu.regs.set_reset_flag(Flag::Z, operand1 == operand2);
     cpu.regs.update_flag_p(result);
     cpu.regs.update_flag_a(operand1, operand2);
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
 }
 
 /*---------------ROTATE---------------*/
