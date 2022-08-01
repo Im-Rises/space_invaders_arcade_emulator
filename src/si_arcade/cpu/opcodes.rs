@@ -426,7 +426,6 @@ pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
 
 fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_add(1);
-    // cpu.regs.set_reset_flag(Flag::C, result.1); //?
     cpu.regs.update_flag_a(data, 1);
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
@@ -436,11 +435,8 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_sub(1);
-    // cpu.regs.set_reset_flag(Flag::C, result.1);//?
-    // cpu.regs.set_reset_flag(Flag::A, )
-    // cpu.regs.update_flag_a(data, u8::MAX);
-    // cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
-    // cpu.regs.set_reset_flag(Flag::A, !((result.0 & 0xF) == 0xF));
+    cpu.regs.update_flag_a(data, 1);
+    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
     cpu.regs.update_flag_s(result.0);
     cpu.regs.update_flag_z(result.0);
     cpu.regs.update_flag_p(result.0);
