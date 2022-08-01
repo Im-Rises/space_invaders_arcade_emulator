@@ -432,7 +432,7 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 }
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
-    let result: u8 = data - 1;
+    let result: u8 = data.wrapping_sub(1);
     cpu.regs.set_reset_flag(Flag::C, !((result & 0xF) == 0xF));
     cpu.regs.update_flags_szp(result);
     result
@@ -511,7 +511,7 @@ pub fn aci_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: bool) -> u8 {
-    let result: u8 = operand1 + operand2 + cy as u8;
+    let result: u8 = (operand1.wrapping_add(operand2)).wrapping_add(cy as u8);
     cpu.regs
         .set_reset_flag(Flag::C, cpu.regs.carry(operand1, operand2, cy, 8));
     cpu.regs
@@ -521,8 +521,8 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: b
 }
 
 pub fn dad_word(cpu: &mut cpu::Cpu, word: u16) -> u8 {
-    cpu.regs
-        .set_reset_flag(Flag::C, (((cpu.regs.get_hl() + word) >> 16) & 1) != 0);
+    let result: u32 = (cpu.regs.get_hl() as u32 + word as u32);
+    cpu.regs.set_reset_flag(Flag::C, ((result >> 16) & 1) != 0);
     cpu.regs.set_hl(cpu.regs.get_hl() + word);
     10
 }
@@ -663,7 +663,7 @@ pub fn cpi(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) {
-    let result: u16 = operand1 as u16 - operand2 as u16;
+    let result: u16 = (operand1 as u16).wrapping_sub(operand2 as u16);
     cpu.regs.set_reset_flag(Flag::C, ((result >> 8) & 0x1) != 0);
     cpu.regs
         .set_reset_flag(Flag::A, (!(operand1 ^ (result as u8) ^ operand2) & 0x10) != 0);
