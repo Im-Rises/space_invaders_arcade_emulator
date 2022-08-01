@@ -95,6 +95,12 @@ impl Register {
         }
     }
 
+    pub fn update_flags_szp(&mut self, value: u8) {
+        self.update_flag_s(value);
+        self.update_flag_z(value);
+        self.update_flag_p(value);
+    }
+
     pub fn update_flag_s(&mut self, value: u8) {
         self.set_reset_flag(Flag::S, get_bit(value, 7));
     }
@@ -104,7 +110,7 @@ impl Register {
     }
 
     pub fn update_flag_p(&mut self, value: u8) {
-        self.set_reset_flag(Flag::P, (value.count_ones() % 2) == 0);
+        self.set_reset_flag(Flag::P, (value.count_ones() & 1) == 0);
     }
 
     pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {

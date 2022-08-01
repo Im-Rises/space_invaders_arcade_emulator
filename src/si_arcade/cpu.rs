@@ -65,7 +65,7 @@ impl Cpu {
     // }
     //
     // fn write_word(&mut self, address: u16, data: u16) {
-    //     self.write(address, (data & 0x00FF) as u8);
+    //     self.write(address, (data & 0xFF) as u8);
     //     self.write(address + 1, (data >> 8) as u8);
     // }
 
