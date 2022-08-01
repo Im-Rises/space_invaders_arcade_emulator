@@ -427,9 +427,7 @@ pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
 fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_add(1);
     cpu.regs.update_flag_a(data, 1);
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
+    cpu.regs.update_flags_szp(result.0);
     result.0
 }
 
@@ -437,9 +435,7 @@ fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result = data.overflowing_sub(1);
     cpu.regs.update_flag_a(data, 1);
     cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
+    cpu.regs.update_flags_szp(result.0);
     result.0
 }
 
@@ -502,9 +498,7 @@ fn add_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result = operand1.overflowing_add(operand2);
     cpu.regs.set_reset_flag(Flag::C, result.1);
     cpu.regs.update_flag_a(operand1, operand2);
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
+    cpu.regs.update_flags_szp(result.0);
     result.0
 }
 
@@ -530,9 +524,7 @@ fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result_u8 = (result_u16 & 0x00FF) as u8;
     cpu.regs.set_reset_flag(Flag::C, result_u16 > 0xFF);
     cpu.regs.set_reset_flag(Flag::A, (result_u8 & 0xF0) > 0xF); //?
-    cpu.regs.update_flag_s(result_u8);
-    cpu.regs.update_flag_z(result_u8);
-    cpu.regs.update_flag_p(result_u8);
+    cpu.regs.update_flags_szp(result_u8);
     result_u8
 }
 
@@ -619,9 +611,7 @@ fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result = operand1 & operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, true); //?
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -646,9 +636,7 @@ fn xor_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result = operand1 ^ operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, false);
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -673,9 +661,7 @@ fn or_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 
     let result = operand1 | operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, false);
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -759,22 +745,11 @@ pub fn cmc(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
-    /*
-    (p15/16)
-    If a carry out of the least significant four bits occurs
-    during Step (1), the Auxiliary Carry bit is set; otherwise it is
-    reset. Likewise, if a carry out of the most significant four
-    bits occurs during Step (2). the normal Carry bit is set;
-    otherwise, it is unaffected.
-    */
-
-    // Step 1
     if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
         cpu.regs.a = cpu.regs.a.wrapping_add(0x06);
         cpu.regs.update_flag_a(cpu.regs.a, 0x06);
     };
 
-    // Step 2
     if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
         let result = cpu.regs.a.overflowing_add(0x60);
         if result.1 {
@@ -783,9 +758,7 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
         cpu.regs.a = result.0;
     };
 
-    cpu.regs.update_flag_s(cpu.regs.a);
-    cpu.regs.update_flag_z(cpu.regs.a);
-    cpu.regs.update_flag_p(cpu.regs.a);
+    cpu.regs.update_flags_szp(cpu.regs.a);
 
     4
 }
@@ -794,15 +767,13 @@ pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
-    // cpu.regs.a = cpu.inputs_outputs.borrow_mut().inputs(port, cpu.regs.a);
-    // panic!("Error: Input opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
+    // cpu.regs.a = inputs(port, cpu.regs.a);
     10
 }
 
 pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
-    // cpu.inputs_outputs.borrow_mut().outputs(port, cpu.regs.a);
-    // panic!("Error: Output opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
+    // outputs(port, cpu.regs.a);
     10
 }
 
