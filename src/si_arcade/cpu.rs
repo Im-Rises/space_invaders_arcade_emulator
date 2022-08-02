@@ -303,7 +303,7 @@ impl Cpu {
             0xE8 => ret_flag(self, Flag::P),
             0xE9 => pchl(self),
             0xEA => jmp_flag(self, Flag::P),
-            0xEB => xchg(self), /////?
+            0xEB => xchg(self),
             0xEC => call_flag(self, Flag::P),
             0xED => call(self),
             0xEE => xri(self),

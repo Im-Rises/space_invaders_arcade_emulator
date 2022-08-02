@@ -112,14 +112,6 @@ impl Register {
         self.set_reset_flag(Flag::P, (value.count_ones() & 1) == 0);
     }
 
-    // pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
-    //     self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);
-    // }
-    //
-    // pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
-    //     self.set_reset_flag(Flag::A, ((operand1 & 0xF) + (operand2 & 0xF)) > 0xF);
-    // }
-
     pub fn carry(&self, operand1: u8, operand2: u8, cy: bool, bit_index: usize) -> bool {
         let result: u16 = operand1 as u16 + operand2 as u16 + cy as u16;
         let carry: u16 = result ^ (operand1 as u16) ^ (operand2 as u16);

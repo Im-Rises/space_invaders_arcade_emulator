@@ -123,24 +123,18 @@ pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
 pub fn lxi_b(cpu: &mut cpu::Cpu) -> u8 {
     let data_word = cpu.fetch_word();
     cpu.regs.set_bc(data_word);
-    // cpu.regs.c = cpu.fetch_byte();
-    // cpu.regs.b = cpu.fetch_byte();
     10
 }
 
 pub fn lxi_d(cpu: &mut cpu::Cpu) -> u8 {
     let data_word = cpu.fetch_word();
     cpu.regs.set_de(data_word);
-    // cpu.regs.e = cpu.fetch_byte();
-    // cpu.regs.d = cpu.fetch_byte();
     10
 }
 
 pub fn lxi_h(cpu: &mut cpu::Cpu) -> u8 {
     let data_word = cpu.fetch_word();
     cpu.regs.set_hl(data_word);
-    // cpu.regs.l = cpu.fetch_byte();
-    // cpu.regs.h = cpu.fetch_byte();
     10
 }
 
@@ -218,9 +212,12 @@ pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn xthl(cpu: &mut cpu::Cpu) -> u8 {
-    let temp_hl = cpu.regs.get_hl();
-    cpu.regs.set_hl(cpu.read_word(cpu.sp));
-    cpu.write_word(cpu.sp, temp_hl);
+    let temp = cpu.read_word(cpu.sp);
+    cpu.write_word(cpu.sp, cpu.regs.get_hl());
+    cpu.regs.set_hl(temp);
+    // let temp_hl = cpu.regs.get_hl();
+    // cpu.regs.set_hl(cpu.read_word(cpu.sp));
+    // cpu.write_word(cpu.sp, temp_hl);
     18
 }
 
@@ -661,7 +658,7 @@ pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8
     let result: u16 = (operand1 as u16).wrapping_sub(operand2 as u16);
     cpu.regs.set_reset_flag(Flag::C, ((result >> 8) & 0x1) != 0);
     cpu.regs
-        .set_reset_flag(Flag::A, (!(operand1 ^ (result as u8) ^ operand2) & 0x10) != 0);
+        .set_reset_flag(Flag::A, (!(operand1 ^ ((result & 0xFF) as u8) ^ operand2) & 0x10) != 0);
     cpu.regs.update_flags_szp((result & 0xFF) as u8);
 }
 
