@@ -40,10 +40,10 @@ impl Register {
         ((self.a as u16) << 8) | (self.f as u16)
     }
 
-    // pub fn set_af(&mut self, data: u16) {
-    //     self.a = (data >> 8) as u8;
-    //     self.f = (data & 0x00ff) as u8;
-    // }
+    pub fn set_af(&mut self, data: u16) {
+        self.a = (data >> 8) as u8;
+        self.f = (data & 0x00ff) as u8;
+    }
 
     pub fn get_bc(&self) -> u16 {
         ((self.b as u16) << 8) | (self.c as u16)

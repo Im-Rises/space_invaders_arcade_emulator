@@ -121,20 +121,26 @@ pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn lxi_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.fetch_byte();
-    cpu.regs.b = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_bc(data_word);
+    // cpu.regs.c = cpu.fetch_byte();
+    // cpu.regs.b = cpu.fetch_byte();
     10
 }
 
 pub fn lxi_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.fetch_byte();
-    cpu.regs.d = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_de(data_word);
+    // cpu.regs.e = cpu.fetch_byte();
+    // cpu.regs.d = cpu.fetch_byte();
     10
 }
 
 pub fn lxi_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.fetch_byte();
-    cpu.regs.h = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_hl(data_word);
+    // cpu.regs.l = cpu.fetch_byte();
+    // cpu.regs.h = cpu.fetch_byte();
     10
 }
 
@@ -162,15 +168,13 @@ pub fn lda(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn shld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.write(address, cpu.regs.l);
-    cpu.write(address + 1, cpu.regs.h);
+    cpu.write_word(address, cpu.regs.get_hl());
     16
 }
 
 pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.regs.l = cpu.read(address);
-    cpu.regs.h = cpu.read(address + 1);
+    cpu.regs.set_hl(cpu.read_word(address));
     16
 }
 
@@ -184,48 +188,39 @@ pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
 /*---------------STACK OPS---------------*/
 
 pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
-    let address = Register::unpair_regs(address);
-    cpu.write(cpu.sp.wrapping_sub(1), address.0);
-    cpu.write(cpu.sp.wrapping_sub(2), address.1);
     cpu.sp = cpu.sp.wrapping_sub(2);
+    cpu.write_word(cpu.sp, address);
     11
 }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.read(cpu.sp);
-    cpu.regs.b = cpu.read(cpu.sp + 1);
+    cpu.regs.set_bc(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.read(cpu.sp);
-    cpu.regs.d = cpu.read(cpu.sp + 1);
+    cpu.regs.set_de(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
+    cpu.regs.set_hl(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.f = cpu.read(cpu.sp);
-    cpu.regs.a = cpu.read(cpu.sp + 1);
+    cpu.regs.set_af(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn xthl(cpu: &mut cpu::Cpu) -> u8 {
-    let temp_l = cpu.regs.l;
-    let temp_h = cpu.regs.h;
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
-    cpu.write(cpu.sp, temp_l);
-    cpu.write(cpu.sp + 1, temp_h);
+    let temp_hl = cpu.regs.get_hl();
+    cpu.regs.set_hl(cpu.read_word(cpu.sp));
+    cpu.write_word(cpu.sp, temp_hl);
     18
 }
 
@@ -308,7 +303,7 @@ pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.pc = (cpu.read(cpu.sp) as u16 | (cpu.read(cpu.sp + 1) as u16) << 8) as u16;
+    cpu.pc = cpu.read_word(cpu.sp);
     cpu.sp += 2;
     10
 }
@@ -333,7 +328,8 @@ pub fn ret_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 
 pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
     push(cpu, cpu.pc + 2);
-    cpu.pc = (operand << 3) as u16;
+    // cpu.pc = (operand << 3) as u16;
+    cpu.pc = (operand * 0x08) as u16; //?
     11
 }
 

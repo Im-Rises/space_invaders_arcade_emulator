@@ -128,9 +128,6 @@ impl SpaceInvadersArcade {
                 );
             }
         }
-        // self.coin = false;
-        // self.player1 = PlayerInputs::new();
-        // self.player2 = PlayerInputs::new();
 
         data
     }

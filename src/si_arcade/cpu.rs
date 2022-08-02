@@ -57,14 +57,14 @@ impl Cpu {
         self.mmu.borrow_mut().write(address, data);
     }
 
-    // fn read_word(&self, address: u16) -> u16 {
-    //     (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
-    // }
-    //
-    // fn write_word(&mut self, address: u16, data: u16) {
-    //     self.write(address, (data & 0xFF) as u8);
-    //     self.write(address + 1, (data >> 8) as u8);
-    // }
+    fn read_word(&self, address: u16) -> u16 {
+        (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
+    }
+
+    fn write_word(&mut self, address: u16, data: u16) {
+        self.write(address, (data & 0xFF) as u8);
+        self.write(address + 1, (data >> 8) as u8);
+    }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
