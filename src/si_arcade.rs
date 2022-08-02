@@ -52,6 +52,8 @@ impl SpaceInvadersArcade {
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
         let mut time = Instant::now();
+
+        // Handle CPU
         while self.get_window_active().unwrap() {
             if !self.cpu.get_halted() {
                 if self.cpu.get_cycles() == 0 {
@@ -73,6 +75,8 @@ impl SpaceInvadersArcade {
                 self.cpu.set_cycles(self.cpu.get_cycles() - 1);
             }
             frequency_counter += 1;
+
+            // Handle Interrupts and PPU
             if self.cpu.get_inte() {
                 if frequency_counter > INTERRUPT_MIDDLE_VBLANK && last_frequency_counter <= INTERRUPT_MIDDLE_VBLANK {
                     cpu::interrupts::interrupt(&mut self.cpu, 1);

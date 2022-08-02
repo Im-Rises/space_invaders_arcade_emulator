@@ -6,6 +6,7 @@ use crate::si_arcade::cpu::register::{Flag, Register};
 
 use super::mmu::Mmu;
 
+mod cpu_disassembly;
 pub mod interrupts;
 mod opcodes;
 mod register;
@@ -382,6 +383,10 @@ impl Cpu {
 
 #[cfg(test)]
 mod tests {
+    use std::fs::File;
+    use std::io::Write;
+
+    use crate::si_arcade::cpu::cpu_disassembly::DISASSEMBLY_TABLE;
     use crate::si_arcade::cpu::Cpu;
     use crate::si_arcade::mmu::Mmu;
 
@@ -422,9 +427,11 @@ mod tests {
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
+        let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");
         while !test_finished {
             // cpu_debug.print_regs(cycles_counter);
             let opcode = cpu_debug.fetch_opcode();
+            write_debug_to_file(&mut f);
             if opcode == 0xDB {
                 let port = cpu_debug.fetch_byte();
                 cpu_debug.regs.a = inputs(port, cpu_debug.regs.a);
@@ -467,5 +474,20 @@ mod tests {
         }
 
         test_finished
+    }
+
+    fn write_debug_to_file(file: &mut File) {
+        write!(f, "{}\n", DISASSEMBLY_TABLE[opcode as usize]).expect("Cannot write to log file");
+
+        // fprintf(file, "PC: %04X, AF: %04X, BC: %04X, DE: %04X, HL: %04X, SP: %04X, CYC: %lu",
+        //         c->pc, c->a << 8 | f, i8080_get_bc(c), i8080_get_de(c), i8080_get_hl(c),
+        //         c->sp, c->cyc);
+        //
+        // fprintf(file, "\t(%02X %02X %02X %02X)", i8080_rb(c, c->pc), i8080_rb(c, c->pc + 1),
+        //         i8080_rb(c, c->pc + 2), i8080_rb(c, c->pc + 3));
+        //
+        // fprintf(file, "\t(Operation: %s", DISASSEMBLE_TABLE[i8080_rb(c, c->pc)]);
+        //
+        // fputc('\n',file);
     }
 }
