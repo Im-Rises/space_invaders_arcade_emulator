@@ -6,7 +6,7 @@ use crate::si_arcade::cpu::register::{Flag, Register};
 
 use super::mmu::Mmu;
 
-mod cpu_disassembly;
+pub mod cpu_disassembly;
 pub mod interrupts;
 mod opcodes;
 mod register;
@@ -429,9 +429,8 @@ mod tests {
         let mut test_finished = false;
         let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");
         while !test_finished {
-            // cpu_debug.print_regs(cycles_counter);
             let opcode = cpu_debug.fetch_opcode();
-            write_debug_to_file(&mut f);
+            write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter, opcode);
             if opcode == 0xDB {
                 let port = cpu_debug.fetch_byte();
                 cpu_debug.regs.a = inputs(port, cpu_debug.regs.a);
@@ -446,7 +445,6 @@ mod tests {
             }
             cycles_counter += cpu_debug.cycles as u64;
         }
-        // cpu_debug.print_regs(cycles_counter);
         assert_eq!(cycles_counter, cycles_to_do);
     }
 
@@ -476,18 +474,34 @@ mod tests {
         test_finished
     }
 
-    fn write_debug_to_file(file: &mut File) {
-        write!(f, "{}\n", DISASSEMBLY_TABLE[opcode as usize]).expect("Cannot write to log file");
+    fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64, opcode: u8) {
+        write!(
+            file,
+            "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}",
+            cpu.pc,
+            cpu.regs.get_af(),
+            cpu.regs.get_bc(),
+            cpu.regs.get_de(),
+            cpu.regs.get_hl(),
+            cpu.sp
+        )
+        .expect("TODO: panic message");
 
-        // fprintf(file, "PC: %04X, AF: %04X, BC: %04X, DE: %04X, HL: %04X, SP: %04X, CYC: %lu",
-        //         c->pc, c->a << 8 | f, i8080_get_bc(c), i8080_get_de(c), i8080_get_hl(c),
-        //         c->sp, c->cyc);
-        //
-        // fprintf(file, "\t(%02X %02X %02X %02X)", i8080_rb(c, c->pc), i8080_rb(c, c->pc + 1),
-        //         i8080_rb(c, c->pc + 2), i8080_rb(c, c->pc + 3));
-        //
-        // fprintf(file, "\t(Operation: %s", DISASSEMBLE_TABLE[i8080_rb(c, c->pc)]);
-        //
-        // fputc('\n',file);
+        write!(
+            file,
+            "\t({:#04X} {:#04X} {:#04X} {:#04X})",
+            cpu.read(cpu.pc),
+            cpu.read(cpu.pc + 1),
+            cpu.read(cpu.pc + 2),
+            cpu.read(cpu.pc + 3)
+        )
+        .expect("TODO: panic message");
+
+        write!(
+            file,
+            "\t(Operation: {})\tcycles: {}\n",
+            DISASSEMBLY_TABLE[opcode as usize], cycles
+        )
+        .expect("TODO: panic message");
     }
 }
