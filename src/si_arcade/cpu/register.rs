@@ -1,5 +1,4 @@
-use crate::binary_lib;
-use crate::binary_lib::get_bit;
+use crate::binary_lib::{get_bit, reset_bit, set_bit};
 
 pub enum Flag {
     S = 7,
@@ -43,6 +42,9 @@ impl Register {
     pub fn set_af(&mut self, data: u16) {
         self.a = (data >> 8) as u8;
         self.f = (data & 0x00ff) as u8;
+        self.f = reset_bit(self.f, 5);
+        self.f = reset_bit(self.f, 3);
+        self.f = set_bit(self.f, 1);
     }
 
     pub fn get_bc(&self) -> u16 {
@@ -88,9 +90,9 @@ impl Register {
 
     pub fn set_reset_flag(&mut self, flag: Flag, bit: bool) {
         if bit {
-            self.f = binary_lib::set_bit(self.f, flag as usize)
+            self.f = set_bit(self.f, flag as usize)
         } else {
-            self.f = binary_lib::reset_bit(self.f, flag as usize)
+            self.f = reset_bit(self.f, flag as usize)
         }
     }
 

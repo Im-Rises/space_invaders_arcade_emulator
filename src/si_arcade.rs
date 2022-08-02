@@ -11,7 +11,7 @@ use sdl2::Sdl;
 use crate::binary_lib::*;
 use crate::si_arcade::inputs_outputs::InputsOutputs;
 
-mod cpu;
+pub mod cpu;
 mod inputs_outputs;
 mod mmu;
 mod ppu;

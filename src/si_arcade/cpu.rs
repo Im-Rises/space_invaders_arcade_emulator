@@ -64,7 +64,7 @@ impl Cpu {
 
     fn write_word(&mut self, address: u16, data: u16) {
         self.write(address, (data & 0xFF) as u8);
-        self.write(address + 1, (data >> 8) as u8);
+        self.write(address + 1, ((data >> 8) & &0xFF) as u8);
     }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
@@ -382,7 +382,7 @@ impl Cpu {
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use std::fs::File;
     use std::io::Write;
 
@@ -422,15 +422,15 @@ mod tests {
     //     cpu_test("test_roms/8080EXM.COM", 23803381171);
     // }
 
-    fn cpu_test(rom_path: &str, cycles_to_do: u64) {
+    pub fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
-        let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");
+        // let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");
         while !test_finished {
+            // write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter);
             let opcode = cpu_debug.fetch_opcode();
-            write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter, opcode);
             if opcode == 0xDB {
                 let port = cpu_debug.fetch_byte();
                 cpu_debug.regs.a = inputs(port, cpu_debug.regs.a);
@@ -474,33 +474,23 @@ mod tests {
         test_finished
     }
 
-    fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64, opcode: u8) {
+    fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64) {
         write!(
             file,
-            "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}",
+            "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}\t({:#04X} \
+            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}\n",
             cpu.pc,
             cpu.regs.get_af(),
             cpu.regs.get_bc(),
             cpu.regs.get_de(),
             cpu.regs.get_hl(),
-            cpu.sp
-        )
-        .expect("TODO: panic message");
-
-        write!(
-            file,
-            "\t({:#04X} {:#04X} {:#04X} {:#04X})",
+            cpu.sp,
             cpu.read(cpu.pc),
             cpu.read(cpu.pc + 1),
             cpu.read(cpu.pc + 2),
-            cpu.read(cpu.pc + 3)
-        )
-        .expect("TODO: panic message");
-
-        write!(
-            file,
-            "\t(Operation: {})\tcycles: {}\n",
-            DISASSEMBLY_TABLE[opcode as usize], cycles
+            cpu.read(cpu.pc + 3),
+            DISASSEMBLY_TABLE[cpu.read(cpu.pc) as usize],
+            cycles
         )
         .expect("TODO: panic message");
     }
