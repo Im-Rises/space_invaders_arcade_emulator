@@ -331,8 +331,11 @@ Rust:
 <https://doc.rust-lang.org/book>
 
 SDL2 Rust:  
-<https://www.libsdl.org>  
 <https://github.com/Rust-SDL2/rust-sdl2>
+
+SDL2 libs download:  
+<https://www.libsdl.org/download-2.0.php>  
+<https://github.com/libsdl-org/SDL_mixer/releases>
 
 Intel 8080 documentations:  
 <https://archive.org/details/8080Datasheet>  

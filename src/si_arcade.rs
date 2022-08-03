@@ -4,6 +4,7 @@ use std::time::Instant;
 
 use crate::binary_lib::*;
 use crate::my_sdl2;
+use crate::my_sdl2::MySdl2;
 
 mod cpu;
 mod inputs_outputs;
@@ -19,7 +20,7 @@ pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
     ppu: ppu::Ppu,
     mmu: Rc<RefCell<mmu::Mmu>>,
-    pub(crate) inputs_outputs: inputs_outputs::InputsOutputs,
+    pub inputs_outputs: inputs_outputs::InputsOutputs,
 }
 
 impl SpaceInvadersArcade {
@@ -34,7 +35,16 @@ impl SpaceInvadersArcade {
     }
     pub fn start(&mut self) {
         let mut time = Instant::now();
-        let mut sdl2_video: my_sdl2::MySdl2 = my_sdl2::MySdl2::new();
+        let mut sdl2_video: my_sdl2::MySdl2 = my_sdl2::MySdl2::new(
+            spu::SOUND_0,
+            spu::SOUND_1,
+            spu::SOUND_2,
+            spu::SOUND_3,
+            spu::SOUND_4,
+            spu::SOUND_5,
+            spu::SOUND_6,
+            spu::SOUND_7,
+        );
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
 
@@ -50,7 +60,7 @@ impl SpaceInvadersArcade {
                         self.cpu.set_cycles(10);
                     } else if opcode == 0xd3 {
                         let port = self.cpu.fetch_byte();
-                        self.outputs(port, self.cpu.get_a());
+                        self.outputs(port, self.cpu.get_a(), &mut sdl2_video);
                         self.cpu.set_cycles(10);
                     } else {
                         let cycles = self.cpu.compute_opcode(opcode);
@@ -121,12 +131,25 @@ impl SpaceInvadersArcade {
         data
     }
 
-    fn outputs(&mut self, port: u8, data: u8) {
+    fn outputs(&mut self, port: u8, data: u8, sdl2_video: &mut MySdl2) {
         match port {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
-            3 => (), //Sound bit
+            3 => {
+                for i in 0..4 {
+                    if get_bit(data, i) {
+                        sdl2_video.play_audio_sound(i as i32);
+                    }
+                }
+            }
             4 => self.inputs_outputs.shift_register = self.inputs_outputs.shift_register >> 8 | (data as u16) << 8,
-            5 => (), //Sound bit
+            5 => {
+                // for i in 0..4 {
+                //     let index = i + 4;
+                //     if get_bit(data, index) {
+                //         sdl2_video.play_audio_sound(index as i32);
+                //     }
+                // }
+            }
             6 => (), //Watch dog
             _ => {
                 println!(
