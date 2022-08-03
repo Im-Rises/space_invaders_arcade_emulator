@@ -2,19 +2,17 @@ use std::fs::File;
 use std::io;
 use std::io::{Error, Read};
 
-// const MEMORY_SIZE: usize = 0x4000;
-const MEMORY_SIZE: usize = 0x10000;
+const MEMORY_SIZE: usize = 0x4000;
+const DEBUG_MEMORY_SIZE: usize = 0x10000;
 
 pub struct Mmu {
-    // memory: [u8; MEMORY_SIZE],
     memory: Vec<u8>,
 }
 
 impl Mmu {
     pub fn new() -> Self {
         let mut mmu = Mmu {
-            // memory: [0; MEMORY_SIZE],
-            memory: vec![0; 0x4000],
+            memory: vec![0; MEMORY_SIZE],
         };
 
         let array_h: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.h").unwrap();
@@ -31,7 +29,7 @@ impl Mmu {
 
     pub fn new_debug(rom_path: &str) -> Self {
         let mut mmu = Mmu {
-            memory: vec![0; 0x10000],
+            memory: vec![0; DEBUG_MEMORY_SIZE],
         };
 
         let debug_rom_and_size = read_complete_rom(rom_path).unwrap();
@@ -49,27 +47,27 @@ impl Mmu {
     }
 
     pub fn read(&self, address: u16) -> u8 {
-        // if address < 0x4000 {
-        self.memory[address as usize]
-        // } else if address < 0x8000 {
-        //     self.memory[(address - 0x4000) as usize]
-        // } else if address < 0xC000 {
-        //     self.memory[(address - 0x8000) as usize]
-        // } else {
-        //     self.memory[(address - 0xC000) as usize]
-        // }
+        if address < 0x4000 {
+            self.memory[address as usize]
+        } else if address < 0x8000 {
+            self.memory[(address - 0x4000) as usize]
+        } else if address < 0xC000 {
+            self.memory[(address - 0x8000) as usize]
+        } else {
+            self.memory[(address - 0xC000) as usize]
+        }
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
-        // if address < 0x4000 {
-        self.memory[address as usize] = data;
-        // } else if address < 0x8000 {
-        //     self.memory[(address - 0x4000) as usize] = data;
-        // } else if address < 0xC000 {
-        //     self.memory[(address - 0x8000) as usize] = data;
-        // } else {
-        //     self.memory[(address - 0xC000) as usize] = data;
-        // }
+        if address < 0x4000 {
+            self.memory[address as usize] = data;
+        } else if address < 0x8000 {
+            self.memory[(address - 0x4000) as usize] = data;
+        } else if address < 0xC000 {
+            self.memory[(address - 0x8000) as usize] = data;
+        } else {
+            self.memory[(address - 0xC000) as usize] = data;
+        }
     }
 
     pub fn get_vram(&self) -> &[u8] {
@@ -87,7 +85,7 @@ fn space_invaders_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
     Ok(buffer)
 }
 
-fn read_complete_rom(rom_path: &str) -> io::Result<((Vec<u8>, usize))> {
+fn read_complete_rom(rom_path: &str) -> io::Result<(Vec<u8>, usize)> {
     let mut f = File::open(rom_path)?;
     let mut buffer = Vec::new();
     let size = f.read_to_end(&mut buffer)?;
