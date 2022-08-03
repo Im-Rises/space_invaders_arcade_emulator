@@ -23,7 +23,11 @@ controller:
   - 'src/**/inputs.*'
 
 binary_lib:
-  - 'stc/**/binary_lib.rs'
+  - 'src/**/binary_lib.rs'
+
+sdl2:
+  - 'src/**/my_sdl2.*'
+  - 'src/**/my_sdl2/*.rs'
 
 cargo:
   - 'Cargo.toml'

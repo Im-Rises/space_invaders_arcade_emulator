@@ -7,7 +7,7 @@
 
 ## Description
 
-Space Invaders arcade game emulator in development made in Rust.
+Space Invaders arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
@@ -89,13 +89,13 @@ command next to it:
 For Linux users, you need to install the SDL2 lib, to do so type one of the following commands:
 
 ```bash
-sudo apt-get install libsdl2-2.0-0
+sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0
 ```
 
 or if you're a developer and want to compile the Emulator, please install this version of SDL2:
 
 ```bash
-sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-dev libsdl2-mixer-dev
 ```
 
 Then you can start by double-clicking the executable of typing the following command next to it:
