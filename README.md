@@ -7,7 +7,7 @@
 
 ## Description
 
-Space Invaders arcade game emulator in development made in Rust.
+Space Invaders arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
@@ -23,9 +23,9 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 ## Images
 
-| Title screen | Game screen                                                                                                            |
-|--------------|------------------------------------------------------------------------------------------------------------------------|
-|![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png)| ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
+| Title screen                                                                                                           | Game screen                                                                                                            |
+|------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png) | ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
 
 ## Videos
 
@@ -39,7 +39,7 @@ PLACEHOLDER HERE
 
 ## Quick start
 
-To download the emulator, you can click one of the icons below depending on your operating system or you can click the
+To download the emulator, you can click one of the icons below depending on your operating system, or you can click the
 release section of the GitHub page.
 
 For each version when you unzip the downloaded release, you will get the executable and two folder, one
@@ -66,7 +66,7 @@ The `wav` files wan be downloaded in the links below:
 <https://github.com/howprice/invaders-emulator>
 
 Depending on you `operating system` you will need to install some libs, they are installed differently depending on your
-system, please follow one of the section belwo `Windows` or `Linux` or `MacOs`.
+system, please follow one of the section below `Windows` or `Linux` or `MacOs`.
 
 ### Windows
 
@@ -86,16 +86,16 @@ command next to it:
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="cmakeLogo" style="height:40px;"/></a>
 
-For Linux useres, you need to install the SDL2 lib, to do so type one of the following commands:
+For Linux users, you need to install the SDL2 lib, to do so type one of the following commands:
 
 ```bash
-sudo apt-get install libsdl2-2.0-0
+sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0
 ```
 
 or if you're a developer and want to compile the Emulator, please install this version of SDL2:
 
 ```bash
-sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-dev libsdl2-mixer-dev
 ```
 
 Then you can start by double-clicking the executable of typing the following command next to it:
@@ -108,13 +108,14 @@ Then you can start by double-clicking the executable of typing the following com
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-For MacOs users you will need to install Brew, please follow the instruction in the link below:  
+For macOS users you will need to install Brew, please follow the instruction in the link below:  
 <https://brew.sh>
 
 Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
+brew install sdl2_mixer
 ```
 
 You also need to add `SDL2` to the paths by typing:
@@ -178,23 +179,25 @@ I used the instructions in the link below to set up the dynamic linking:
 
 ### Linux
 
-Linux Users need to install the SDL2 lib. To do so, type in your bash system the following commands.
+Linux Users need to install the SDL2 libs (SDL2 and SDL2_mixer). To do so, type in your bash system the following
+commands.
 
 If you want to compile the program, install the developer version with the command below:
 
 ```bash
-sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-dev libsdl2-mixer-dev
 ```
 
 ### MacOs
 
-For MacOs users you will need to install Brew, please follow the instruction in the link below:  
+For macOS users you will need to install Brew, please follow the instruction in the link below:  
 <https://brew.sh>
 
 Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
+brew install sdl2_mixer
 ```
 
 You also need to add `SDL2` to the paths by typing:
@@ -246,8 +249,8 @@ Currently, the CPU is passing the following tests:
 - [x] cpudiag.bin
 - [x] TST8080.COM
 - [x] 8080PRE.COM
-- [ ] CPUTEST.COM
-- [ ] 8080EXM.COM
+- [x] CPUTEST.COM
+- [x] 8080EXM.COM
 
 The tests are named:
 
@@ -263,19 +266,36 @@ You can start them individuality by typing:
 cargo test <test_name>
 ```
 
-Example: If you wan to start the cpu_test_rom_tst8080 test.
+Example: If you want to start the cpu_test_rom_tst8080 test.
 
 ```bash
 cargo test cpu_test_rom_tst8080
 ```
 
+You can also debug the processes by uncommenting the two lines following lines in the `cpu.rs` file in the `test`
+module.
+
+~~~
+// let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");  
+~~~
+
+~~~
+// write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter);
+~~~
+
 > **Note**  
 > Depending on the test the output is different. Refer to this project for more explanation about how they work.  
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
+>
+> The last test (cpu_test_rom_8080exm) can take a lot of time so it is commented to prevent an issue with the GitHub
+> Actions. Uncomment it if you need it.
+> You will also need to comment the ram mirroring for the read and write functions in the Mmu struct methods in the mmu
+> files to allow the last test to work (the ram banking is enabled for the Space invaders game to work correctly).
 
 > **Warning**  
-> Be carefull, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.
+> Be carefully, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.  
+> All tests take a lot more time if you output all the disassembly code by uncommenting the two lines.
 
 <!--
 or if you want to see the output
@@ -314,8 +334,11 @@ Rust:
 <https://doc.rust-lang.org/book>
 
 SDL2 Rust:  
-<https://www.libsdl.org>  
 <https://github.com/Rust-SDL2/rust-sdl2>
+
+SDL2 libs download:  
+<https://www.libsdl.org/download-2.0.php>  
+<https://github.com/libsdl-org/SDL_mixer/releases>
 
 Intel 8080 documentations:  
 <https://archive.org/details/8080Datasheet>  
@@ -328,7 +351,7 @@ Intel 8080 opcodes table:
 Wikipedia:  
 <https://en.wikipedia.org/wiki/Intel_8080>
 
-Rustfmt:  
+rustfmt:  
 <https://github.com/rust-lang/rustfmt>
 
 Test Roms for the Intel 8080:  

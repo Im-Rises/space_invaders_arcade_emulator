@@ -1,9 +1,5 @@
-use std::mem;
-
-use crate::binary_lib::*;
-
 use super::super::cpu;
-use super::super::cpu::register::{Flag, Register};
+use super::super::cpu::register::Flag;
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
@@ -123,20 +119,20 @@ pub fn mvi_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn lxi_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.fetch_byte();
-    cpu.regs.b = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_bc(data_word);
     10
 }
 
 pub fn lxi_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.fetch_byte();
-    cpu.regs.d = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_de(data_word);
     10
 }
 
 pub fn lxi_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.fetch_byte();
-    cpu.regs.h = cpu.fetch_byte();
+    let data_word = cpu.fetch_word();
+    cpu.regs.set_hl(data_word);
     10
 }
 
@@ -164,69 +160,62 @@ pub fn lda(cpu: &mut cpu::Cpu) -> u8 {
 
 pub fn shld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.write(address, cpu.regs.l);
-    cpu.write(address + 1, cpu.regs.h);
+    cpu.write_word(address, cpu.regs.get_hl());
     16
 }
 
 pub fn lhld(cpu: &mut cpu::Cpu) -> u8 {
     let address = cpu.fetch_word();
-    cpu.regs.l = cpu.read(address);
-    cpu.regs.h = cpu.read(address + 1);
+    cpu.regs.set_hl(cpu.read_word(address));
     16
 }
 
 pub fn xchg(cpu: &mut cpu::Cpu) -> u8 {
-    mem::swap(&mut cpu.regs.d, &mut cpu.regs.h);
-    mem::swap(&mut cpu.regs.e, &mut cpu.regs.l);
-    4 //HERE    //? or 5
+    let de: u16 = cpu.regs.get_de();
+    cpu.regs.set_de(cpu.regs.get_hl());
+    cpu.regs.set_hl(de);
+    4
 }
 
 /*---------------STACK OPS---------------*/
 
 pub fn push(cpu: &mut cpu::Cpu, address: u16) -> u8 {
-    let address = Register::unpair_regs(address);
-    cpu.write(cpu.sp.wrapping_sub(1), address.0);
-    cpu.write(cpu.sp.wrapping_sub(2), address.1);
     cpu.sp = cpu.sp.wrapping_sub(2);
+    cpu.write_word(cpu.sp, address);
     11
 }
 
 pub fn pop_b(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.c = cpu.read(cpu.sp);
-    cpu.regs.b = cpu.read(cpu.sp + 1);
+    cpu.regs.set_bc(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_d(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.e = cpu.read(cpu.sp);
-    cpu.regs.d = cpu.read(cpu.sp + 1);
+    cpu.regs.set_de(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_h(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
+    cpu.regs.set_hl(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn pop_psw(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.regs.f = cpu.read(cpu.sp);
-    cpu.regs.a = cpu.read(cpu.sp + 1);
+    cpu.regs.set_af(cpu.read_word(cpu.sp));
     cpu.sp = cpu.sp.wrapping_add(2);
     10
 }
 
 pub fn xthl(cpu: &mut cpu::Cpu) -> u8 {
-    let temp_l = cpu.regs.l;
-    let temp_h = cpu.regs.h;
-    cpu.regs.l = cpu.read(cpu.sp);
-    cpu.regs.h = cpu.read(cpu.sp + 1);
-    cpu.write(cpu.sp, temp_l);
-    cpu.write(cpu.sp + 1, temp_h);
+    let temp = cpu.read_word(cpu.sp);
+    cpu.write_word(cpu.sp, cpu.regs.get_hl());
+    cpu.regs.set_hl(temp);
+    // let temp_hl = cpu.regs.get_hl();
+    // cpu.regs.set_hl(cpu.read_word(cpu.sp));
+    // cpu.write_word(cpu.sp, temp_hl);
     18
 }
 
@@ -309,7 +298,7 @@ pub fn call_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 /*---------------RETURN---------------*/
 
 pub fn ret(cpu: &mut cpu::Cpu) -> u8 {
-    cpu.pc = (cpu.read(cpu.sp) as u16 | (cpu.read(cpu.sp + 1) as u16) << 8) as u16;
+    cpu.pc = cpu.read_word(cpu.sp);
     cpu.sp += 2;
     10
 }
@@ -334,7 +323,8 @@ pub fn ret_not_flag(cpu: &mut cpu::Cpu, flag: Flag) -> u8 {
 
 pub fn rst(cpu: &mut cpu::Cpu, operand: u8) -> u8 {
     push(cpu, cpu.pc + 2);
-    cpu.pc = (operand << 3) as u16;
+    // cpu.pc = (operand << 3) as u16;
+    cpu.pc = (operand * 0x08) as u16; //?
     11
 }
 
@@ -425,178 +415,147 @@ pub fn dcr_m(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
-    let result = data.overflowing_add(1);
-    // cpu.regs.set_reset_flag(Flag::C, result.1); //?
-    cpu.regs.update_flag_a(data, 1);
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
-    result.0
+    let result: u8 = data.wrapping_add(1);
+    cpu.regs.set_reset_flag(Flag::A, (result & 0xF) == 0);
+    cpu.regs.update_flags_szp(result);
+    result
 }
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
-    let result = data.overflowing_sub(1);
-    // cpu.regs.set_reset_flag(Flag::C, result.1);//?
-    // cpu.regs.set_reset_flag(Flag::A, )
-    // cpu.regs.update_flag_a(data, u8::MAX);
-    // cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A));
-    // cpu.regs.set_reset_flag(Flag::A, !((result.0 & 0xF) == 0xF));
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
-    result.0
+    let result: u8 = data.wrapping_sub(1);
+    cpu.regs.set_reset_flag(Flag::A, !((result & 0xF) == 0xF));
+    cpu.regs.update_flags_szp(result);
+    result
 }
 
 pub fn inx_b(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_bc().wrapping_add(1);
-    (cpu.regs.b, cpu.regs.c) = Register::unpair_regs(word);
+    cpu.regs.set_bc(word);
     5
 }
 
 pub fn inx_d(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_de().wrapping_add(1);
-    (cpu.regs.d, cpu.regs.e) = Register::unpair_regs(word);
+    cpu.regs.set_de(word);
     5
 }
 
 pub fn inx_h(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_hl().wrapping_add(1);
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(word);
+    cpu.regs.set_hl(word);
     5
 }
 
 pub fn dcx_b(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_bc().wrapping_sub(1);
-    (cpu.regs.b, cpu.regs.c) = Register::unpair_regs(word);
+    cpu.regs.set_bc(word);
     5
 }
 
 pub fn dcx_d(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_de().wrapping_sub(1);
-    (cpu.regs.d, cpu.regs.e) = Register::unpair_regs(word);
+    cpu.regs.set_de(word);
     5
 }
 
 pub fn dcx_h(cpu: &mut cpu::Cpu) -> u8 {
     let word = cpu.regs.get_hl().wrapping_sub(1);
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs(word);
+    cpu.regs.set_hl(word);
     5
 }
 
 /*---------------ADD---------------*/
 
 pub fn add_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, r);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, r, false);
     4
 }
 
 pub fn add_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.read(cpu.regs.get_hl());
-    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand, false);
     7
 }
 
 pub fn adi_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.fetch_byte();
-    cpu.regs.a = add_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand, false);
     7
 }
 
-fn add_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    let result = operand1.overflowing_add(operand2);
-    cpu.regs.set_reset_flag(Flag::C, result.1);
-    cpu.regs.update_flag_a(operand1, operand2);
-    cpu.regs.update_flag_s(result.0);
-    cpu.regs.update_flag_z(result.0);
-    cpu.regs.update_flag_p(result.0);
-    result.0
-}
-
 pub fn adc_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, r);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, r, cpu.regs.get_flag(Flag::C));
     4
 }
 
 pub fn adc_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.read(cpu.regs.get_hl());
-    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand, cpu.regs.get_flag(Flag::C));
     7
 }
 
 pub fn aci_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.fetch_byte();
-    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, operand, cpu.regs.get_flag(Flag::C));
     7
 }
 
-fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    let result_u16: u16 = operand1 as u16 + operand2 as u16 + cpu.regs.get_flag(Flag::C) as u16;
-    let result_u8 = (result_u16 & 0x00FF) as u8;
-    cpu.regs.set_reset_flag(Flag::C, result_u16 > 0xFF);
-    cpu.regs.set_reset_flag(Flag::A, (result_u8 & 0xF0) > 0xF); //?
-    cpu.regs.update_flag_s(result_u8);
-    cpu.regs.update_flag_z(result_u8);
-    cpu.regs.update_flag_p(result_u8);
-    result_u8
+fn adc_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: bool) -> u8 {
+    let result: u8 = (operand1.wrapping_add(operand2)).wrapping_add(cy as u8);
+    cpu.regs
+        .set_reset_flag(Flag::C, cpu.regs.carry(operand1, operand2, cy, 8));
+    cpu.regs
+        .set_reset_flag(Flag::A, cpu.regs.carry(operand1, operand2, cy, 4));
+    cpu.regs.update_flags_szp(result);
+    result
 }
 
 pub fn dad_word(cpu: &mut cpu::Cpu, word: u16) -> u8 {
     let result: u32 = cpu.regs.get_hl() as u32 + word as u32;
-    cpu.regs.set_reset_flag(Flag::C, result > 0xFFFF);
-    (cpu.regs.h, cpu.regs.l) = Register::unpair_regs((result & 0x0000FFFF) as u16);
+    cpu.regs.set_reset_flag(Flag::C, ((result >> 16) & 1) != 0);
+    cpu.regs.set_hl(cpu.regs.get_hl().wrapping_add(word));
     10
 }
 
 /*---------------SUBTRACT---------------*/
 
 pub fn sub_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a = sub_subroutine_function(cpu, cpu.regs.a, r);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, r, false);
     4
 }
 
 pub fn sub_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.read(cpu.regs.get_hl());
-    cpu.regs.a = sub_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand, false);
     7
 }
 
 pub fn sui(cpu: &mut cpu::Cpu) -> u8 {
     let operand2 = cpu.fetch_byte();
-    cpu.regs.a = sub_subroutine_function(cpu, cpu.regs.a, operand2);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand2, false);
     7
 }
 
-fn sub_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    let operand2 = (!operand2).wrapping_add(1);
-    let result = add_subroutine_function(cpu, operand1, operand2);
-    cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
-    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
-    result
-}
-
 pub fn sbb_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {
-    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, r);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, r, cpu.regs.get_flag(Flag::C));
     4
 }
 
 pub fn sbb_m(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.read(cpu.regs.get_hl());
-    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand, cpu.regs.get_flag(Flag::C));
     7
 }
 
 pub fn sbi(cpu: &mut cpu::Cpu) -> u8 {
     let operand = cpu.fetch_byte();
-    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand);
+    cpu.regs.a = sbb_subroutine_function(cpu, cpu.regs.a, operand, cpu.regs.get_flag(Flag::C));
     7
 }
 
-fn sbb_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    let operand2 = operand2.wrapping_add(cpu.regs.get_flag(Flag::C) as u8); // Add carry
-    let operand2 = (!operand2).wrapping_add(1); // Two's complement
-    let result = add_subroutine_function(cpu, operand1, operand2);
+fn sbb_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8, cy: bool) -> u8 {
+    let result = adc_subroutine_function(cpu, operand1, !operand2, !cy);
     cpu.regs.set_reset_flag(Flag::C, !cpu.regs.get_flag(Flag::C));
-    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
     result
 }
 
@@ -620,12 +579,10 @@ pub fn ani(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 {
-    let result = operand1 & operand2;
+    let result: u8 = operand1 & operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
-    cpu.regs.set_reset_flag(Flag::A, true); //?
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.set_reset_flag(Flag::A, ((operand1 | operand2) & 0x08) != 0);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -650,9 +607,7 @@ fn xor_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result = operand1 ^ operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, false);
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -677,9 +632,7 @@ fn or_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8 
     let result = operand1 | operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, false);
-    cpu.regs.update_flag_s(result);
-    cpu.regs.update_flag_z(result);
-    cpu.regs.update_flag_p(result);
+    cpu.regs.update_flags_szp(result);
     result
 }
 
@@ -700,48 +653,38 @@ pub fn cpi(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn subroutine_logical_compare(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) {
-    let result = operand1.wrapping_sub(operand2);
-    cpu.regs.set_reset_flag(Flag::C, !(operand1 >= operand2));
-    cpu.regs.update_flag_s(result); // Inverting result with !result allow CPUTEST.COM to pass ?
-    cpu.regs.set_reset_flag(Flag::Z, operand1 == operand2);
-    cpu.regs.update_flag_p(result);
-    cpu.regs.update_flag_a(operand1, operand2);
-    cpu.regs.set_reset_flag(Flag::A, !cpu.regs.get_flag(Flag::A)); //?
+    let result: u16 = (operand1 as u16).wrapping_sub(operand2 as u16);
+    cpu.regs.set_reset_flag(Flag::C, ((result >> 8) & 0x1) != 0);
+    cpu.regs
+        .set_reset_flag(Flag::A, (!(operand1 ^ ((result & 0xFF) as u8) ^ operand2) & 0x10) != 0);
+    cpu.regs.update_flags_szp((result & 0xFF) as u8);
 }
 
 /*---------------ROTATE---------------*/
 
 pub fn rlc(cpu: &mut cpu::Cpu) -> u8 {
-    let high_order_bit = get_bit(cpu.regs.a, 7);
-    cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 0, high_order_bit);
+    cpu.regs.set_reset_flag(Flag::C, ((cpu.regs.a >> 7) & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a << 1) | (cpu.regs.get_flag(Flag::C) as u8);
     4
 }
 
 pub fn rrc(cpu: &mut cpu::Cpu) -> u8 {
-    let low_order_bit = get_bit(cpu.regs.a, 0);
-    cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 7, low_order_bit);
+    cpu.regs.set_reset_flag(Flag::C, (cpu.regs.a & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a >> 1) | ((cpu.regs.get_flag(Flag::C) as u8) << 7);
     4
 }
 
 pub fn ral(cpu: &mut cpu::Cpu) -> u8 {
-    let high_order_bit = get_bit(cpu.regs.a, 7);
-    let carry = cpu.regs.get_flag(Flag::C);
-    cpu.regs.set_reset_flag(Flag::C, high_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shl(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 0, carry);
+    let cy: bool = cpu.regs.get_flag(Flag::C);
+    cpu.regs.set_reset_flag(Flag::C, ((cpu.regs.a >> 7) & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a << 1) | (cy as u8);
     4
 }
 
 pub fn rar(cpu: &mut cpu::Cpu) -> u8 {
-    let low_order_bit = get_bit(cpu.regs.a, 0);
-    let carry = cpu.regs.get_flag(Flag::C);
-    cpu.regs.set_reset_flag(Flag::C, low_order_bit);
-    cpu.regs.a = cpu.regs.a.overflowing_shr(1).0;
-    cpu.regs.a = set_reset_bit(cpu.regs.a, 7, carry);
+    let cy: bool = cpu.regs.get_flag(Flag::C);
+    cpu.regs.set_reset_flag(Flag::C, (cpu.regs.a & 0x1) != 0);
+    cpu.regs.a = (cpu.regs.a >> 1) | ((cy as u8) << 7);
     4
 }
 
@@ -763,50 +706,36 @@ pub fn cmc(cpu: &mut cpu::Cpu) -> u8 {
 }
 
 pub fn daa(cpu: &mut cpu::Cpu) -> u8 {
-    /*
-    (p15/16)
-    If a carry out of the least significant four bits occurs
-    during Step (1), the Auxiliary Carry bit is set; otherwise it is
-    reset. Likewise, if a carry out of the most significant four
-    bits occurs during Step (2). the normal Carry bit is set;
-    otherwise, it is unaffected.
-    */
+    let mut cy = cpu.regs.get_flag(Flag::C);
+    let mut correction: u8 = 0;
+    let lsb = cpu.regs.a & 0x0F;
+    let msb = cpu.regs.a >> 4;
 
-    // Step 1
-    if cpu.regs.a & 0x0F > 9 || cpu.regs.get_flag(Flag::A) {
-        cpu.regs.a = cpu.regs.a.wrapping_add(0x06);
-        cpu.regs.update_flag_a(cpu.regs.a, 0x06);
-    };
+    if (cpu.regs.get_flag(Flag::A)) || (lsb > 9) {
+        correction += 0x06;
+    }
 
-    // Step 2
-    if ((cpu.regs.a & 0xF0) >> 4) > 9 || cpu.regs.get_flag(Flag::C) {
-        let result = cpu.regs.a.overflowing_add(0x60);
-        if result.1 {
-            cpu.regs.set_reset_flag(Flag::C, true);
-        }
-        cpu.regs.a = result.0;
-    };
+    if (cpu.regs.get_flag(Flag::C)) || (msb > 9) || (msb >= 9 && lsb > 9) {
+        correction += 0x60;
+        cy = true;
+    }
 
-    cpu.regs.update_flag_s(cpu.regs.a);
-    cpu.regs.update_flag_z(cpu.regs.a);
-    cpu.regs.update_flag_p(cpu.regs.a);
-
+    cpu.regs.a = adc_subroutine_function(cpu, cpu.regs.a, correction, false);
+    cpu.regs.set_reset_flag(Flag::C, cy);
     4
 }
 
 /*---------------INPUT/OUTPUT---------------*/
 
-pub fn input_in(cpu: &mut cpu::Cpu) -> u8 {
+pub fn input_in(_cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
-    // cpu.regs.a = cpu.inputs_outputs.borrow_mut().inputs(port, cpu.regs.a);
-    // panic!("Error: Input opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
+    // cpu.regs.a = inputs(port, cpu.regs.a);
     10
 }
 
-pub fn output_out(cpu: &mut cpu::Cpu) -> u8 {
+pub fn output_out(_cpu: &mut cpu::Cpu) -> u8 {
     // let port = cpu.fetch_byte();
-    // cpu.inputs_outputs.borrow_mut().outputs(port, cpu.regs.a);
-    // panic!("Error: Output opcode handling from opcode.rs file instead of trap handling in si_arcade.rs");
+    // outputs(port, cpu.regs.a);
     10
 }
 

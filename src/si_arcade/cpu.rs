@@ -1,14 +1,12 @@
 use std::cell::RefCell;
-use std::process::exit;
 use std::rc::Rc;
 
-use crate::si_arcade::cpu::interrupts::interrupt;
 use crate::si_arcade::cpu::opcodes::*;
 use crate::si_arcade::cpu::register::{Flag, Register};
-use crate::si_arcade::inputs_outputs::InputsOutputs;
 
 use super::mmu::Mmu;
 
+pub mod cpu_disassembly;
 pub mod interrupts;
 mod opcodes;
 mod register;
@@ -60,14 +58,14 @@ impl Cpu {
         self.mmu.borrow_mut().write(address, data);
     }
 
-    // fn read_word(&self, address: u16) -> u16 {
-    //     (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
-    // }
-    //
-    // fn write_word(&mut self, address: u16, data: u16) {
-    //     self.write(address, (data & 0xFF) as u8);
-    //     self.write(address + 1, (data >> 8) as u8);
-    // }
+    fn read_word(&self, address: u16) -> u16 {
+        (self.read(address) as u16) | ((self.read(address + 1) as u16) << 8)
+    }
+
+    fn write_word(&mut self, address: u16, data: u16) {
+        self.write(address, (data & 0xFF) as u8);
+        self.write(address + 1, ((data >> 8) & &0xFF) as u8);
+    }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
         match opcode {
@@ -306,7 +304,7 @@ impl Cpu {
             0xE8 => ret_flag(self, Flag::P),
             0xE9 => pchl(self),
             0xEA => jmp_flag(self, Flag::P),
-            0xEB => xchg(self), /////?
+            0xEB => xchg(self),
             0xEC => call_flag(self, Flag::P),
             0xED => call(self),
             0xEE => xri(self),
@@ -327,10 +325,10 @@ impl Cpu {
             0xFD => call(self),
             0xFE => cpi(self),
             0xFF => rst(self, 7),
-            _ => {
-                println!("Error: unknown opcode");
-                exit(1);
-            }
+            // _ => {
+            //     println!("Error: unknown opcode");
+            //     exit(1);
+            // }
         }
     }
 
@@ -361,22 +359,6 @@ impl Cpu {
     pub fn set_cycles(&mut self, value: u8) {
         self.cycles = value;
     }
-
-    // Debug
-
-    fn print_regs(&self, cycles_total: u64) {
-        println!(
-            "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
-            self.pc,
-            self.regs.get_af(),
-            self.regs.get_bc(),
-            self.regs.get_de(),
-            self.regs.get_hl(),
-            self.sp,
-            self.cycles,
-            cycles_total
-        );
-    }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -384,7 +366,11 @@ impl Cpu {
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
+    use std::fs::File;
+    use std::io::Write;
+
+    use crate::si_arcade::cpu::cpu_disassembly::DISASSEMBLY_TABLE;
     use crate::si_arcade::cpu::Cpu;
     use crate::si_arcade::mmu::Mmu;
 
@@ -408,25 +394,26 @@ mod tests {
         cpu_test("test_roms/8080PRE.COM", 7817);
     }
 
-    // #[test]
-    // fn cpu_test_rom_cputest() {
-    //     println!("------------------------------------CPUTEST------------------------------------");
-    //     cpu_test("test_roms/CPUTEST.COM", 255653383);
-    // }
-    //
+    #[test]
+    fn cpu_test_rom_cputest() {
+        println!("------------------------------------CPUTEST------------------------------------");
+        cpu_test("test_roms/CPUTEST.COM", 255653383);
+    }
+
     // #[test]
     // fn cpu_test_rom_8080exm() {
     //     println!("------------------------------------8080EXM------------------------------------");
     //     cpu_test("test_roms/8080EXM.COM", 23803381171);
     // }
 
-    fn cpu_test(rom_path: &str, cycles_to_do: u64) {
+    pub fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
         let mut cpu_debug = Cpu::new(&mmu_debug, 0x100);
         let mut cycles_counter: u64 = 0;
         let mut test_finished = false;
+        // let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");
         while !test_finished {
-            // cpu_debug.print_regs(cycles_counter);
+            // write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter);
             let opcode = cpu_debug.fetch_opcode();
             if opcode == 0xDB {
                 let port = cpu_debug.fetch_byte();
@@ -469,5 +456,26 @@ mod tests {
         }
 
         test_finished
+    }
+
+    fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64) {
+        write!(
+            file,
+            "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}\t({:#04X} \
+            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}\n",
+            cpu.pc,
+            cpu.regs.get_af(),
+            cpu.regs.get_bc(),
+            cpu.regs.get_de(),
+            cpu.regs.get_hl(),
+            cpu.sp,
+            cpu.read(cpu.pc),
+            cpu.read(cpu.pc + 1),
+            cpu.read(cpu.pc + 2),
+            cpu.read(cpu.pc + 3),
+            DISASSEMBLY_TABLE[cpu.read(cpu.pc) as usize],
+            cycles
+        )
+        .expect("Error: Cannot write to file disassembly");
     }
 }

@@ -27,8 +27,8 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator.exe
             ./SDL2.dll
+            ./SDL2_mixer.dll
             ./game_roms
-            ./game_audios
   build-ubuntu:
     name: Build ubuntu
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Download libraries
-        run: sudo apt-get install libsdl2-dev
+        run: sudo apt-get install libsdl2-dev libsdl2-mixer-dev
       - name: Compile code
         run: cargo build --release
       - name: Copy exe to root
@@ -48,7 +48,6 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator
             ./game_roms
-            ./game_audios
   build-macos:
     name: Build macos
     runs-on: macos-latest
@@ -56,7 +55,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Download libraries
-        run: brew install sdl2
+        run: |
+          brew install sdl2
+          brew install sdl2_mixer
       - name: Add lib to path
         run: export LIBRARY_PATH="$LIBRARY_PATH:/opt/local/lib/"
       - name: Compile code
@@ -70,7 +71,6 @@ jobs:
           path: |
             ./space_invaders_arcade_emulator
             ./game_roms
-            ./game_audios
   release-project:
     name: Release project
     runs-on: ubuntu-latest
@@ -117,20 +117,20 @@ jobs:
       - name: Archive ubuntu release
         uses: thedoctor0/zip-release@master
         with:
-          filename: release-linux.zip
+          filename: release-linux.tar.gz
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: release-linux.zip
-          asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.zip
+          asset_path: release-linux.tar.gz
+          asset_name: space_invaders_arcade_emulator-linux-v${{ github.run_number }}.tar.gz
           asset_content_type: application/zip
       - name: Delete ubuntu release files
         run: |
           rm space_invaders_arcade_emulator
-          rm release-linux.zip
+          rm release-linux.tar.gz
       - name: Download macos artifact content
         uses: actions/download-artifact@v2
         with:
@@ -140,13 +140,13 @@ jobs:
       - name: Archive macos release
         uses: thedoctor0/zip-release@master
         with:
-          filename: release-macos.zip
+          filename: release-macos.tar.gz
       - name: Upload release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: release-macos.zip
-          asset_name: space_invaders_arcade_emulator-macos-v${{ github.run_number }}.zip
+          asset_path: release-macos.tar.gz
+          asset_name: space_invaders_arcade_emulator-macos-v${{ github.run_number }}.tar.gz
           asset_content_type: application/zip

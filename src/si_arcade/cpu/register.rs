@@ -1,8 +1,6 @@
-use crate::binary_lib;
-use crate::binary_lib::get_bit;
+use crate::binary_lib::{get_bit, reset_bit, set_bit};
 
 pub enum Flag {
-    //Three bits are unused
     S = 7,
     Z = 6,
     A = 4,
@@ -38,16 +36,19 @@ impl Register {
 
 impl Register {
     pub fn get_af(&self) -> u16 {
-        (u16::from(self.a) << 8) | u16::from(self.f)
+        ((self.a as u16) << 8) | (self.f as u16)
     }
 
     pub fn set_af(&mut self, data: u16) {
         self.a = (data >> 8) as u8;
         self.f = (data & 0x00ff) as u8;
+        self.f = reset_bit(self.f, 5);
+        self.f = reset_bit(self.f, 3);
+        self.f = set_bit(self.f, 1);
     }
 
     pub fn get_bc(&self) -> u16 {
-        u16::from(self.b) << 8 | u16::from(self.c)
+        ((self.b as u16) << 8) | (self.c as u16)
     }
 
     pub fn set_bc(&mut self, data: u16) {
@@ -56,7 +57,7 @@ impl Register {
     }
 
     pub fn get_de(&self) -> u16 {
-        u16::from(self.d) << 8 | u16::from(self.e)
+        ((self.d as u16) << 8) | (self.e as u16)
     }
 
     pub fn set_de(&mut self, data: u16) {
@@ -65,7 +66,7 @@ impl Register {
     }
 
     pub fn get_hl(&self) -> u16 {
-        u16::from(self.h) << 8 | u16::from(self.l)
+        ((self.h as u16) << 8) | (self.l as u16)
     }
 
     pub fn set_hl(&mut self, data: u16) {
@@ -73,25 +74,25 @@ impl Register {
         self.l = (data & 0x00ff) as u8;
     }
 
-    pub fn pair_regs(hi: u8, lo: u8) -> u16 {
-        ((hi as u16) << 8 | lo as u16) as u16
-    }
+    // pub fn pair_regs(hi: u8, lo: u8) -> u16 {
+    //     ((hi as u16) << 8 | lo as u16) as u16
+    // }
 
-    pub fn unpair_regs(pr: u16) -> (u8, u8) {
-        (((pr & 0xFF00) >> 8) as u8, (pr & 0x00FF) as u8)
-    }
+    // pub fn unpair_regs(pr: u16) -> (u8, u8) {
+    //     (((pr & 0xFF00) >> 8) as u8, (pr & 0x00FF) as u8)
+    // }
 }
 
 impl Register {
     pub fn get_flag(&self, f: Flag) -> bool {
-        binary_lib::get_bit(self.f, f as usize)
+        get_bit(self.f, f as usize)
     }
 
     pub fn set_reset_flag(&mut self, flag: Flag, bit: bool) {
         if bit {
-            self.f = binary_lib::set_bit(self.f, flag as usize)
+            self.f = set_bit(self.f, flag as usize)
         } else {
-            self.f = binary_lib::reset_bit(self.f, flag as usize)
+            self.f = reset_bit(self.f, flag as usize)
         }
     }
 
@@ -113,11 +114,9 @@ impl Register {
         self.set_reset_flag(Flag::P, (value.count_ones() & 1) == 0);
     }
 
-    pub fn update_flag_c(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::C, operand1 as u16 + operand2 as u16 > 0xFF);
-    }
-
-    pub fn update_flag_a(&mut self, operand1: u8, operand2: u8) {
-        self.set_reset_flag(Flag::A, ((operand1 & 0xF) + (operand2 & 0xF)) > 0xF);
+    pub fn carry(&self, operand1: u8, operand2: u8, cy: bool, bit_index: usize) -> bool {
+        let result: u16 = operand1 as u16 + operand2 as u16 + cy as u16;
+        let carry: u16 = result ^ (operand1 as u16) ^ (operand2 as u16);
+        ((carry >> bit_index) & 0x1) != 0
     }
 }

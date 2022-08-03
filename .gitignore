@@ -3,8 +3,8 @@
 invaders.*
 #*.COM
 documentations/
-*.wav
 *.zip
+*.tar.gz
 
 # Ignore compilation folder
 [Tt]arget/
