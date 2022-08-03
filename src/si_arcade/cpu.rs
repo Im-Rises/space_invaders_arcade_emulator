@@ -359,22 +359,6 @@ impl Cpu {
     pub fn set_cycles(&mut self, value: u8) {
         self.cycles = value;
     }
-
-    // // Debug
-    //
-    // fn print_regs(&self, cycles_total: u64) {
-    //     println!(
-    //         "PC = {:#X}, AF = {:#X}, BC = {:#X}, DE = {:#X}, HL = {:#X}, SP = {:#X}, Cycles = {}, Total Cycles = {}",
-    //         self.pc,
-    //         self.regs.get_af(),
-    //         self.regs.get_bc(),
-    //         self.regs.get_de(),
-    //         self.regs.get_hl(),
-    //         self.sp,
-    //         self.cycles,
-    //         cycles_total
-    //     );
-    // }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

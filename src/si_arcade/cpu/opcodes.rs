@@ -1,7 +1,5 @@
-// use std::mem;
-
 use super::super::cpu;
-use super::super::cpu::register::{Flag, Register};
+use super::super::cpu::register::Flag;
 
 /*---------------MOVE, LOAD AND STORE---------------*/
 pub fn mov_a_r(cpu: &mut cpu::Cpu, r: u8) -> u8 {

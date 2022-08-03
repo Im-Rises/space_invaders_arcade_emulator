@@ -78,9 +78,9 @@ impl Register {
     //     ((hi as u16) << 8 | lo as u16) as u16
     // }
 
-    pub fn unpair_regs(pr: u16) -> (u8, u8) {
-        (((pr & 0xFF00) >> 8) as u8, (pr & 0x00FF) as u8)
-    }
+    // pub fn unpair_regs(pr: u16) -> (u8, u8) {
+    //     (((pr & 0xFF00) >> 8) as u8, (pr & 0x00FF) as u8)
+    // }
 }
 
 impl Register {
