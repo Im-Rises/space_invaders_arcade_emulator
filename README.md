@@ -272,18 +272,23 @@ cargo test cpu_test_rom_tst8080
 You can also debug the processes by uncommenting the two lines following lines in the `cpu.rs` file in the `test`
 module.
 
-```
+~~~
 // let mut f = File::create("test_roms/my_output.log").expect("Cannot create debug log file");  
-```
+~~~
 
-```
+~~~
 // write_debug_to_file(&mut cpu_debug, &mut f, cycles_counter);
-```
+~~~
 
 > **Note**  
 > Depending on the test the output is different. Refer to this project for more explanation about how they work.  
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
+>
+> The last test (cpu_test_rom_8080exm) can take a lot of time so it is commented to prevent an issue with the GitHub
+> Actions. Uncomment it if you need it.
+> You will also need to comment the ram mirroring for the read and write functions in the Mmu struct methods in the mmu
+> files to allow the last test to work (the ram banking is enabled for the Space invaders game to work correctly).
 
 > **Warning**  
 > Be carefully, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.  

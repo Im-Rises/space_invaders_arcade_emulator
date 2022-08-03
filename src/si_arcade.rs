@@ -199,6 +199,8 @@ impl SpaceInvadersArcade {
         Ok(())
     }
 
+    fn init_audio(&mut self) {}
+
     fn get_window_active(&mut self) -> Result<bool, String> {
         let mut event_pump = self.sdl_context.event_pump()?;
         let mut window_active = true;
