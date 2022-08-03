@@ -115,6 +115,7 @@ Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
+brew install sdl2_mixer
 ```
 
 You also need to add `SDL2` to the paths by typing:
@@ -178,12 +179,13 @@ I used the instructions in the link below to set up the dynamic linking:
 
 ### Linux
 
-Linux Users need to install the SDL2 lib. To do so, type in your bash system the following commands.
+Linux Users need to install the SDL2 libs (SDL2 and SDL2_mixer). To do so, type in your bash system the following
+commands.
 
 If you want to compile the program, install the developer version with the command below:
 
 ```bash
-sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-dev libsdl2-mixer-dev
 ```
 
 ### MacOs
@@ -195,6 +197,7 @@ Once it is installed, you can type the following command to install SDL2.
 
 ```bash
 brew install sdl2
+brew install sdl2_mixer
 ```
 
 You also need to add `SDL2` to the paths by typing:

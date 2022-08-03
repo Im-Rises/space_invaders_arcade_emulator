@@ -33,7 +33,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download libraries
-        run: brew install sdl2
+        run: |
+          brew install sdl2
+          brew install sdl2_mixer
       - name: Add lib to path
         run: export LIBRARY_PATH="$LIBRARY_PATH:/opt/local/lib/"
       - name: Build
