@@ -3,6 +3,8 @@ use std::io;
 use std::io::{Error, Read};
 
 const MEMORY_SIZE: usize = 0x4000;
+
+#[allow(dead_code)]
 const DEBUG_MEMORY_SIZE: usize = 0x10000;
 
 pub struct Mmu {
@@ -27,6 +29,7 @@ impl Mmu {
         mmu
     }
 
+    #[allow(dead_code)]
     pub fn new_debug(rom_path: &str) -> Self {
         let mut mmu = Mmu {
             memory: vec![0; DEBUG_MEMORY_SIZE],

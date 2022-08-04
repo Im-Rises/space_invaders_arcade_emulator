@@ -108,6 +108,7 @@ jobs:
           rm space_invaders_arcade_emulator.exe
           rm release-windows.zip
           rm SDL2.dll
+          rm SDL2_mixer.dll
       - name: Download ubuntu artifact content
         uses: actions/download-artifact@v2
         with:

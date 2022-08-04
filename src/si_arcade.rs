@@ -16,6 +16,7 @@ const SCREEN_REFRESH_TIME: u128 = 16;
 const INTERRUPT_VBLANK_COUNTER: usize = cpu::CLOCK_FREQUENCY / ppu::SCREEN_FREQUENCY;
 const INTERRUPT_MIDDLE_VBLANK: usize = INTERRUPT_VBLANK_COUNTER / 2;
 
+#[allow(dead_code)]
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
     ppu: ppu::Ppu,
@@ -44,6 +45,7 @@ impl SpaceInvadersArcade {
             spu::SOUND_5,
             spu::SOUND_6,
             spu::SOUND_7,
+            spu::SOUND_8,
         );
         let mut frequency_counter: usize = 0;
         let mut last_frequency_counter: usize = 0;
@@ -135,20 +137,22 @@ impl SpaceInvadersArcade {
         match port {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
             3 => {
-                for i in 0..4 {
-                    if get_bit(data, i) {
-                        sdl2_video.play_audio_sound(i as i32);
+                let extented_play = get_bit(data, 4);
+                for sound in 0..4 {
+                    if get_bit(data, sound) {
+                        sdl2_video.play_audio_sound(sound as i32);
                     }
                 }
             }
             4 => self.inputs_outputs.shift_register = self.inputs_outputs.shift_register >> 8 | (data as u16) << 8,
             5 => {
-                // for i in 0..4 {
-                //     let index = i + 4;
-                //     if get_bit(data, index) {
-                //         sdl2_video.play_audio_sound(index as i32);
-                //     }
-                // }
+                //OK
+                for i in 0..5 {
+                    let sound = i + 4;
+                    if get_bit(data, i) {
+                        sdl2_video.play_audio_sound(sound as i32);
+                    }
+                }
             }
             6 => (), //Watch dog
             _ => {

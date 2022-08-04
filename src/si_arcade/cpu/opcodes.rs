@@ -423,7 +423,7 @@ fn inr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
 
 fn dcr_subroutine(cpu: &mut cpu::Cpu, data: u8) -> u8 {
     let result: u8 = data.wrapping_sub(1);
-    cpu.regs.set_reset_flag(Flag::A, !((result & 0xF) == 0xF));
+    cpu.regs.set_reset_flag(Flag::A, (result & 0xF) != 0xF);
     cpu.regs.update_flags_szp(result);
     result
 }

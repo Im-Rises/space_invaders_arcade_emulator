@@ -50,21 +50,6 @@ named `game_roms` where you must put the game's roms:
 - invaders.e
 - invaders.f
 
-The other folder named `game_audios`, need to contain the different .wav files audio. of the game:
-
-- 0.wav
-- 1.wav
-- 2.wav
-- 3.wav
-- 4.wav
-- 5.wav
-- 6.wav
-- 7.wav
-- 8.wav
-
-The `wav` files wan be downloaded in the links below:  
-<https://github.com/howprice/invaders-emulator>
-
 Depending on you `operating system` you will need to install some libs, they are installed differently depending on your
 system, please follow one of the section below `Windows` or `Linux` or `MacOs`.
 
@@ -72,8 +57,8 @@ system, please follow one of the section below `Windows` or `Linux` or `MacOs`.
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-For Windows users you don't need to install the libs, you just need to be carefully that you have the `sdl2.dll` next to
-the `space_invaders_arcade_emulator.exe` or the emulator won't start.
+For Windows users you don't need to install the libs, you just need to be carefully that you have the `SDL2.dll`
+and `SDL2_mixer.dll` next to the `space_invaders_arcade_emulator.exe` or the emulator won't start.
 
 Once everything is set up by you can start the emulator by double-clicking the executable of typing the following
 command next to it:
@@ -164,9 +149,31 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 
 ## Compilation
 
-First thing you need is to install cargo. You have it if you already have installed Rust, if not, please follow the
-instruction at the link below:  
+First thing you need is to install cargo and rust. You can find them by following the insctructions in the link below:  
 <https://www.rust-lang.org/tools/install>
+
+You also need to download the following audio files:
+
+- 0.wav
+- 1.wav
+- 2.wav
+- 3.wav
+- 4.wav
+- 5.wav
+- 6.wav
+- 7.wav
+- 8.wav
+
+The `wav` files wan be downloaded in the links below:  
+<https://github.com/howprice/invaders-emulator>
+
+They all must be put in the `game_audios` folder.
+
+> **Warning**  
+> Be carefully when downloading the .wav files, some files pay have the wrong name. For example, 0.wav and 8.wav are swapped.
+
+Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
+below `Windows`, `Linux` and `macOs`.
 
 ### Windows
 
@@ -340,6 +347,12 @@ SDL2 libs download:
 <https://www.libsdl.org/download-2.0.php>  
 <https://github.com/libsdl-org/SDL_mixer/releases>
 
+rust-clippy:  
+<https://github.com/rust-lang/rust-clippy>
+
+rustfmt:  
+<https://github.com/rust-lang/rustfmt>
+
 Intel 8080 documentations:  
 <https://archive.org/details/8080Datasheet>  
 <https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf>
@@ -350,9 +363,6 @@ Intel 8080 opcodes table:
 
 Wikipedia:  
 <https://en.wikipedia.org/wiki/Intel_8080>
-
-rustfmt:  
-<https://github.com/rust-lang/rustfmt>
 
 Test Roms for the Intel 8080:  
 <https://github.com/superzazu/8080/>  
