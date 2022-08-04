@@ -147,6 +147,15 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 > In the same way, you can enable the extra ship to came at 1000 points instead of 1500, but you just need to press
 > the button one time (a confirmation will be displayed in the console).
 
+## Code architecture
+
+The Emulator is divied into 3 parts:
+
+- main (starter)
+- si_arcade (console emulation)
+- my_sdl2 (video, audio and inputs si_arcade interpreter)
+- binary_lib (a set of binary functions to manipulate data)
+
 ## Compilation
 
 First thing you need is to install cargo and rust. You can find them by following the insctructions in the link below:  
