@@ -18,6 +18,7 @@ pub struct MySdl2Audio {
     sound_6: Chunk,
     sound_7: Chunk,
     sound_8: Chunk,
+    sound_2_enabled: bool,
 }
 
 impl MySdl2Audio {
@@ -46,6 +47,7 @@ impl MySdl2Audio {
             sound_6: RWops::from_bytes(sound_6_bytes).unwrap().load_wav().unwrap(),
             sound_7: RWops::from_bytes(sound_7_bytes).unwrap().load_wav().unwrap(),
             sound_8: RWops::from_bytes(sound_8_bytes).unwrap().load_wav().unwrap(),
+            sound_2_enabled: false,
         }
     }
 
@@ -54,25 +56,34 @@ impl MySdl2Audio {
     // }
 
     pub fn play_audio_sound(&mut self, audio_nbr: i32) {
+        println!("{}", audio_nbr);
         if !mixer::Channel(audio_nbr).is_playing() {
             match audio_nbr {
                 0 => {
+                    //OK
                     mixer::Channel(audio_nbr)
                         .play(&self.sound_0, 0)
                         .expect("Error: Cannot play audio wav file 0");
                 }
                 1 => {
-                    // mixer::Channel(audio_nbr)
-                    //     .play(&self.sound_1, 0)
-                    //     .expect("Error: Cannot play audio wav file 1");
+                    mixer::Channel(audio_nbr)
+                        .play(&self.sound_1, 0)
+                        .expect("Error: Cannot play audio wav file 1");
                 }
                 2 => {
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_2, 0)
-                        .expect("Error: Cannot play audio wav file 2");
+                    if self.sound_2_enabled {
+                        mixer::Channel(audio_nbr)
+                            .play(&self.sound_2, 0)
+                            .expect("Error: Cannot play audio wav file 2");
+                        self.sound_2_enabled = false;
+                    }
+                    // else {
+                    //     self.sound_2_counter -= 1;
+                    //     println!("counter {}", self.sound_2_counter);
+                    // }
                 }
                 3 => {
-                    // println!("{}", audio_nbr);
+                    //OK
                     mixer::Channel(audio_nbr)
                         .play(&self.sound_3, 0)
                         .expect("Error: Cannot play audio wav file 3");
@@ -102,12 +113,18 @@ impl MySdl2Audio {
                         .expect("Error: Cannot play audio wav file 7");
                 }
                 8 => {
+                    //OK
                     mixer::Channel(audio_nbr)
                         .play(&self.sound_8, 0)
                         .expect("Error: Cannot play audio wav file 8");
                 }
                 _ => panic!("Error: Unknown audio wav file to play"),
             }
+        }
+
+        if audio_nbr != 2 {
+            self.sound_2_enabled = true;
+            println!("Reanabling sound2");
         }
     }
 }

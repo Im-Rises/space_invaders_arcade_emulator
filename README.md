@@ -165,12 +165,15 @@ You also need to download the following audio files:
 - 8.wav
 
 The `wav` files wan be downloaded in the links below:  
-<https://github.com/howprice/invaders-emulator>
+<https://samples.mameworld.info>  
+<https://www.classicgaming.cc/classics/space-invaders/sounds>
 
 They all must be put in the `game_audios` folder.
 
 > **Warning**  
-> Be carefully when downloading the .wav files, some files pay have the wrong name. For example, 0.wav and 8.wav are swapped.
+> Be carefully when downloading the .wav files, some files pay have the wrong name.
+
+[//]: # (> &#40;For example, 0.wav and 8.wav are swapped&#41;)
 
 Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
 below `Windows`, `Linux` and `macOs`.
