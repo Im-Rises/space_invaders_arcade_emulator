@@ -44,7 +44,7 @@ impl MySdl2 {
     }
 
     fn mysdl2_init() -> Result<Sdl, String> {
-        Ok(sdl2::init()?)
+        sdl2::init()
     }
 
     pub fn update_screen(&mut self, si_arcade: &mut si_arcade::SpaceInvadersArcade) {

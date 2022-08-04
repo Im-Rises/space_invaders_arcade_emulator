@@ -16,6 +16,7 @@ const SCREEN_REFRESH_TIME: u128 = 16;
 const INTERRUPT_VBLANK_COUNTER: usize = cpu::CLOCK_FREQUENCY / ppu::SCREEN_FREQUENCY;
 const INTERRUPT_MIDDLE_VBLANK: usize = INTERRUPT_VBLANK_COUNTER / 2;
 
+#[allow(dead_code)]
 pub struct SpaceInvadersArcade {
     cpu: cpu::Cpu,
     ppu: ppu::Ppu,

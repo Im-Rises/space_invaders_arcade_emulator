@@ -32,7 +32,7 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
-            mmu: Rc::clone(&mmu),
+            mmu: Rc::clone(mmu),
         }
     }
 
@@ -64,7 +64,7 @@ impl Cpu {
 
     fn write_word(&mut self, address: u16, data: u16) {
         self.write(address, (data & 0xFF) as u8);
-        self.write(address + 1, ((data >> 8) & &0xFF) as u8);
+        self.write(address + 1, ((data >> 8) & 0xFF) as u8);
     }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
@@ -400,11 +400,11 @@ pub mod tests {
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
-    // #[test]
-    // fn cpu_test_rom_8080exm() {
-    //     println!("------------------------------------8080EXM------------------------------------");
-    //     cpu_test("test_roms/8080EXM.COM", 23803381171);
-    // }
+    #[test]
+    fn cpu_test_rom_8080exm() {
+        println!("------------------------------------8080EXM------------------------------------");
+        cpu_test("test_roms/8080EXM.COM", 23803381171);
+    }
 
     pub fn cpu_test(rom_path: &str, cycles_to_do: u64) {
         let mmu_debug = Rc::new(RefCell::new(Mmu::new_debug(rom_path)));
