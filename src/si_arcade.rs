@@ -135,20 +135,21 @@ impl SpaceInvadersArcade {
         match port {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
             3 => {
-                for i in 0..4 {
-                    if get_bit(data, i) {
-                        sdl2_video.play_audio_sound(i as i32);
+                for sound in 0..4 {
+                    if get_bit(data, sound) {
+                        sdl2_video.play_audio_sound(sound as i32);
                     }
                 }
             }
             4 => self.inputs_outputs.shift_register = self.inputs_outputs.shift_register >> 8 | (data as u16) << 8,
             5 => {
-                // for i in 0..4 {
-                //     let index = i + 4;
-                //     if get_bit(data, index) {
-                //         sdl2_video.play_audio_sound(index as i32);
-                //     }
-                // }
+                //OK
+                for i in 0..4 {
+                    let sound = i + 4;
+                    if get_bit(data, i) {
+                        sdl2_video.play_audio_sound(sound as i32);
+                    }
+                }
             }
             6 => (), //Watch dog
             _ => {

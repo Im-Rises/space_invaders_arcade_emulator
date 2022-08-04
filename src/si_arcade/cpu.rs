@@ -459,10 +459,10 @@ pub mod tests {
     }
 
     fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64) {
-        write!(
+        writeln!(
             file,
             "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}\t({:#04X} \
-            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}\n",
+            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}",
             cpu.pc,
             cpu.regs.get_af(),
             cpu.regs.get_bc(),

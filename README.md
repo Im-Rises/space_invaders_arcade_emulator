@@ -72,8 +72,8 @@ system, please follow one of the section below `Windows` or `Linux` or `MacOs`.
 
 <a href="https://github.com/Im-Rises/space_invaders_arcade_emulator/releases/latest"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="cmakeLogo" style="height:40px;"/></a>
 
-For Windows users you don't need to install the libs, you just need to be carefully that you have the `sdl2.dll` next to
-the `space_invaders_arcade_emulator.exe` or the emulator won't start.
+For Windows users you don't need to install the libs, you just need to be carefully that you have the `SDL2.dll`
+and `SDL2_mixer.dll` next to the `space_invaders_arcade_emulator.exe` or the emulator won't start.
 
 Once everything is set up by you can start the emulator by double-clicking the executable of typing the following
 command next to it:

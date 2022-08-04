@@ -1,6 +1,9 @@
 repo:
   - '*'
 
+readme:
+  - 'README.md'
+
 source:
   - 'src'
 
