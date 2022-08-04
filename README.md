@@ -169,9 +169,11 @@ The `wav` files wan be downloaded in the links below:
 
 They all must be put in the `game_audios` folder.
 
-> **Note**  
-> Depending on your OS, you will need to follow specific steps to compile the app.
-> Please refer to the sections below `Windows`, `Linux` and `macOs`.
+> **Warning**  
+> Be carefully when downloading the .wav files, some files pay have the wrong name. For example, 0.wav and 8.wav are swapped.
+
+Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
+below `Windows`, `Linux` and `macOs`.
 
 ### Windows
 
