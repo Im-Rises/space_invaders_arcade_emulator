@@ -1,10 +1,6 @@
 # Ignore roms
 [Rr]oms/
 invaders.*
-#*.COM
-documentations/
-*.zip
-*.tar.gz
 
 # Ignore compilation folder
 [Tt]arget/
@@ -12,6 +8,12 @@ documentations/
 # Ignore Intellij IDE folder
 *.idea/
 *.iml
+
+# Ignore other
+documentations/
+game_audios/*/**/*
+*.zip
+*.tar.gz
 
 # Ignore other rust files
 Cargo.lock

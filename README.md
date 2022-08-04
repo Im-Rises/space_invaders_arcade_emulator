@@ -147,6 +147,15 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 > In the same way, you can enable the extra ship to came at 1000 points instead of 1500, but you just need to press
 > the button one time (a confirmation will be displayed in the console).
 
+## Code architecture
+
+The Emulator is divied into 3 parts:
+
+- main (starter)
+- si_arcade (console emulation)
+- my_sdl2 (video, audio and inputs si_arcade interpreter)
+- binary_lib (a set of binary functions to manipulate data)
+
 ## Compilation
 
 First thing you need is to install cargo and rust. You can find them by following the insctructions in the link below:  
@@ -165,12 +174,15 @@ You also need to download the following audio files:
 - 8.wav
 
 The `wav` files wan be downloaded in the links below:  
-<https://github.com/howprice/invaders-emulator>
+<https://samples.mameworld.info>  
+<https://www.classicgaming.cc/classics/space-invaders/sounds>
 
 They all must be put in the `game_audios` folder.
 
 > **Warning**  
-> Be carefully when downloading the .wav files, some files pay have the wrong name. For example, 0.wav and 8.wav are swapped.
+> Be carefully when downloading the .wav files, some files pay have the wrong name.
+
+[//]: # (> &#40;For example, 0.wav and 8.wav are swapped&#41;)
 
 Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
 below `Windows`, `Linux` and `macOs`.
@@ -368,6 +380,10 @@ Test Roms for the Intel 8080:
 <https://github.com/superzazu/8080/>  
 <https://altairclone.com/downloads/cpu_tests/>  
 <http://www.emulator101.com/full-8080-emulation.html>
+
+Space Invaders Audio files:  
+<https://samples.mameworld.info>  
+<https://www.classicgaming.cc/classics/space-invaders/sounds>
 
 ## Contributors
 
