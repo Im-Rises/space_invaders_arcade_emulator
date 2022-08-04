@@ -372,6 +372,10 @@ Test Roms for the Intel 8080:
 <https://altairclone.com/downloads/cpu_tests/>  
 <http://www.emulator101.com/full-8080-emulation.html>
 
+Space Invaders Audio files:  
+<https://samples.mameworld.info>  
+<https://www.classicgaming.cc/classics/space-invaders/sounds>
+
 ## Contributors
 
 Quentin MOREL :

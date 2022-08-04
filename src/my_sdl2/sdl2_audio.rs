@@ -47,7 +47,7 @@ impl MySdl2Audio {
             sound_6: RWops::from_bytes(sound_6_bytes).unwrap().load_wav().unwrap(),
             sound_7: RWops::from_bytes(sound_7_bytes).unwrap().load_wav().unwrap(),
             sound_8: RWops::from_bytes(sound_8_bytes).unwrap().load_wav().unwrap(),
-            sound_2_enabled: false,
+            sound_2_enabled: true,
         }
     }
 
@@ -56,75 +56,87 @@ impl MySdl2Audio {
     // }
 
     pub fn play_audio_sound(&mut self, audio_nbr: i32) {
-        println!("{}", audio_nbr);
+        // println!("{}", audio_nbr);
         if !mixer::Channel(audio_nbr).is_playing() {
             match audio_nbr {
-                0 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_0, 0)
-                        .expect("Error: Cannot play audio wav file 0");
-                }
+                0 => self.play_ufo(audio_nbr),
                 1 => {
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_1, 0)
-                        .expect("Error: Cannot play audio wav file 1");
+                    println!("Play sound");
+                    // self.play_shot_sound(audio_nbr);
                 }
                 2 => {
                     if self.sound_2_enabled {
-                        mixer::Channel(audio_nbr)
-                            .play(&self.sound_2, 0)
-                            .expect("Error: Cannot play audio wav file 2");
+                        self.play_player_die(audio_nbr);
                         self.sound_2_enabled = false;
                     }
-                    // else {
-                    //     self.sound_2_counter -= 1;
-                    //     println!("counter {}", self.sound_2_counter);
-                    // }
                 }
-                3 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_3, 0)
-                        .expect("Error: Cannot play audio wav file 3");
-                }
-                4 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_4, 0)
-                        .expect("Error: Cannot play audio wav file 4");
-                }
-                5 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_5, 0)
-                        .expect("Error: Cannot play audio wav file 5");
-                }
-                6 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_6, 0)
-                        .expect("Error: Cannot play audio wav file 6");
-                }
-                7 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_7, 0)
-                        .expect("Error: Cannot play audio wav file 7");
-                }
-                8 => {
-                    //OK
-                    mixer::Channel(audio_nbr)
-                        .play(&self.sound_8, 0)
-                        .expect("Error: Cannot play audio wav file 8");
-                }
+                3 => self.play_invader_die(audio_nbr),
+                4 => self.play_fleet_movement_1(audio_nbr),
+                5 => self.play_fleet_movement_2(audio_nbr),
+                6 => self.play_fleet_movement_3(audio_nbr),
+                7 => self.play_fleet_movement_4(audio_nbr),
+                8 => self.play_ufo_hit(audio_nbr),
                 _ => panic!("Error: Unknown audio wav file to play"),
             }
         }
-
-        if audio_nbr != 2 {
+        if audio_nbr != 0 && audio_nbr != 2 {
             self.sound_2_enabled = true;
-            println!("Reanabling sound2");
         }
+    }
+
+    fn play_ufo(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_0, 0)
+            .expect("Error: Cannot play audio wav file 0");
+    }
+
+    pub fn play_shot_sound(&self, channel: i32) {
+        if !mixer::Channel(channel).is_playing() {
+            mixer::Channel(channel)
+                .play(&self.sound_1, 0)
+                .expect("Error: Cannot play audio wav file 1");
+        }
+    }
+
+    fn play_player_die(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_2, 0)
+            .expect("Error: Cannot play audio wav file 2");
+    }
+
+    fn play_invader_die(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_3, 0)
+            .expect("Error: Cannot play audio wav file 3");
+    }
+
+    fn play_fleet_movement_1(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_4, 0)
+            .expect("Error: Cannot play audio wav file 4");
+    }
+
+    fn play_fleet_movement_2(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_5, 0)
+            .expect("Error: Cannot play audio wav file 5");
+    }
+
+    fn play_fleet_movement_3(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_6, 0)
+            .expect("Error: Cannot play audio wav file 6");
+    }
+
+    fn play_fleet_movement_4(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_7, 0)
+            .expect("Error: Cannot play audio wav file 7");
+    }
+
+    fn play_ufo_hit(&self, channel: i32) {
+        mixer::Channel(channel)
+            .play(&self.sound_8, 0)
+            .expect("Error: Cannot play audio wav file 8");
     }
 }
