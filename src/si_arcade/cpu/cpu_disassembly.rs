@@ -1,5 +1,6 @@
 // Thanks to https://github.com/superzazu/8080/blob/master/i8080.c
 
+#[allow(dead_code)]
 pub const DISASSEMBLY_TABLE: [&str; 256] = [
     "nop", "lxi b,#", "stax b", "inx b", "inr b", "dcr b", "mvi b,#", "rlc", "ill", "dad b", "ldax b", "dcx b",
     "inr c", "dcr c", "mvi c,#", "rrc", "ill", "lxi d,#", "stax d", "inx d", "inr d", "dcr d", "mvi d,#", "ral", "ill",

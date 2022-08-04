@@ -19,7 +19,7 @@ pub struct Ppu {
 impl Ppu {
     pub fn new(mmu: &Rc<RefCell<Mmu>>) -> Ppu {
         Ppu {
-            mmu: Rc::clone(&mmu),
+            mmu: Rc::clone(mmu),
             screen: [0; SCREEN_WIDTH * SCREEN_HEIGHT * 3],
         }
     }
@@ -28,12 +28,7 @@ impl Ppu {
         let mut index: usize = 0;
         for data in self.mmu.borrow().get_vram() {
             for bit in 0..8 {
-                let color: u8;
-                if get_bit(*data, bit) {
-                    color = 0xFF;
-                } else {
-                    color = 0;
-                }
+                let color: u8 = if get_bit(*data, bit) { 0xFF } else { 0 };
                 self.screen[index] = color;
                 self.screen[index + 1] = color;
                 self.screen[index + 2] = color;

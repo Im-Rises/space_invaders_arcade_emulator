@@ -32,7 +32,7 @@ impl Cpu {
             inte: false,
             halted: false,
             cycles: 0,
-            mmu: Rc::clone(&mmu),
+            mmu: Rc::clone(mmu),
         }
     }
 
@@ -64,7 +64,7 @@ impl Cpu {
 
     fn write_word(&mut self, address: u16, data: u16) {
         self.write(address, (data & 0xFF) as u8);
-        self.write(address + 1, ((data >> 8) & &0xFF) as u8);
+        self.write(address + 1, ((data >> 8) & 0xFF) as u8);
     }
 
     pub fn compute_opcode(&mut self, opcode: u8) -> u8 {
@@ -400,6 +400,7 @@ pub mod tests {
         cpu_test("test_roms/CPUTEST.COM", 255653383);
     }
 
+    // // Commented because take to much time to proceed.
     // #[test]
     // fn cpu_test_rom_8080exm() {
     //     println!("------------------------------------8080EXM------------------------------------");
@@ -459,10 +460,10 @@ pub mod tests {
     }
 
     fn write_debug_to_file(cpu: &mut Cpu, file: &mut File, cycles: u64) {
-        write!(
+        writeln!(
             file,
             "PC: {:#06X}, AF: {:#06X}, BC: {:#06X}, DE: {:#06X}, HL: {:#06X}, SP: {:#06X}\t({:#04X} \
-            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}\n",
+            {:#04X} {:#04X} {:#04X})\t(OPCODE: {})\tCYC: {}",
             cpu.pc,
             cpu.regs.get_af(),
             cpu.regs.get_bc(),
