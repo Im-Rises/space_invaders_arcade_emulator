@@ -122,11 +122,11 @@ impl Sdl2Inputs {
                 } => {
                     if !self.one_additional_life_last_state {
                         si_arcade.inputs_outputs.dip3 = !si_arcade.inputs_outputs.dip3;
-                        self.two_additional_lives_last_state = true;
+                        self.one_additional_life_last_state = true;
                         if si_arcade.inputs_outputs.dip3 {
-                            println!("One additional life activated");
+                            println!("- One additional life activated");
                         } else {
-                            println!("One additional life deactivated");
+                            println!("- One additional life deactivated");
                         }
                     }
                 }
@@ -144,9 +144,9 @@ impl Sdl2Inputs {
                         si_arcade.inputs_outputs.dip5 = !si_arcade.inputs_outputs.dip5;
                         self.two_additional_lives_last_state = true;
                         if si_arcade.inputs_outputs.dip5 {
-                            println!("Two additional lives activated");
+                            println!("- Two additional lives activated");
                         } else {
-                            println!("Two additional lives deactivated");
+                            println!("- Two additional lives deactivated");
                         }
                     }
                 }
@@ -164,9 +164,9 @@ impl Sdl2Inputs {
                         si_arcade.inputs_outputs.dip6 = !si_arcade.inputs_outputs.dip6;
                         self.extraship_btn_last_state = true;
                         if si_arcade.inputs_outputs.dip6 {
-                            println!("Extra ship at 1000 points");
+                            println!("- Extra ship at 1000 points");
                         } else {
-                            println!("Extra ship at 1500 points");
+                            println!("- Extra ship at 1500 points");
                         }
                     }
                 }

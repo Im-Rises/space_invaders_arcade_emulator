@@ -24,6 +24,7 @@ impl MySdl2 {
         sound_5_bytes: &[u8],
         sound_6_bytes: &[u8],
         sound_7_bytes: &[u8],
+        sound_8_bytes: &[u8],
     ) -> MySdl2 {
         let sdl_init = MySdl2::mysdl2_init().unwrap();
         MySdl2 {
@@ -39,6 +40,7 @@ impl MySdl2 {
                 sound_5_bytes,
                 sound_6_bytes,
                 sound_7_bytes,
+                sound_8_bytes,
             ),
         }
     }
