@@ -19,7 +19,8 @@ fn main() {
     println!("|      Prepare for the invasion!       |");
     println!("+--------------------------------------+");
 
-    println!("\nMessages:");
+    println!("Click the window game to play.");
+    println!("\nLogs:");
 
     let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new();
     space_invaders_arcade.start();

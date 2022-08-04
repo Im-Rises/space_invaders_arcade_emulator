@@ -1,6 +1,7 @@
 use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
 
+use crate::binary_lib::get_bit;
 use crate::si_arcade;
 
 mod sdl2_audio;
@@ -12,6 +13,8 @@ pub struct MySdl2 {
     window_canvas: WindowCanvas,
     sdl_audio: sdl2_audio::MySdl2Audio,
     sdl_inputs: sdl2_inputs::Sdl2Inputs,
+    port3_previous_outputs: u8,
+    port5_previous_outputs: u8,
 }
 
 impl MySdl2 {
@@ -31,6 +34,7 @@ impl MySdl2 {
             window_canvas: sdl2_video::init_video(&sdl_init).unwrap(),
             sdl_context: sdl_init,
             sdl_inputs: sdl2_inputs::Sdl2Inputs::new(),
+            port3_previous_outputs: 0,
             sdl_audio: sdl2_audio::MySdl2Audio::new(
                 sound_0_bytes,
                 sound_1_bytes,
@@ -42,6 +46,7 @@ impl MySdl2 {
                 sound_7_bytes,
                 sound_8_bytes,
             ),
+            port5_previous_outputs: 0,
         }
     }
 
@@ -59,7 +64,44 @@ impl MySdl2 {
             .expect("Error: Cannot fetch keyboard state")
     }
 
-    pub fn play_audio_sound(&mut self, audio_song_nbr: i32) {
-        self.sdl_audio.play_audio_sound(audio_song_nbr);
+    pub fn play_audio_sound(&mut self, port: u8, data: u8) {
+        match port {
+            3 => {
+                if get_bit(data, 0) {
+                    self.sdl_audio.play_ufo();
+                }
+                if get_bit(data, 1) && !get_bit(self.port3_previous_outputs, 1) {
+                    self.sdl_audio.play_shot();
+                }
+                if get_bit(data, 2) && !get_bit(self.port3_previous_outputs, 2) {
+                    self.sdl_audio.play_player_die();
+                }
+                if get_bit(data, 3) {
+                    self.sdl_audio.play_invader_die();
+                }
+                self.port3_previous_outputs = data;
+            }
+            5 => {
+                if get_bit(data, 0) {
+                    self.sdl_audio.play_fleet_movement_1();
+                }
+                if get_bit(data, 1) {
+                    self.sdl_audio.play_fleet_movement_2();
+                }
+                if get_bit(data, 2) {
+                    self.sdl_audio.play_fleet_movement_3();
+                }
+                if get_bit(data, 3) {
+                    self.sdl_audio.play_fleet_movement_4();
+                }
+                if get_bit(data, 4) {
+                    self.sdl_audio.play_ufo_hit();
+                }
+                self.port5_previous_outputs = data;
+            }
+            _ => {
+                panic!("Error: Trying to use port {} as audio port", port)
+            }
+        }
     }
 }
