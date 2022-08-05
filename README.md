@@ -11,6 +11,8 @@ Space Invaders' arcade game emulator in development made in Rust with SDL2 and S
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
+Everything is working including the Space Invaders Easter Egg.
+
 ## Features
 
 - Full emulation
@@ -28,7 +30,7 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 |------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | ![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png) | ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
 
-| Taito Cop Easter Egg                                                                                                           | Score advance table                                                                                                           |
+| Taito Cop Easter Egg                                                                                                           | Score advance table with Invaders                                                                                             |
 |--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
 | ![taito_cop_easter_egg](https://user-images.githubusercontent.com/59691442/183047666-97f9711c-e2a4-4659-86df-410db5562450.png) | ![score_advance_table](https://user-images.githubusercontent.com/59691442/183058044-b5d532d6-bad2-4629-a55c-f669c82a5e29.png) |
 

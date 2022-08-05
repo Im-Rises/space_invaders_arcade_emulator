@@ -124,7 +124,7 @@ impl SpaceInvadersArcade {
             3 => data = ((self.inputs_outputs.shift_register >> (8 - self.inputs_outputs.shift_offset)) & 0xFF) as u8,
             6 => (), //WATCHDOG
             _ => {
-                println!(
+                panic!(
                     "Error: Writing to port not implemented at port {} with data {}",
                     port, data
                 );
@@ -146,7 +146,7 @@ impl SpaceInvadersArcade {
             }
             6 => (), //Watch dog
             _ => {
-                println!(
+                panic!(
                     "Error: Reading from port not implemented at port {} with data {}",
                     port, data
                 );
