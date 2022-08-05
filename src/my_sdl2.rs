@@ -76,7 +76,7 @@ impl MySdl2 {
                 if get_bit(data, 2) && !get_bit(self.port3_previous_outputs, 2) {
                     self.sdl_audio.play_player_die();
                 }
-                if get_bit(data, 3) {
+                if get_bit(data, 3) && !get_bit(self.port3_previous_outputs, 3) {
                     self.sdl_audio.play_invader_die();
                 }
                 self.port3_previous_outputs = data;
@@ -94,7 +94,7 @@ impl MySdl2 {
                 if get_bit(data, 3) {
                     self.sdl_audio.play_fleet_movement_4();
                 }
-                if get_bit(data, 4) {
+                if get_bit(data, 4) && !get_bit(self.port5_previous_outputs, 4) {
                     self.sdl_audio.play_ufo_hit();
                 }
                 self.port5_previous_outputs = data;

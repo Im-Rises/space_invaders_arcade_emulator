@@ -55,6 +55,7 @@ impl SpaceInvadersArcade {
             if !self.cpu.get_halted() {
                 if self.cpu.get_cycles() == 0 {
                     let opcode = self.cpu.fetch_opcode();
+                    // println!("Opcode {}", opcode);
                     if opcode == 0xDB {
                         let port = self.cpu.fetch_byte();
                         let a = self.inputs(port, self.cpu.get_a());
@@ -138,25 +139,10 @@ impl SpaceInvadersArcade {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
             3 => {
                 sdl2_video.play_audio_sound(port, data);
-                // if get_bit(data, 0){sdl2_video.play_audio_sound(3,0)};
-                // let extented_play = get_bit(data, 4);
-                // for sound in 0..4 {
-                //     if get_bit(data, sound) {
-                //         sdl2_video.play_audio_sound(sound as i32);
-                //     }
-                // }
-                // self.inputs_outputs.port3_previous_outputs = data;
             }
             4 => self.inputs_outputs.shift_register = self.inputs_outputs.shift_register >> 8 | (data as u16) << 8,
             5 => {
                 sdl2_video.play_audio_sound(port, data);
-                // for i in 0..5 {
-                //     let sound = i + 4;
-                //     if get_bit(data, i) {
-                //         sdl2_video.play_audio_sound(sound as i32);
-                //     }
-                // }
-                // self.inputs_outputs.port5_previous_outputs = data;
             }
             6 => (), //Watch dog
             _ => {
