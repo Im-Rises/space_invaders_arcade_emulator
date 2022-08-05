@@ -15,11 +15,14 @@ fn main() {
     println!("|       S to move P2 left              |");
     println!("|       F to move P2 right             |");
     println!("|       E to shoot with P2             |");
+    println!("|       K to get 1 extra life          |");
+    println!("|       L to get 2 extra lives         |");
+    println!("|       M extra ship at 1000 points    |");
     println!("|                                      |");
     println!("|      Prepare for the invasion!       |");
     println!("+--------------------------------------+");
 
-    println!("Click the window game to play.");
+    println!("\nClick the Space Invaders Window to play.");
     println!("\nLogs:");
 
     let mut space_invaders_arcade = si_arcade::SpaceInvadersArcade::new();

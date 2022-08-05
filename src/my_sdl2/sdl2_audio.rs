@@ -8,18 +8,6 @@ use sdl2::rwops::RWops;
 // SDL2 Rust audio mixer
 //https://github.com/Rust-SDL2/rust-sdl2/blob/master/examples/mixer-demo.rs
 
-// pub enum SiSounds {
-//     Ufo = 0,
-//     Shot = 1,
-//     PlayerDie = 2,
-//     InvaderDie = 3,
-//     FleetMovement1 = 4,
-//     FleetMovement2 = 5,
-//     FleetMovement3 = 6,
-//     FleetMovement4 = 7,
-//     UfoHit = 8,
-// }
-
 pub struct MySdl2Audio {
     sound_0: Chunk,
     sound_1: Chunk,
@@ -60,65 +48,6 @@ impl MySdl2Audio {
             sound_8: RWops::from_bytes(sound_8_bytes).unwrap().load_wav().unwrap(),
         }
     }
-
-    // pub fn set_volume(&self, volume: u8) {
-    //     mixer::Channel::all().set_volume(volume as i32);
-    // }
-
-    // pub fn play_audio_sound(&mut self, audio_nbr: i32) {
-    //     // println!("{}", audio_nbr);
-    //     if !mixer::Channel(audio_nbr).is_playing() {
-    //         match audio_nbr {
-    //             0 => self.play_ufo(audio_nbr),
-    //             1 => self.play_shot_sound(audio_nbr),
-    //             2 => self.play_player_die(audio_nbr),
-    //             3 => self.play_invader_die(audio_nbr),
-    //             4 => self.play_fleet_movement_1(audio_nbr),
-    //             5 => self.play_fleet_movement_2(audio_nbr),
-    //             6 => self.play_fleet_movement_3(audio_nbr),
-    //             7 => self.play_fleet_movement_4(audio_nbr),
-    //             8 => self.play_ufo_hit(audio_nbr),
-    //             _ => panic!("Error: Unknown audio wav file to play"),
-    //         }
-    //     }
-    //     // if audio_nbr != 0 && audio_nbr != 1 && audio_nbr != 2 && audio_nbr != 3 {
-    //     // if audio_nbr == 4 && audio_nbr == 5 && audio_nbr == 6 && audio_nbr == 7 {
-    //     //     self.sound_2_enabled = true;
-    //     // }
-    // }
-
-    // pub fn play_sound(&self, sound: SiSounds) {
-    //     if !Channel(sound as i32).is_playing() {
-    //         match sound {
-    //             SiSounds::Ufo => self.play_ufo(0),
-    //             SiSounds::Shot => self.play_shot_sound(1),
-    //             SiSounds::PlayerDie => self.play_player_die(2),
-    //             SiSounds::InvaderDie => self.play_invader_die(3),
-    //             SiSounds::FleetMovement1 => self.play_fleet_movement_1(4),
-    //             SiSounds::FleetMovement2 => self.play_fleet_movement_2(5),
-    //             SiSounds::FleetMovement3 => self.play_fleet_movement_3(6),
-    //             SiSounds::FleetMovement4 => self.play_fleet_movement_4(7),
-    //             SiSounds::UfoHit => self.play_ufo_hit(8),
-    //         }
-    //     }
-    // }
-
-    // pub fn play_sound(&self, sound: SiSounds) {
-    //     if !Channel(channel).is_playing() {
-    //         match sound {
-    //             SiSounds::Ufo => self.play_ufo(0),
-    //             SiSounds::Shot => self.play_shot_sound(1),
-    //             SiSounds::PlayerDie => self.play_player_die(2),
-    //             SiSounds::InvaderDie => self.play_invader_die(3),
-    //             SiSounds::FleetMovement1 => self.play_fleet_movement_1(4),
-    //             SiSounds::FleetMovement1 => self.play_fleet_movement_2(5),
-    //             SiSounds::FleetMovement2 => self.play_fleet_movement_3(6),
-    //             SiSounds::FleetMovement3 => self.play_fleet_movement_4(7),
-    //             SiSounds::FleetMovement4 => self.play_ufo_hit(8),
-    //             _ => {}
-    //         }
-    //     }
-    // }
 
     pub fn play_ufo(&self) {
         let channel = 0;
