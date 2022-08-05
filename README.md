@@ -7,15 +7,18 @@
 
 ## Description
 
-Space Invaders arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
+Space Invaders' arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
+
+Everything is working including the Space Invaders Easter Egg.
 
 ## Features
 
 - Full emulation
 - Sound
 - two-players mode
+- Window resizing without deformation
 
 [//]: # (joystick support)
 
@@ -27,15 +30,13 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 |------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | ![title_screen](https://user-images.githubusercontent.com/59691442/181736212-8d8cfa4e-4c85-48ce-92ac-1165dcb73891.png) | ![playing_demo](https://user-images.githubusercontent.com/59691442/181736224-da769503-2a2e-45d6-af2c-9204a96e78e1.png) |
 
+| Taito Cop Easter Egg                                                                                                           | Score advance table with Invaders                                                                                             |
+|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| ![taito_cop_easter_egg](https://user-images.githubusercontent.com/59691442/183047666-97f9711c-e2a4-4659-86df-410db5562450.png) | ![score_advance_table](https://user-images.githubusercontent.com/59691442/183058044-b5d532d6-bad2-4629-a55c-f669c82a5e29.png) |
+
 ## Videos
 
-PLACEHOLDER HERE
-
-PLACEHOLDER HERE
-
-PLACEHOLDER HERE
-
-PLACEHOLDER HERE
+https://user-images.githubusercontent.com/59691442/183045566-0a3df947-06e7-4c46-9fc6-9d2b8f7d9a46.mp4
 
 ## Quick start
 
@@ -149,16 +150,19 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 
 ## Code architecture
 
-The Emulator is divied into 3 parts:
+The Emulator is divided into 3 parts:
 
 - main (starter)
 - si_arcade (console emulation)
 - my_sdl2 (video, audio and inputs si_arcade interpreter)
 - binary_lib (a set of binary functions to manipulate data)
 
+The sound is implemented using `.wav` files, they are laoded in the `si_aracade` part of the program and totally
+interpreted in the my_sdl2 part.
+
 ## Compilation
 
-First thing you need is to install cargo and rust. You can find them by following the insctructions in the link below:  
+First thing you need is to install cargo and rust. You can find them by following the instructions in the link below:  
 <https://www.rust-lang.org/tools/install>
 
 You also need to download the following audio files:
@@ -307,7 +311,7 @@ module.
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
 >
-> The last test (cpu_test_rom_8080exm) can take a lot of time so it is commented to prevent an issue with the GitHub
+> The last test (cpu_test_rom_8080exm) can take a lot of time, so it is commented to prevent an issue with the GitHub
 > Actions. Uncomment it if you need it.
 > You will also need to comment the ram mirroring for the read and write functions in the Mmu struct methods in the mmu
 > files to allow the last test to work (the ram banking is enabled for the Space invaders game to work correctly).

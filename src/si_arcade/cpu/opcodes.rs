@@ -582,6 +582,7 @@ fn and_subroutine_function(cpu: &mut cpu::Cpu, operand1: u8, operand2: u8) -> u8
     let result: u8 = operand1 & operand2;
     cpu.regs.set_reset_flag(Flag::C, false);
     cpu.regs.set_reset_flag(Flag::A, ((operand1 | operand2) & 0x08) != 0);
+    // cpu.regs.set_reset_flag(Flag::A, true);
     cpu.regs.update_flags_szp(result);
     result
 }
