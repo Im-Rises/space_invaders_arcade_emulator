@@ -2,7 +2,8 @@ use std::fs::File;
 use std::io;
 use std::io::{Error, Read};
 
-const MEMORY_SIZE: usize = 0x4000;
+// const MEMORY_SIZE: usize = 0x4000;
+const MEMORY_SIZE: usize = 0x10000;
 
 #[allow(dead_code)]
 const DEBUG_MEMORY_SIZE: usize = 0x10000;
@@ -48,28 +49,41 @@ impl Mmu {
 
         mmu
     }
-
+    //Wrong implementation of RAM banking, I implemented like Rom/Ram banking
+    //It is only Ram Banking
     pub fn read(&self, address: u16) -> u8 {
         if address < 0x4000 {
             self.memory[address as usize]
+        } else if address < 0x6000 {
+            self.memory[(address - 0x2000) as usize]
         } else if address < 0x8000 {
             self.memory[(address - 0x4000) as usize]
+        } else if address < 0xA000 {
+            self.memory[(address - 0x6000) as usize]
         } else if address < 0xC000 {
             self.memory[(address - 0x8000) as usize]
+        } else if address < 0xE000 {
+            self.memory[(address - 0xA000) as usize]
         } else {
-            self.memory[(address - 0xC000) as usize]
+            self.memory[(address - 0xE000) as usize]
         }
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
         if address < 0x4000 {
             self.memory[address as usize] = data;
+        } else if address < 0x6000 {
+            self.memory[(address - 0x2000) as usize] = data;
         } else if address < 0x8000 {
             self.memory[(address - 0x4000) as usize] = data;
+        } else if address < 0xA000 {
+            self.memory[(address - 0x6000) as usize] = data;
         } else if address < 0xC000 {
             self.memory[(address - 0x8000) as usize] = data;
+        } else if address < 0xE000 {
+            self.memory[(address - 0xA000) as usize] = data;
         } else {
-            self.memory[(address - 0xC000) as usize] = data;
+            self.memory[(address - 0xE000) as usize] = data;
         }
     }
 
