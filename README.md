@@ -157,8 +157,8 @@ The Emulator is divided into 3 parts:
 - my_sdl2 (video, audio and inputs si_arcade interpreter)
 - binary_lib (a set of binary functions to manipulate data)
 
-The sound is implemented using `.wav` files, they are laoded in the `si_aracade` part of the program and totally
-interpreted in the my_sdl2 part.
+The sound is implemented using `.wav` files, they are loaded in the `si_aracade` part of the program and totally
+interpreted in the `my_sdl2` part.
 
 ## Compilation
 
