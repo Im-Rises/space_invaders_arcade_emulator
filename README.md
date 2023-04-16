@@ -289,10 +289,22 @@ You can start them individuality by typing:
 cargo test <test_name>
 ```
 
+or
+
+```bash
+cargo test --release
+```
+
 Example: If you want to start the cpu_test_rom_tst8080 test.
 
 ```bash
 cargo test cpu_test_rom_tst8080
+```
+
+or
+
+```bash
+cargo test cpu_test_rom_tst8080 --release
 ```
 
 You can also debug the processes by uncommenting the two lines following lines in the `cpu.rs` file in the `test`
@@ -311,14 +323,11 @@ module.
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
 >
-> The last test (cpu_test_rom_8080exm) can take a lot of time, so it is commented to prevent an issue with the GitHub
-> Actions. Uncomment it if you need it.
-> You will also need to comment the ram mirroring for the read and write functions in the Mmu struct methods in the mmu
-> files to allow the last test to work (the ram banking is enabled for the Space invaders game to work correctly).
-
-> **Warning**  
-> Be carefully, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.  
-> All tests take a lot more time if you output all the disassembly code by uncommenting the two lines.
+> The last test (cpu_test_rom_8080exm) can take a lot of time in debug mode, you should test it in release mode, use the
+> command below:
+> ```bash
+> cargo test cpu_test_rom_8080exm --release
+> ```
 
 <!--
 or if you want to see the output
