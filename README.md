@@ -7,7 +7,7 @@
 
 ## Description
 
-Space Invaders' arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
+Space Invaders arcade game emulator made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
@@ -17,12 +17,8 @@ Everything is working including the Space Invaders Easter Egg.
 
 - Full emulation
 - Sound
-- two-players mode
+- Two-players mode
 - Window resizing without deformation
-
-[//]: # (joystick support)
-
-[//]: # (high score automatically saved)
 
 ## Images
 
@@ -150,7 +146,7 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 
 ## Code architecture
 
-The Emulator is divided into 3 parts:
+The Emulator is divided into 4 parts:
 
 - main (starter)
 - si_arcade (console emulation)
@@ -185,8 +181,6 @@ They all must be put in the `game_audios` folder.
 
 > **Warning**  
 > Be carefully when downloading the .wav files, some files pay have the wrong name.
-
-[//]: # (> &#40;For example, 0.wav and 8.wav are swapped&#41;)
 
 Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
 below `Windows`, `Linux` and `macOs`.
@@ -289,10 +283,22 @@ You can start them individuality by typing:
 cargo test <test_name>
 ```
 
+or
+
+```bash
+cargo test --release
+```
+
 Example: If you want to start the cpu_test_rom_tst8080 test.
 
 ```bash
 cargo test cpu_test_rom_tst8080
+```
+
+or
+
+```bash
+cargo test cpu_test_rom_tst8080 --release
 ```
 
 You can also debug the processes by uncommenting the two lines following lines in the `cpu.rs` file in the `test`
@@ -311,22 +317,11 @@ module.
 > https://github.com/superzazu/8080  
 > http://www.emulator101.com/full-8080-emulation.html
 >
-> The last test (cpu_test_rom_8080exm) can take a lot of time, so it is commented to prevent an issue with the GitHub
-> Actions. Uncomment it if you need it.
-> You will also need to comment the ram mirroring for the read and write functions in the Mmu struct methods in the mmu
-> files to allow the last test to work (the ram banking is enabled for the Space invaders game to work correctly).
-
-> **Warning**  
-> Be carefully, the last test (cpu_test_rom_8080exm for the 8080EXM.COM rom) may take a long time to proceed.  
-> All tests take a lot more time if you output all the disassembly code by uncommenting the two lines.
-
-<!--
-or if you want to see the output
-
-```bash
-cargo test cpu_test_rom_tst8080 -- --show-output
-```
--->
+> The last test (cpu_test_rom_8080exm) can take a lot of time in debug mode, you should test it in release mode, use the
+> command below:
+> ```bash
+> cargo test cpu_test_rom_8080exm --release
+> ```
 
 ## GitHub Actions
 

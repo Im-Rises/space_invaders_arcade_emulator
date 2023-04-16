@@ -84,8 +84,10 @@ impl SpaceInvadersArcade {
                     frequency_counter = 0;
                     self.ppu.clock();
                     sdl2_video.update_screen(self);
-                    while time.elapsed().as_millis() < SCREEN_REFRESH_TIME {
-                        // println!("{}", time.elapsed().as_millis())
+                    if time.elapsed().as_millis() < SCREEN_REFRESH_TIME {
+                        std::thread::sleep(std::time::Duration::from_millis(
+                            SCREEN_REFRESH_TIME as u64 - time.elapsed().as_millis() as u64,
+                        ));
                     }
                     time = Instant::now();
                 }
