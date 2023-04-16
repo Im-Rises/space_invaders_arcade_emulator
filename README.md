@@ -7,7 +7,7 @@
 
 ## Description
 
-Space Invaders' arcade game emulator made in Rust with SDL2 and SDL2_mixer.
+Space Invaders arcade game emulator made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
@@ -17,12 +17,8 @@ Everything is working including the Space Invaders Easter Egg.
 
 - Full emulation
 - Sound
-- two-players mode
+- Two-players mode
 - Window resizing without deformation
-
-[//]: # (joystick support)
-
-[//]: # (high score automatically saved)
 
 ## Images
 
@@ -150,7 +146,7 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 
 ## Code architecture
 
-The Emulator is divided into 3 parts:
+The Emulator is divided into 4 parts:
 
 - main (starter)
 - si_arcade (console emulation)
@@ -185,8 +181,6 @@ They all must be put in the `game_audios` folder.
 
 > **Warning**  
 > Be carefully when downloading the .wav files, some files pay have the wrong name.
-
-[//]: # (> &#40;For example, 0.wav and 8.wav are swapped&#41;)
 
 Depending on your OS, you will need to follow specific steps to compile the app. Please refer to the sections
 below `Windows`, `Linux` and `macOs`.
@@ -328,14 +322,6 @@ module.
 > ```bash
 > cargo test cpu_test_rom_8080exm --release
 > ```
-
-<!--
-or if you want to see the output
-
-```bash
-cargo test cpu_test_rom_tst8080 -- --show-output
-```
--->
 
 ## GitHub Actions
 
