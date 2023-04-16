@@ -326,8 +326,7 @@ impl Cpu {
             0xFE => cpi(self),
             0xFF => rst(self, 7),
             // _ => {
-            //     println!("Error: unknown opcode");
-            //     exit(1);
+            //     panic!("Error: unknown opcode");
             // }
         }
     }

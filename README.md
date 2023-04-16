@@ -7,7 +7,7 @@
 
 ## Description
 
-Space Invaders' arcade game emulator in development made in Rust with SDL2 and SDL2_mixer.
+Space Invaders' arcade game emulator made in Rust with SDL2 and SDL2_mixer.
 
 Complete Emulator of the Intel 8080, the app is implemented to run the Space Invaders Arcade game.
 
