@@ -400,6 +400,12 @@ pub mod tests {
     }
 
     #[test]
+    fn cpu_test_rom_8080exer() {
+        println!("------------------------------------8080EXEROM------------------------------------");
+        cpu_test("test_roms/8080EXER.COM", 23803307039);
+    }
+
+    #[test]
     fn cpu_test_rom_8080exm() {
         println!("------------------------------------8080EXM------------------------------------");
         cpu_test("test_roms/8080EXM.COM", 23803381171);
