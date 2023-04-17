@@ -3,7 +3,7 @@ use std::rc::Rc;
 use std::time::Instant;
 
 use super::binary_lib::*;
-use super::my_sdl2::MySdl2;
+use super::my_sdl2;
 
 mod cpu;
 mod inputs_outputs;
@@ -35,7 +35,7 @@ impl SpaceInvadersArcade {
     }
     pub fn start(&mut self) {
         let mut time = Instant::now();
-        let mut sdl2_video: MySdl2 = MySdl2::new(
+        let mut sdl2_video: my_sdl2::MySdl2 = my_sdl2::MySdl2::new(
             spu::SOUND_0,
             spu::SOUND_1,
             spu::SOUND_2,
@@ -135,7 +135,7 @@ impl SpaceInvadersArcade {
         data
     }
 
-    fn outputs(&mut self, port: u8, data: u8, sdl2_video: &mut MySdl2) {
+    fn outputs(&mut self, port: u8, data: u8, sdl2_video: &mut my_sdl2::MySdl2) {
         match port {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
             3 => {
