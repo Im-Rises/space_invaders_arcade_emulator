@@ -1,8 +1,16 @@
 [package]
 name = "space_invaders_arcade_emulator"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 build = "build.rs"
+license = "MIT"
+authors = ["Quentin MOREL (Im-Rises) <quentin-morel88@hotmail.com>"]
+description = "Space Invaders Arcade Emulator"
+repository = "https:://github.com/Im-Rises/space_invaders_arcade_emulator"
+documentation = "https:://github.com/Im-Rises/space_invaders_arcade_emulator"
+readme = "README.md"
+keywords = ["cpu", "intel8080", "emulator"]
+categories = ["emulators"]
 
 [dependencies.sdl2]
 version = "0.35"

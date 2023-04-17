@@ -2,9 +2,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Instant;
 
-use crate::binary_lib::*;
-use crate::my_sdl2;
-use crate::my_sdl2::MySdl2;
+use super::binary_lib::*;
+use super::my_sdl2;
 
 mod cpu;
 mod inputs_outputs;
@@ -136,7 +135,7 @@ impl SpaceInvadersArcade {
         data
     }
 
-    fn outputs(&mut self, port: u8, data: u8, sdl2_video: &mut MySdl2) {
+    fn outputs(&mut self, port: u8, data: u8, sdl2_video: &mut my_sdl2::MySdl2) {
         match port {
             2 => self.inputs_outputs.shift_offset = data & 0b0000_0111,
             3 => {

@@ -325,9 +325,9 @@ impl Cpu {
             0xFD => call(self),
             0xFE => cpi(self),
             0xFF => rst(self, 7),
-            // _ => {
-            //     panic!("Error: unknown opcode");
-            // }
+            _ => {
+                panic!("Error: unknown opcode");
+            }
         }
     }
 
@@ -397,6 +397,12 @@ pub mod tests {
     fn cpu_test_rom_cputest() {
         println!("------------------------------------CPUTEST------------------------------------");
         cpu_test("test_roms/CPUTEST.COM", 255653383);
+    }
+
+    #[test]
+    fn cpu_test_rom_8080exer() {
+        println!("------------------------------------8080EXEROM------------------------------------");
+        cpu_test("test_roms/8080EXER.COM", 23803307039);
     }
 
     #[test]
