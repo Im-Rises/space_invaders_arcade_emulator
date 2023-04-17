@@ -2,9 +2,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Instant;
 
-use crate::binary_lib::*;
-use crate::my_sdl2;
-use crate::my_sdl2::MySdl2;
+use super::binary_lib::*;
+use super::my_sdl2::MySdl2;
 
 mod cpu;
 mod inputs_outputs;
@@ -36,7 +35,7 @@ impl SpaceInvadersArcade {
     }
     pub fn start(&mut self) {
         let mut time = Instant::now();
-        let mut sdl2_video: my_sdl2::MySdl2 = my_sdl2::MySdl2::new(
+        let mut sdl2_video: MySdl2 = MySdl2::new(
             spu::SOUND_0,
             spu::SOUND_1,
             spu::SOUND_2,
