@@ -1,8 +1,9 @@
 use sdl2::event::Event;
-use sdl2::keyboard::{Keycode, Scancode};
+use sdl2::keyboard::Keycode;
 use sdl2::Sdl;
 
 use crate::si_arcade;
+use crate::si_arcade::GameInput;
 
 pub fn get_window_active(si_arcade: &mut si_arcade::SpaceInvadersArcade, sdl_context: &Sdl) -> Result<bool, String> {
     let mut event_pump = sdl_context.event_pump()?;

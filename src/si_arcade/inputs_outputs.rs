@@ -1,3 +1,16 @@
+pub enum GameInput {
+    Coin,
+    Player1Start,
+    Player2Start,
+    Left,
+    Right,
+    Shot,
+    Dip3,
+    Dip5,
+    Dip6,
+    Dip7,
+}
+
 pub struct PlayerInputs {
     pub left: bool,
     pub right: bool,
@@ -28,8 +41,6 @@ pub struct InputsOutputs {
     pub dip5: bool,
     pub dip6: bool,
     pub dip7: bool,
-    // pub port3_previous_outputs: u8,
-    // pub port5_previous_outputs: u8,
 }
 
 impl InputsOutputs {
@@ -46,8 +57,21 @@ impl InputsOutputs {
             dip5: false,
             dip6: false,
             dip7: false,
-            // port3_previous_outputs: 0,
-            // port5_previous_outputs: 0,
+        }
+    }
+
+    pub fn update_input(&mut self, input_index: GameInput, value: bool) {
+        match input_index {
+            GameInput::Coin => self.coin = value,
+            GameInput::Player1Start => self.player1_start = value,
+            GameInput::Player2Start => self.player2_start = value,
+            GameInput::Left => self.player.left = value,
+            GameInput::Right => self.player.right = value,
+            GameInput::Shot => self.player.shot = value,
+            GameInput::Dip3 => self.dip3 = value,
+            GameInput::Dip5 => self.dip5 = value,
+            GameInput::Dip6 => self.dip6 = value,
+            GameInput::Dip7 => self.dip7 = value,
         }
     }
 }
