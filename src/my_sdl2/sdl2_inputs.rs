@@ -85,17 +85,17 @@ impl Sdl2Inputs {
                     Keycode::K => {
                         si_arcade.inputs_outputs.dip3 = !si_arcade.inputs_outputs.dip3;
                         if si_arcade.inputs_outputs.dip3 {
-                            println!("- 3 ships per game");
+                            println!("- 1 additional life");
                         } else {
-                            println!("- 5 ships per game");
+                            println!("- 1 additional life disabled");
                         }
                     }
                     Keycode::L => {
                         si_arcade.inputs_outputs.dip5 = !si_arcade.inputs_outputs.dip5;
                         if si_arcade.inputs_outputs.dip5 {
-                            println!("- 2 additional lives at 1500 points");
+                            println!("- 2 additional lives");
                         } else {
-                            println!("- 1 additional life at 1000 points");
+                            println!("- 2 additional lives disabled");
                         }
                     }
                     Keycode::M => {
