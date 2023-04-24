@@ -2,7 +2,7 @@ pub struct PlayerInputs {
     pub left: bool,
     pub right: bool,
     pub shot: bool,
-    pub start: bool,
+    // pub start: bool,
 }
 
 impl PlayerInputs {
@@ -11,7 +11,7 @@ impl PlayerInputs {
             left: false,
             right: false,
             shot: false,
-            start: false,
+            // start: false,
         }
     }
 }
@@ -20,8 +20,10 @@ pub struct InputsOutputs {
     pub shift_register: u16,
     pub shift_offset: u8,
     pub coin: bool,
-    pub player1: PlayerInputs,
-    pub player2: PlayerInputs,
+    pub player: PlayerInputs,
+    // pub player2: PlayerInputs,
+    pub player1_start: bool,
+    pub player2_start: bool,
     pub dip3: bool,
     pub dip5: bool,
     pub dip6: bool,
@@ -36,8 +38,10 @@ impl InputsOutputs {
             shift_register: 0,
             shift_offset: 0,
             coin: false,
-            player1: PlayerInputs::new(),
-            player2: PlayerInputs::new(),
+            player: PlayerInputs::new(),
+            // player2: PlayerInputs::new(),
+            player1_start: false,
+            player2_start: false,
             dip3: false,
             dip5: false,
             dip6: false,

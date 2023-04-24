@@ -8,6 +8,7 @@ pub struct Sdl2Inputs {
     one_additional_life_last_state: bool,
     two_additional_lives_last_state: bool,
     extraship_btn_last_state: bool,
+    coin_info_last_state: bool,
 }
 
 impl Sdl2Inputs {
@@ -16,6 +17,7 @@ impl Sdl2Inputs {
             one_additional_life_last_state: false,
             two_additional_lives_last_state: false,
             extraship_btn_last_state: false,
+            coin_info_last_state: false,
         }
     }
 
@@ -49,71 +51,46 @@ impl Sdl2Inputs {
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
-                } => si_arcade.inputs_outputs.player1.left = true,
+                } => si_arcade.inputs_outputs.player.left = true,
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
-                } => si_arcade.inputs_outputs.player1.right = true,
+                } => si_arcade.inputs_outputs.player.right = true,
                 Event::KeyDown {
                     keycode: Some(Keycode::Up),
                     ..
-                } => si_arcade.inputs_outputs.player1.shot = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Num1),
-                    ..
-                } => si_arcade.inputs_outputs.player1.start = true,
+                } => si_arcade.inputs_outputs.player.shot = true,
                 //Player 1 KeyUp
                 Event::KeyUp {
                     keycode: Some(Keycode::Left),
                     ..
-                } => si_arcade.inputs_outputs.player1.left = false,
+                } => si_arcade.inputs_outputs.player.left = false,
                 Event::KeyUp {
                     keycode: Some(Keycode::Right),
                     ..
-                } => si_arcade.inputs_outputs.player1.right = false,
+                } => si_arcade.inputs_outputs.player.right = false,
                 Event::KeyUp {
                     keycode: Some(Keycode::Up),
                     ..
-                } => si_arcade.inputs_outputs.player1.shot = false,
+                } => si_arcade.inputs_outputs.player.shot = false,
+
+                // Choose 1/2 Players
                 Event::KeyUp {
                     keycode: Some(Keycode::Num1),
                     ..
-                } => si_arcade.inputs_outputs.player1.start = false,
-
-                //Player 2 KeyDown
+                } => si_arcade.inputs_outputs.player1_start = false,
                 Event::KeyDown {
-                    keycode: Some(Keycode::S),
+                    keycode: Some(Keycode::Num1),
                     ..
-                } => si_arcade.inputs_outputs.player2.left = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::F),
-                    ..
-                } => si_arcade.inputs_outputs.player2.right = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::E),
-                    ..
-                } => si_arcade.inputs_outputs.player2.shot = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Num2),
-                    ..
-                } => si_arcade.inputs_outputs.player2.start = true,
-                //Player 2 KeyUp
-                Event::KeyUp {
-                    keycode: Some(Keycode::S),
-                    ..
-                } => si_arcade.inputs_outputs.player2.left = false,
-                Event::KeyUp {
-                    keycode: Some(Keycode::F),
-                    ..
-                } => si_arcade.inputs_outputs.player2.right = false,
-                Event::KeyUp {
-                    keycode: Some(Keycode::E),
-                    ..
-                } => si_arcade.inputs_outputs.player2.shot = false,
+                } => si_arcade.inputs_outputs.player1_start = true,
                 Event::KeyUp {
                     keycode: Some(Keycode::Num2),
                     ..
-                } => si_arcade.inputs_outputs.player2.start = false,
+                } => si_arcade.inputs_outputs.player2_start = false,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Num2),
+                    ..
+                } => si_arcade.inputs_outputs.player2_start = true,
 
                 //DIP 3
                 Event::KeyDown {
@@ -177,15 +154,21 @@ impl Sdl2Inputs {
                     self.extraship_btn_last_state = false;
                 }
 
-                // //DIP7 Coin info displayed in demo screen 0=ON
-                // Event::KeyDown {
-                //     keycode: Some(Keycode::O),
-                //     ..
-                // } => si_arcade.inputs_outputs.borrow_mut().dip7 = true,
-                // Event::KeyUp {
-                //     keycode: Some(Keycode::O),
-                //     ..
-                // } => si_arcade.inputs_outputs.borrow_mut().dip7 = false,
+                //DIP7 Coin info displayed in demo screen 0=ON
+                Event::KeyDown {
+                    keycode: Some(Keycode::O),
+                    ..
+                } => {
+                    if !self.coin_info_last_state {
+                        si_arcade.inputs_outputs.dip7 = !si_arcade.inputs_outputs.dip7;
+                        self.coin_info_last_state = true;
+                        if si_arcade.inputs_outputs.dip7 {
+                            println!("- Coin info displayed in demo screen");
+                        } else {
+                            println!("- Coin info not displayed in demo screen");
+                        }
+                    }
+                }
 
                 // Default
                 _ => window_active = true,

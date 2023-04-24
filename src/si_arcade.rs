@@ -106,20 +106,20 @@ impl SpaceInvadersArcade {
             1 => {
                 data = 0b0000_1000;
                 data = set_reset_bit(data, 0, self.inputs_outputs.coin);
-                data = set_reset_bit(data, 1, self.inputs_outputs.player2.start);
-                data = set_reset_bit(data, 2, self.inputs_outputs.player1.start);
-                data = set_reset_bit(data, 4, self.inputs_outputs.player1.shot);
-                data = set_reset_bit(data, 5, self.inputs_outputs.player1.left);
-                data = set_reset_bit(data, 6, self.inputs_outputs.player1.right);
+                data = set_reset_bit(data, 1, self.inputs_outputs.player2_start);
+                data = set_reset_bit(data, 2, self.inputs_outputs.player1_start);
+                data = set_reset_bit(data, 4, self.inputs_outputs.player.shot);
+                data = set_reset_bit(data, 5, self.inputs_outputs.player.left);
+                data = set_reset_bit(data, 6, self.inputs_outputs.player.right);
             }
             2 => {
                 data = 0b0000_0000;
                 data = set_reset_bit(data, 0, self.inputs_outputs.dip3);
                 data = set_reset_bit(data, 1, self.inputs_outputs.dip5);
                 data = set_reset_bit(data, 3, self.inputs_outputs.dip6);
-                data = set_reset_bit(data, 4, self.inputs_outputs.player2.shot);
-                data = set_reset_bit(data, 5, self.inputs_outputs.player2.left);
-                data = set_reset_bit(data, 6, self.inputs_outputs.player2.right);
+                data = set_reset_bit(data, 4, self.inputs_outputs.player.shot); // player 2 shot
+                data = set_reset_bit(data, 5, self.inputs_outputs.player.left); // player 2 left
+                data = set_reset_bit(data, 6, self.inputs_outputs.player.right); // player 2 right
                 data = set_reset_bit(data, 7, self.inputs_outputs.dip7);
             }
             3 => data = ((self.inputs_outputs.shift_register >> (8 - self.inputs_outputs.shift_offset)) & 0xFF) as u8,
