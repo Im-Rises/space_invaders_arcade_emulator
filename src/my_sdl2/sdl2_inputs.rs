@@ -1,23 +1,23 @@
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
+use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::Sdl;
 
 use crate::si_arcade;
 
 pub struct Sdl2Inputs {
-    one_additional_life_last_state: bool,
-    two_additional_lives_last_state: bool,
-    extraship_btn_last_state: bool,
-    coin_info_last_state: bool,
+    // one_additional_life_last_state: bool,
+    // two_additional_lives_last_state: bool,
+    // extraship_btn_last_state: bool,
+    // coin_info_last_state: bool,
 }
 
 impl Sdl2Inputs {
     pub fn new() -> Sdl2Inputs {
         Sdl2Inputs {
-            one_additional_life_last_state: false,
-            two_additional_lives_last_state: false,
-            extraship_btn_last_state: false,
-            coin_info_last_state: false,
+            // one_additional_life_last_state: false,
+            // two_additional_lives_last_state: false,
+            // extraship_btn_last_state: false,
+            // coin_info_last_state: false,
         }
     }
 
@@ -28,6 +28,7 @@ impl Sdl2Inputs {
     ) -> Result<bool, String> {
         let mut event_pump = sdl_context.event_pump()?;
         let mut window_active = true;
+
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -36,142 +37,86 @@ impl Sdl2Inputs {
                     ..
                 } => window_active = false,
 
-                //Insert Coin KeyDown
                 Event::KeyDown {
-                    keycode: Some(Keycode::C),
-                    ..
-                } => si_arcade.inputs_outputs.coin = true,
-                //Insert Coin KeyUp
-                Event::KeyUp {
-                    keycode: Some(Keycode::C),
-                    ..
-                } => si_arcade.inputs_outputs.coin = false,
+                    keycode: Some(keycode), ..
+                } => match keycode {
+                    Keycode::C => {
+                        si_arcade.inputs_outputs.coin = true;
+                    }
+                    Keycode::Left => {
+                        si_arcade.inputs_outputs.player.left = true;
+                    }
+                    Keycode::Right => {
+                        si_arcade.inputs_outputs.player.right = true;
+                    }
+                    Keycode::Up => {
+                        si_arcade.inputs_outputs.player.shot = true;
+                    }
+                    Keycode::Num1 => {
+                        si_arcade.inputs_outputs.player1_start = true;
+                    }
+                    Keycode::Num2 => {
+                        si_arcade.inputs_outputs.player2_start = true;
+                    }
+                    _ => {}
+                },
 
-                //Player 1 KeyDown
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => si_arcade.inputs_outputs.player.left = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => si_arcade.inputs_outputs.player.right = true,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => si_arcade.inputs_outputs.player.shot = true,
-                //Player 1 KeyUp
                 Event::KeyUp {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => si_arcade.inputs_outputs.player.left = false,
-                Event::KeyUp {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => si_arcade.inputs_outputs.player.right = false,
-                Event::KeyUp {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => si_arcade.inputs_outputs.player.shot = false,
-
-                // Choose 1/2 Players
-                Event::KeyUp {
-                    keycode: Some(Keycode::Num1),
-                    ..
-                } => si_arcade.inputs_outputs.player1_start = false,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Num1),
-                    ..
-                } => si_arcade.inputs_outputs.player1_start = true,
-                Event::KeyUp {
-                    keycode: Some(Keycode::Num2),
-                    ..
-                } => si_arcade.inputs_outputs.player2_start = false,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Num2),
-                    ..
-                } => si_arcade.inputs_outputs.player2_start = true,
-
-                //DIP 3
-                Event::KeyDown {
-                    keycode: Some(Keycode::K),
-                    ..
-                } => {
-                    if !self.one_additional_life_last_state {
+                    keycode: Some(keycode), ..
+                } => match keycode {
+                    Keycode::C => {
+                        si_arcade.inputs_outputs.coin = false;
+                    }
+                    Keycode::Left => {
+                        si_arcade.inputs_outputs.player.left = false;
+                    }
+                    Keycode::Right => {
+                        si_arcade.inputs_outputs.player.right = false;
+                    }
+                    Keycode::Up => {
+                        si_arcade.inputs_outputs.player.shot = false;
+                    }
+                    Keycode::Num1 => {
+                        si_arcade.inputs_outputs.player1_start = false;
+                    }
+                    Keycode::Num2 => {
+                        si_arcade.inputs_outputs.player2_start = false;
+                    }
+                    Keycode::K => {
                         si_arcade.inputs_outputs.dip3 = !si_arcade.inputs_outputs.dip3;
-                        self.one_additional_life_last_state = true;
                         if si_arcade.inputs_outputs.dip3 {
-                            println!("- One additional life activated");
+                            println!("- 3 ships per game");
                         } else {
-                            println!("- One additional life deactivated");
+                            println!("- 5 ships per game");
                         }
                     }
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::K),
-                    ..
-                } => self.one_additional_life_last_state = false,
-
-                //DIP 5
-                Event::KeyDown {
-                    keycode: Some(Keycode::L),
-                    ..
-                } => {
-                    if !self.two_additional_lives_last_state {
+                    Keycode::L => {
                         si_arcade.inputs_outputs.dip5 = !si_arcade.inputs_outputs.dip5;
-                        self.two_additional_lives_last_state = true;
                         if si_arcade.inputs_outputs.dip5 {
-                            println!("- Two additional lives activated");
+                            println!("- 2 additional lives at 1500 points");
                         } else {
-                            println!("- Two additional lives deactivated");
+                            println!("- 1 additional life at 1000 points");
                         }
                     }
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::L),
-                    ..
-                } => self.two_additional_lives_last_state = false,
-
-                //DIP 6
-                Event::KeyDown {
-                    keycode: Some(Keycode::M),
-                    ..
-                } => {
-                    if !self.extraship_btn_last_state {
+                    Keycode::M => {
                         si_arcade.inputs_outputs.dip6 = !si_arcade.inputs_outputs.dip6;
-                        self.extraship_btn_last_state = true;
                         if si_arcade.inputs_outputs.dip6 {
-                            println!("- Extra ship at 1000 points");
-                        } else {
                             println!("- Extra ship at 1500 points");
+                        } else {
+                            println!("- Extra ship at 1000 points");
                         }
                     }
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::M),
-                    ..
-                } => {
-                    self.extraship_btn_last_state = false;
-                }
-
-                //DIP7 Coin info displayed in demo screen 0=ON
-                Event::KeyDown {
-                    keycode: Some(Keycode::O),
-                    ..
-                } => {
-                    if !self.coin_info_last_state {
+                    Keycode::O => {
                         si_arcade.inputs_outputs.dip7 = !si_arcade.inputs_outputs.dip7;
-                        self.coin_info_last_state = true;
                         if si_arcade.inputs_outputs.dip7 {
                             println!("- Coin info displayed in demo screen");
                         } else {
                             println!("- Coin info not displayed in demo screen");
                         }
                     }
-                }
-
-                // Default
-                _ => window_active = true,
+                    _ => {}
+                },
+                _ => {}
             }
         }
         Ok(window_active)
