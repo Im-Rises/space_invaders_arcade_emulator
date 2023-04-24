@@ -12,7 +12,6 @@ pub struct MySdl2 {
     sdl_context: Sdl,
     window_canvas: WindowCanvas,
     sdl_audio: sdl2_audio::MySdl2Audio,
-    sdl_inputs: sdl2_inputs::Sdl2Inputs,
     port3_previous_outputs: u8,
     port5_previous_outputs: u8,
 }
@@ -33,7 +32,6 @@ impl MySdl2 {
         MySdl2 {
             window_canvas: sdl2_video::init_video(&sdl_init).unwrap(),
             sdl_context: sdl_init,
-            sdl_inputs: sdl2_inputs::Sdl2Inputs::new(),
             port3_previous_outputs: 0,
             sdl_audio: sdl2_audio::MySdl2Audio::new(
                 sound_0_bytes,
@@ -59,9 +57,7 @@ impl MySdl2 {
     }
 
     pub fn get_window_active(&mut self, si_arcade: &mut si_arcade::SpaceInvadersArcade) -> bool {
-        self.sdl_inputs
-            .get_window_active(si_arcade, &self.sdl_context)
-            .expect("Error: Cannot fetch keyboard state")
+        sdl2_inputs::get_window_active(si_arcade, &self.sdl_context).expect("Error: Cannot fetch keyboard state")
     }
 
     pub fn play_audio_sound(&mut self, port: u8, data: u8) {
