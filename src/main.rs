@@ -9,12 +9,9 @@ fn main() {
     println!("|       C to insert a coin             |");
     println!("|       1 to start 1 player mode       |");
     println!("|       2 to start 2 player mode       |");
-    println!("|       → to move P1 left              |");
-    println!("|       ← to move P1 right             |");
-    println!("|       ↑ to shoot with P1             |");
-    println!("|       S to move P2 left              |");
-    println!("|       F to move P2 right             |");
-    println!("|       E to shoot with P2             |");
+    println!("|       → to move left                 |");
+    println!("|       ← to move right                |");
+    println!("|       ↑ to shoot                     |");
     println!("|       K to get 1 extra life          |");
     println!("|       L to get 2 extra lives         |");
     println!("|       M extra ship at 1000 points    |");

@@ -119,14 +119,11 @@ You can use the keyboard to play the game.
 | Arcade buttons | Emulator/Keyboard |
 |----------------|-------------------|
 | Insert coin    | C                 |
-| P1 start       | Space             |
-| P1 shoot       | ↑                 |
-| P1 ←           | ←                 |
-| P1 →           | →                 |
-| P2 start       | G                 |
-| P2 shoot       | E                 |
-| P2 ←           | S                 |
-| P2 →           | F                 |
+| Shoot          | ↑                 |
+| ←              | ←                 |
+| →              | →                 |
+| Start 1        | 1                 |
+| Start 2        | 2                 |
 
 The original game is mapped with some inputs that allow the constructor to choose the difficulty. I Mapped those inputs
 to the keyboard. This allows you to increase the numer of lives and change the extra ship necessity points.
@@ -135,6 +132,7 @@ Before pressing start with player 1 or 2, you can choose the number of life you 
 
 | Emulator/Keyboard | Emulator buttons                   |
 |-------------------|------------------------------------|
+| O                 | Show additional info in demo       |
 | K                 | 1 more life                        |
 | L                 | 2 more lives                       |
 | M                 | extra ship at 1000 instead of 1500 |
