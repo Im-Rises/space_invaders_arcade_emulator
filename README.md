@@ -13,6 +13,11 @@ Complete Emulator of the Intel 8080, the app is implemented to run the Space Inv
 
 Everything is working including the Space Invaders Easter Egg.
 
+You can also play it in the browser, I ported the code to WebGL, you can find the
+code  [here](https://github.com/Im-Rises/space-invaders-arcade-emulator-website).
+
+# 🚀🚀 Play in the browser [here](https://im-rises.github.io/space-invaders-arcade-emulator-website/). 🚀🚀
+
 ## Features
 
 - Full emulation
