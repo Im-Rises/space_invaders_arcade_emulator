@@ -135,12 +135,12 @@ to the keyboard. This allows you to increase the numer of lives and change the e
 
 Before pressing start with player 1 or 2, you can choose the number of life you want to have for a game party.
 
-| Emulator/Keyboard | Emulator buttons                   |
-|-------------------|------------------------------------|
-| O                 | Show additional info in demo       |
-| K                 | 1 more life                        |
-| L                 | 2 more lives                       |
-| M                 | extra ship at 1000 instead of 1500 |
+| Emulator/Keyboard | Emulator buttons                                 |
+|-------------------|--------------------------------------------------|
+| O                 | Show additional info in demo                     |
+| K                 | 1 more life                                      |
+| L                 | 2 more lives                                     |
+| M                 | extra ship at 1000 points instead of 1500 points |
 
 > **Note**  
 > If you don't keep pressed K or L before pressing start and starting a new game you will have 3 lives.  
