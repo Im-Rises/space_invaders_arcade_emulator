@@ -18,10 +18,10 @@ impl Mmu {
             memory: vec![0; MEMORY_SIZE],
         };
 
-        let array_h: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.h").unwrap();
-        let array_g: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.g").unwrap();
-        let array_f: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.f").unwrap();
-        let array_e: [u8; 0x800] = space_invaders_rom("./game_roms/invaders.e").unwrap();
+        let array_h: [u8; 0x800] = read_space_invaders_rom("./game_roms/invaders.h").unwrap();
+        let array_g: [u8; 0x800] = read_space_invaders_rom("./game_roms/invaders.g").unwrap();
+        let array_f: [u8; 0x800] = read_space_invaders_rom("./game_roms/invaders.f").unwrap();
+        let array_e: [u8; 0x800] = read_space_invaders_rom("./game_roms/invaders.e").unwrap();
         mmu.memory[0..0x800].clone_from_slice(&array_h);
         mmu.memory[0x800..0x1000].clone_from_slice(&array_g);
         mmu.memory[0x1000..0x1800].clone_from_slice(&array_f);
@@ -49,42 +49,13 @@ impl Mmu {
 
         mmu
     }
-    //Wrong implementation of RAM banking, I implemented like Rom/Ram banking
-    //It is only Ram Banking
+
     pub fn read(&self, address: u16) -> u8 {
-        // if address < 0x4000 {
         self.memory[address as usize]
-        // } else if address < 0x6000 {
-        //     self.memory[(address - 0x2000) as usize]
-        // } else if address < 0x8000 {
-        //     self.memory[(address - 0x4000) as usize]
-        // } else if address < 0xA000 {
-        //     self.memory[(address - 0x6000) as usize]
-        // } else if address < 0xC000 {
-        //     self.memory[(address - 0x8000) as usize]
-        // } else if address < 0xE000 {
-        //     self.memory[(address - 0xA000) as usize]
-        // } else {
-        //     self.memory[(address - 0xE000) as usize]
-        // }
     }
 
     pub fn write(&mut self, address: u16, data: u8) {
-        // if address < 0x4000 {
         self.memory[address as usize] = data;
-        // } else if address < 0x6000 {
-        //     self.memory[(address - 0x2000) as usize] = data;
-        // } else if address < 0x8000 {
-        //     self.memory[(address - 0x4000) as usize] = data;
-        // } else if address < 0xA000 {
-        //     self.memory[(address - 0x6000) as usize] = data;
-        // } else if address < 0xC000 {
-        //     self.memory[(address - 0x8000) as usize] = data;
-        // } else if address < 0xE000 {
-        //     self.memory[(address - 0xA000) as usize] = data;
-        // } else {
-        //     self.memory[(address - 0xE000) as usize] = data;
-        // }
     }
 
     pub fn get_vram(&self) -> &[u8] {
@@ -92,7 +63,7 @@ impl Mmu {
     }
 }
 
-fn space_invaders_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
+fn read_space_invaders_rom(rom_path: &str) -> Result<[u8; 0x800], Error> {
     let mut f = File::open(rom_path)?;
     let mut buffer: [u8; 0x800] = [0; 0x800];
     let size = f.read(&mut buffer)?;

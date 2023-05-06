@@ -2,10 +2,13 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::Sdl;
 
-use crate::si_arcade;
-use crate::si_arcade::GameInput;
+use crate::{my_sdl2, si_arcade};
 
-pub fn get_window_active(si_arcade: &mut si_arcade::SpaceInvadersArcade, sdl_context: &Sdl) -> Result<bool, String> {
+pub fn get_window_active(
+    si_arcade: &mut si_arcade::SpaceInvadersArcade,
+    sdl_context: &Sdl,
+    sdl_canvas: &mut sdl2::render::WindowCanvas,
+) -> Result<bool, String> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut window_active = true;
 
@@ -81,9 +84,9 @@ pub fn get_window_active(si_arcade: &mut si_arcade::SpaceInvadersArcade, sdl_con
                 Keycode::M => {
                     si_arcade.inputs_outputs.dip6 = !si_arcade.inputs_outputs.dip6;
                     if si_arcade.inputs_outputs.dip6 {
-                        println!("- Extra ship at 1500 points");
-                    } else {
                         println!("- Extra ship at 1000 points");
+                    } else {
+                        println!("- Extra ship at 1500 points");
                     }
                 }
                 Keycode::O => {
@@ -94,6 +97,9 @@ pub fn get_window_active(si_arcade: &mut si_arcade::SpaceInvadersArcade, sdl_con
                         println!("- Coin info not displayed in demo screen");
                     }
                 }
+                Keycode::F11 => {
+                    my_sdl2::sdl2_video::toggle_fullscreen(sdl_canvas);
+                }
                 _ => {}
             },
             _ => {}
@@ -101,3 +107,9 @@ pub fn get_window_active(si_arcade: &mut si_arcade::SpaceInvadersArcade, sdl_con
     }
     Ok(window_active)
 }
+
+// pub fn center_window(window_canvas: &mut sdl2::render::WindowCanvas) {
+//     window_canvas
+//         .window_mut()
+//         .set_position(sdl2::video::WindowPos::Centered, sdl2::video::WindowPos::Centered);
+// }

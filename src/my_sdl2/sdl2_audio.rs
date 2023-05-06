@@ -18,6 +18,7 @@ pub struct MySdl2Audio {
     sound_6: Chunk,
     sound_7: Chunk,
     sound_8: Chunk,
+    sound_9: Chunk,
 }
 
 impl MySdl2Audio {
@@ -31,10 +32,11 @@ impl MySdl2Audio {
         sound_6_bytes: &[u8],
         sound_7_bytes: &[u8],
         sound_8_bytes: &[u8],
+        sound_9_bytes: &[u8],
     ) -> Self {
         mixer::open_audio(11025, mixer::AUDIO_S8, 1, 256).unwrap();
         mixer::init(mixer::InitFlag::MID).unwrap();
-        mixer::allocate_channels(9);
+        mixer::allocate_channels(10);
 
         MySdl2Audio {
             sound_0: RWops::from_bytes(sound_0_bytes).unwrap().load_wav().unwrap(),
@@ -46,6 +48,7 @@ impl MySdl2Audio {
             sound_6: RWops::from_bytes(sound_6_bytes).unwrap().load_wav().unwrap(),
             sound_7: RWops::from_bytes(sound_7_bytes).unwrap().load_wav().unwrap(),
             sound_8: RWops::from_bytes(sound_8_bytes).unwrap().load_wav().unwrap(),
+            sound_9: RWops::from_bytes(sound_9_bytes).unwrap().load_wav().unwrap(),
         }
     }
 
@@ -58,13 +61,25 @@ impl MySdl2Audio {
         }
     }
 
-    pub fn play_shot(&self) {
+    pub fn stop_ufo(&self) {
+        let channel = 0;
+        Channel(channel).halt();
+        Channel(channel).set_position(0, 0).expect("Error: Cannot set position");
+    }
+
+    pub fn play_shoot(&self) {
         let channel = 1;
         if !Channel(channel).is_playing() {
             Channel(channel)
                 .play(&self.sound_1, 0)
                 .expect("Error: Cannot play audio wav file 1");
         }
+    }
+
+    pub fn stop_shoot(&self) {
+        let channel = 1;
+        Channel(channel).halt();
+        Channel(channel).set_position(0, 0).expect("Error: Cannot set position");
     }
 
     pub fn play_player_die(&self) {
@@ -117,6 +132,13 @@ impl MySdl2Audio {
         let channel = 8;
         Channel(channel)
             .play(&self.sound_8, 0)
+            .expect("Error: Cannot play audio wav file 8");
+    }
+
+    pub fn play_extra_ship(&self) {
+        let channel = 9;
+        Channel(channel)
+            .play(&self.sound_9, 0)
             .expect("Error: Cannot play audio wav file 8");
     }
 }
