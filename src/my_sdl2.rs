@@ -69,9 +69,9 @@ impl MySdl2 {
                 {
                     let current_play_bit = get_bit(data, 0);
                     let previous_play_bit = get_bit(self.port3_previous_outputs, 0);
-                    if current_play_bit && !previousPlayBit {
+                    if current_play_bit && !previous_play_bit {
                         self.sdl_audio.play_ufo();
-                    } else if (!current_play_bit) && previousPlayBit {
+                    } else if (!current_play_bit) && previous_play_bit {
                         self.sdl_audio.stop_ufo();
                     }
                 }
