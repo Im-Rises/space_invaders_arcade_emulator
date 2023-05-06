@@ -67,20 +67,20 @@ impl MySdl2 {
         match port {
             3 => {
                 {
-                    let currentPlayBit = get_bit(data, 0);
-                    let previousPlayBit = get_bit(self.port3_previous_outputs, 0);
-                    if currentPlayBit && !previousPlayBit {
+                    let current_play_bit = get_bit(data, 0);
+                    let previous_play_bit = get_bit(self.port3_previous_outputs, 0);
+                    if current_play_bit && !previousPlayBit {
                         self.sdl_audio.play_ufo();
-                    } else if (!currentPlayBit) && previousPlayBit {
+                    } else if (!current_play_bit) && previousPlayBit {
                         self.sdl_audio.stop_ufo();
                     }
                 }
                 {
-                    let currentPlayBit = get_bit(data, 1);
-                    let previousPlayBit = get_bit(self.port3_previous_outputs, 1);
-                    if currentPlayBit && !previousPlayBit {
+                    let current_play_bit = get_bit(data, 1);
+                    let previous_play_bit = get_bit(self.port3_previous_outputs, 1);
+                    if current_play_bit && !previous_play_bit {
                         self.sdl_audio.play_shoot();
-                    } else if (!currentPlayBit) && previousPlayBit {
+                    } else if (!current_play_bit) && previous_play_bit {
                         self.sdl_audio.stop_shoot();
                     }
                 }

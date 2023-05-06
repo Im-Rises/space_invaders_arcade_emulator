@@ -37,7 +37,7 @@ impl SpaceInvadersArcade {
     }
     pub fn start(&mut self) {
         let mut time = Instant::now();
-        let mut mySdl2Instance: my_sdl2::MySdl2 = my_sdl2::MySdl2::new(
+        let mut my_sdl2instance: my_sdl2::MySdl2 = my_sdl2::MySdl2::new(
             spu::SOUND_0,
             spu::SOUND_1,
             spu::SOUND_2,
@@ -53,7 +53,7 @@ impl SpaceInvadersArcade {
         let mut last_frequency_counter: usize = 0;
 
         // Handle CPU
-        while mySdl2Instance.get_window_active(self) {
+        while my_sdl2instance.get_window_active(self) {
             if !self.cpu.get_halted() {
                 if self.cpu.get_cycles() == 0 {
                     let opcode = self.cpu.fetch_opcode();
@@ -65,7 +65,7 @@ impl SpaceInvadersArcade {
                         self.cpu.set_cycles(10);
                     } else if opcode == 0xd3 {
                         let port = self.cpu.fetch_byte();
-                        self.outputs(port, self.cpu.get_a(), &mut mySdl2Instance);
+                        self.outputs(port, self.cpu.get_a(), &mut my_sdl2instance);
                         self.cpu.set_cycles(10);
                     } else {
                         let cycles = self.cpu.compute_opcode(opcode);
@@ -85,7 +85,7 @@ impl SpaceInvadersArcade {
                     cpu::interrupts::interrupt(&mut self.cpu, 2);
                     frequency_counter = 0;
                     self.ppu.clock();
-                    mySdl2Instance.update_screen(self);
+                    my_sdl2instance.update_screen(self);
                     if time.elapsed().as_millis() < SCREEN_REFRESH_TIME {
                         std::thread::sleep(std::time::Duration::from_millis(
                             SCREEN_REFRESH_TIME as u64 - time.elapsed().as_millis() as u64,
