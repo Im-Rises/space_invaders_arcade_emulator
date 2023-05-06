@@ -27,6 +27,7 @@ impl MySdl2 {
         sound_6_bytes: &[u8],
         sound_7_bytes: &[u8],
         sound_8_bytes: &[u8],
+        sound_9_bytes: &[u8],
     ) -> MySdl2 {
         let sdl_init = MySdl2::mysdl2_init().unwrap();
         MySdl2 {
@@ -43,6 +44,7 @@ impl MySdl2 {
                 sound_6_bytes,
                 sound_7_bytes,
                 sound_8_bytes,
+                sound_9_bytes,
             ),
             port5_previous_outputs: 0,
         }
@@ -57,23 +59,39 @@ impl MySdl2 {
     }
 
     pub fn get_window_active(&mut self, si_arcade: &mut si_arcade::SpaceInvadersArcade) -> bool {
-        sdl2_inputs::get_window_active(si_arcade, &self.sdl_context).expect("Error: Cannot fetch keyboard state")
+        sdl2_inputs::get_window_active(si_arcade, &self.sdl_context, &mut self.window_canvas)
+            .expect("Error: Cannot fetch keyboard state")
     }
 
     pub fn play_audio_sound(&mut self, port: u8, data: u8) {
         match port {
             3 => {
-                if get_bit(data, 0) {
-                    self.sdl_audio.play_ufo();
+                {
+                    let currentPlayBit = get_bit(data, 0);
+                    let previousPlayBit = get_bit(self.port3_previous_outputs, 0);
+                    if currentPlayBit && !previousPlayBit {
+                        self.sdl_audio.play_ufo();
+                    } else if (!currentPlayBit) && previousPlayBit {
+                        self.sdl_audio.stop_ufo();
+                    }
                 }
-                if get_bit(data, 1) && !get_bit(self.port3_previous_outputs, 1) {
-                    self.sdl_audio.play_shot();
+                {
+                    let currentPlayBit = get_bit(data, 1);
+                    let previousPlayBit = get_bit(self.port3_previous_outputs, 1);
+                    if currentPlayBit && !previousPlayBit {
+                        self.sdl_audio.play_shoot();
+                    } else if (!currentPlayBit) && previousPlayBit {
+                        self.sdl_audio.stop_shoot();
+                    }
                 }
                 if get_bit(data, 2) && !get_bit(self.port3_previous_outputs, 2) {
                     self.sdl_audio.play_player_die();
                 }
                 if get_bit(data, 3) && !get_bit(self.port3_previous_outputs, 3) {
                     self.sdl_audio.play_invader_die();
+                }
+                if get_bit(data, 4) && !get_bit(self.port3_previous_outputs, 4) {
+                    self.sdl_audio.play_extra_ship();
                 }
                 self.port3_previous_outputs = data;
             }

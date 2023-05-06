@@ -1,10 +1,8 @@
-// use sdl2::event::Event;
-// use sdl2::keyboard::Keycode;
 use sdl2::pixels::PixelFormatEnum;
-// use sdl2::render::{Canvas, WindowCanvas};
 use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
 
+// use crate::my_sdl2::sdl2_inputs::center_window;
 use crate::si_arcade;
 
 const WINDOW_WIDTH: usize = 600;
@@ -53,4 +51,20 @@ pub fn update_screen(si_arcade: &mut si_arcade::SpaceInvadersArcade, canvas: &mu
     canvas.copy_ex(&texture, None, None, -90.0, None, false, false)?;
     canvas.present();
     Ok(())
+}
+
+pub fn toggle_fullscreen(canvas: &mut WindowCanvas) {
+    let is_fullscreen = canvas.window().fullscreen_state() == sdl2::video::FullscreenType::Desktop;
+    // let is_fullscreen = canvas.window().fullscreen_state() == sdl2::video::FullscreenType::True;
+    canvas
+        .window_mut()
+        .set_fullscreen(if is_fullscreen {
+            sdl2::video::FullscreenType::Off
+        } else {
+            sdl2::video::FullscreenType::Desktop
+            // sdl2::video::FullscreenType::True
+        })
+        .expect("Error: Cannot toggle fullscreen/windowed mode");
+
+    // center_window(canvas);
 }
